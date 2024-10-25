@@ -1,0 +1,448 @@
+<!-- header -->
+<%- include('../Z_Common_Code/userDashboard/header.ejs') %>
+
+<!-- navbar -->
+<%- include('../Z_Common_Code/userDashboard/navbar.ejs') %>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar Section -->
+        <div class="col-md-3 border-end border-dark">
+            <div class="list-group shadow-sm p-3 bg-white rounded">
+                <h4 class="mb-3">Account Info</h4>
+                <a href="/editProfile" class="list-group-item list-group-item-action">Update Profile</a>
+                <a href="/address" class="list-group-item list-group-item-action">Manage Address</a>
+                <a href="/order/history" class="list-group-item list-group-item-action">My Orders <i class="bi bi-arrow-left"></i></a>
+                <a href="/user/wallet" class="list-group-item list-group-item-action">Wallet</a>
+                <h4 class="mt-4 mb-3">Personal</h4>
+                <a href="#" class="list-group-item list-group-item-action">Terms of Use</a>
+                <a href="#" class="list-group-item list-group-item-action">Privacy Policy</a>
+                <a href="/logout" class="list-group-item list-group-item-action text-danger">Logout</a>
+            </div>
+        </div>
+
+        <!-- Main Content Section -->
+        <div class="col-md-9 py-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Order Details</h2>
+                <div class="d-flex gap-3">
+                    <form action="/order/history" method="get">
+                        <input type="hidden" name="orderStatus" value="Canceled">
+                        <button class="btn btn-outline-secondary border-0" type="submit">Canceled</button>
+                    </form>
+                   
+                    <form action="/order/history" method="get">
+                        <input type="hidden" name="orderStatus" value="Delivered">
+                        <button class="btn btn-outline-secondary border-0" type="submit">Delivered</button>
+                    </form>
+
+                    <form action="/order/history" method="get">
+                        <input type="hidden" name="orderStatus" value="Returned">
+                        <button class="btn btn-outline-secondary border-0" type="submit">Return</button>
+                    </form>
+
+                        <a href="/order/history" class="btn btn-outline-secondary border-0">All</a>
+                        
+                </div>
+            </div>
+            
+        
+            <form action="/order/history" method="get">
+                <div class="input-group mb-4">
+                    <input type="text" class="form-control" name="search" placeholder="Search your Orders using Product name" value="<%=locals.searchTerm%>">
+                    <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>  
+                </div>
+            </form>
+
+
+
+            <!-- Order Items -->
+            <div class="list-group">
+                <!-- Loop starts here -->
+                <% if (orders.length > 0) { %>
+                    <% for (let i = 0; i < orders.length; i++) { %>
+                        <div class="rounded-box mb-3 p-3 shadow-sm">
+                            <% for (let j = 0; j < orders[i].items.length; j++) { %>
+                                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center order-item mb-3 p-3 bg-body rounded">
+                                    <div class="d-flex align-items-start">
+                                        <img src="/imgs/product/<%= orders[i].items[j].images %>" alt="Product Image" class="img-thumbnail me-3" style="width: 100px; height: 100px;">
+                                        <div>
+                                            <h5 class="mb-1 text-primary"><%= orders[i].items[j].productName %> (<%= orders[i].items[j].category %>)</h5>
+                                            <small class="text-muted">Color: <%= orders[i].items[j].color %></small>
+
+                                            <p class="mt-1 mb-0">MRP: ₹<%= orders[i].items[j].salePrice %></p>
+                                            <p class="mt-0">Quantity: <%= orders[i].items[j].quantity %></p>
+                                            
+                                            <% if(orders[i].items[j].OrderStatus === 'Pending Payment') { %> 
+                                                <div class="border bg-warning d-flex align-items-center justify-content-center" style="font-size: 11px;">
+                                                    <p class="mb-0 px-1 py-1">We are waiting for the payment confirmation, confirm payment within 15 minutes</p>
+                                                </div>
+                                            <% } %>
+                                            
+                                        </div>
+                                    </div>
+                                   
+                                    <div class="text-end">
+                                        <small class="text-muted">Size: <%= orders[i].items[j].size %></small>
+
+                                        <% let price = (orders[i].items[j].OrderStatus === 'Canceled' || orders[i].items[j].OrderStatus === 'Returned') ? 0 : orders[i].items[j].salePrice; %>
+                                        <p class="fw-bold mt-2 mb-2 text-success">₹<%= price * orders[i].items[j].quantity %></p>
+
+                                        
+                                        <% let badgeClass = ''; %>
+                                        <% if (orders[i].items[j].OrderStatus === 'Confirmed' || orders[i].items[j].OrderStatus === 'Delivered' || orders[i].items[j].OrderStatus === 'Return-Approved') { %>
+                                            <% badgeClass = 'bg-success'; %>
+                                        <% } else if (orders[i].items[j].OrderStatus === 'Shipped' || orders[i].items[j].OrderStatus === 'Returned' ) { %>
+                                            <% badgeClass = 'bg-primary'; %>
+                                        <% } else if (orders[i].items[j].OrderStatus === 'Canceled' || orders[i].items[j].OrderStatus === 'Return-Rejected') { %>
+                                            <% badgeClass = 'bg-danger'; %>
+                                        <% } else if ( orders[i].items[j].OrderStatus === 'Return-initiated' || orders[i].items[j].OrderStatus === 'Pending Payment') { %>
+                                            <% badgeClass = 'bg-warning text-dark' %>
+                                        <% } %>
+
+                                        <span class="badge <%= badgeClass %>"><%= orders[i].items[j].OrderStatus %></span>
+                        
+                                        <% let statusMessage = ''; %>
+                                        <% if (orders[i].items[j].OrderStatus === 'Confirmed') { %>
+                                            <% statusMessage = 'Your Order has been placed'; %>
+                                        <% } else if (orders[i].items[j].OrderStatus === 'Shipped') { %>
+                                            <% statusMessage = 'Your Product has been Shipped'; %>
+                                        <% } else if (orders[i].items[j].OrderStatus === 'Delivered') { %>
+                                            <% statusMessage = 'Your items have been Delivered'; %>
+                                        <% } else if (orders[i].items[j].OrderStatus === 'Canceled') { %>
+                                            <% statusMessage = 'Your item has been cancelled'; %>
+                                        <% } else if (orders[i].items[j].OrderStatus === 'Return-initiated') { %>
+                                            <% statusMessage = 'Your request to return the item is being processed (it will  around take 5 - 10 mints)'; %>
+                                        <% } else if (orders[i].items[j].OrderStatus === 'Return-Rejected') { %>
+                                            <% statusMessage = ' Your request to return the item has been Rejected (Due to terms & Conditon)'; %>
+                                        <% } else if (orders[i].items[j].OrderStatus === 'Return-Approved') { %>
+                                            <% statusMessage = ' Your request to return the item has been Approved (item will be collected in 3-4 working days)' %>
+                                        <% } else if (orders[i].items[j].OrderStatus === 'Returned') { %>
+                                            <% statusMessage = 'Your Item has been returned and refunded'; %>
+                                        <% } else if (orders[i].items[j].OrderStatus === 'Pending Payment') { %>
+                                            <% statusMessage = 'Payment not yet Completed '; %>
+                                        <% } %>
+                                        <small class="d-block text-muted"><%= statusMessage %></small>
+                                    </div>
+                                </div>
+                        
+                                <!-- Hidden Section for Additional Details -->
+                                <div class="toggle-content pt-3 mb-3 shadow-sm rounded" style="display: none; background-color: #f9f9f9;">
+                                    <div class="container">
+                                        <!-- Delivery Address Section -->
+                                        <div class="mb-4 d-flex justify-content-between">
+                                            <div class="col-md-4">
+                                                <h5 class="mb-3 text-secondary border-bottom pb-2 border-dark">Delivery Address</h5>
+                                                <p style="text-transform: uppercase; margin-bottom: 2px;">
+                                                    <strong><%= orders[i].shippingAddress.name %></strong>
+                                                </p>
+                                                <p>
+                                                    <%= orders[i].shippingAddress.address %>, 
+                                                    <%= orders[i].shippingAddress.locality %> 
+                                                    <%= orders[i].shippingAddress.district %>, 
+                                                    <%= orders[i].shippingAddress.state %> - 
+                                                    <%= orders[i].shippingAddress.pincode %>
+                                                </p>
+                                                <p>Phone number: <%= orders[i].shippingAddress.phone %></p>
+                                            </div>
+                                            <div>
+                                                    <p class="pt-1"><strong>Order Id - </strong> <%= orders[i]._id %></p> 
+                                            </div>
+                                        </div>
+                        
+                                        <!-- Order Details Section -->
+                                        <div class="row mb-4">
+                                            <div class="col-md-2">
+                                                <img src="/imgs/product/<%= orders[i].items[j].images %>" class="img-fluid rounded" alt="Product Image">
+                                            </div>
+                                            <div class="col-md-10">
+                                                <h6 class="text-dar fw-bold"><%= orders[i].items[j].productName %></h6>
+                                                <p class=" mb-1" >Color: <%= orders[i].items[j].color %> | Size: <%= orders[i].items[j].size %></p>
+                                                <p class=" mb-1" >Price: ₹<%= orders[i].items[j].salePrice %></p>
+                                                <p class="mb-1" >Quantity: <%= orders[i].items[j].quantity %></p>
+
+                        
+                                                <div class="d-flex align-items-center">
+                                                    <div>
+                                                        <% if (orders[i].items[j].OrderStatus === 'Confirmed' ) { %>
+                                                            <div>
+                                                                <p class="mt-2 text-muted"><%=statusMessage%></p>
+                                                                <button class="btn btn-outline-danger btn-sm me-2 cancel-order-btn" onclick="cancelOrder('<%= orders[i]._id %>', '<%= orders[i].items[j]._id %>')">Cancel</button>
+                                                            </div>
+                                                        <% }else if (orders[i].items[j].OrderStatus === 'Canceled'|| orders[i].items[j].OrderStatus === 'Pending Payment'){ %>
+                                                            <div>
+                                                                <p class="mt-2 text-muted"><%=statusMessage%></p> 
+                                                                <p class="text-muted fw-bold">Reason - <%=orders[i].items[j].Reason %></p> 
+                                                            </div>
+                                                        <%  }else if(orders[i].items[j].OrderStatus === 'Shipped'){ %>
+                                                            <div>
+                                                                <p class="mt-2 text-muted"><%=statusMessage%></p>                                                             
+                                                            </div>
+                                                        <%  }else if(orders[i].items[j].OrderStatus === 'Return-initiated'){ %>
+                                                            <div>
+                                                                <p class="mt-2 text-muted"><%=statusMessage%></p>                                                             
+                                                            </div>
+                                                        <%  }else if(orders[i].items[j].OrderStatus === 'Return-Approved'){ %>
+                                                            <div>
+                                                                <p class="mt-2 text-muted"><%=statusMessage%></p>                                                             
+                                                            </div>
+                                                        <%  }else if(orders[i].items[j].OrderStatus === 'Return-Rejected'){ %>
+                                                            <div>
+                                                                <p class="mt-2 text-muted"><%=statusMessage%></p>                                                             
+                                                            </div>
+                                                        <%  }else if(orders[i].items[j].OrderStatus === 'Returned'){ %>
+                                                            <div>
+                                                                <p class="mt-2 text-muted"><%=statusMessage%></p>                                                             
+                                                            </div>
+                                                        <%  } else { %>  
+                                                            <div>
+                                                                <p class="mt-2 text-muted"><%=statusMessage%></p>
+                                                                <button class="btn btn-outline-warning btn-sm" onclick="returnOrder('<%=orders[i]._id%>','<%=orders[i].items[j]._id %>')">Return</button>
+                                                            </div>                                                    
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <div class="p-3">
+                                            <h6 class="fw-bold text-primary border-bottom ">Payment Details</h6>
+                                            <% if(orders[i].paymentId != null) { %>
+                                                <p class="fw-bold mb-1">Payment ID: <span class="fw-light"> <%= orders[i].paymentId %> </span> </p>
+                                            <% } %>
+                                            <p class="fw-bold mb-1">Method: <span class="fw-light"> <%= orders[i].paymentMethod.toUpperCase() %> </span> </p>
+                                            <p class="fw-bold mb-1">Status: <span class="fw-light"> <%= orders[i].paymentStatus %> </span> </p>
+                                        </div>
+                                        <div class="pt-5">
+                                            <% if (orders[i].items[j].OrderStatus === 'Delivered'|| orders[i].items[j].OrderStatus === 'Return-initiated') { %>
+                                                <p class="px-3 text-muted">Delivery Date: <%=new Date(orders[i].items[j].deliveryDate).toLocaleString()%></p>
+                                            <% } %>
+                                            <p class="px-3 text-muted">Order Date: <%=new Date(orders[i].orderDate).toLocaleString()%></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+                            <div class="text-end mt-3">
+                                <h5 class="fw-bold text-secondary">Total: ₹<%= orders[i].totalSalePrice %></h5>
+                            </div>
+                        </div>
+                    <% } %>
+                <% } else { %>
+                    <div class="d-flex justify-content-center align-items-center" style="height: 300px">
+                        <h5 class="fw-bold text-secondary">No orders found. It looks like you haven't ordered anything yet!</h5>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+<!-- JavaScript for Toggling Hidden Content -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {      // why written like this is required ? *Q6
+        const orderItems = document.querySelectorAll('.order-item');
+        orderItems.forEach(item => {
+            item.addEventListener('click', function () {
+                const toggleContent = this.nextElementSibling;
+                toggleContent.style.display = toggleContent.style.display === 'none' || toggleContent.style.display === '' ? 'block' : 'none';
+            });
+        });
+    });
+
+    async function cancelOrder(orderId, itemId) {
+        try {
+
+            const confirmResult = await Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you really want to cancel this order?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, cancel it!',
+                cancelButtonText: 'No, keep it'
+            });
+
+              
+            // Check if the user confirmed the cancellation
+            if (confirmResult.isConfirmed) {
+              
+                const reasonResult = await Swal.fire({
+                    title: 'Reason for Cancellation',
+                    input: 'text',
+                    inputLabel: 'Please enter the reason for cancellation',
+                    inputPlaceholder: 'Enter your reason here...',
+                    showCancelButton: true,
+                    confirmButtonText: 'Submit',
+                    cancelButtonText: 'Cancel',
+                    inputValidator: (value) => {
+                        if (!value ||!/[a-zA-Z]/.test(value.trim())){
+                            return 'Please provide a valid reason for cancellation!';
+                        }
+                    }
+                })
+       
+                   const reason = reasonResult.value;   
+                   console.log(reason) 
+
+                if (reasonResult.isConfirmed) {
+                    const response = await fetch('/order/cancel', {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            orderId,
+                            itemId,
+                            reason ,
+                        }),
+                    });
+
+                    const result = await response.json();
+
+                    // If the response is successful, reload the page
+                    if (response.ok) {
+                        await Swal.fire(    // swal fire default arameter  is tittle , text ,icon ( tittle: cancelled text : string  icon : success )      
+                            'Cancelled!',
+                            result.message || 'successfully cancelled.',                            'success'
+                        );
+                        window.location.reload();
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            result.message || 'Failed to cancel the order. Please try again.',
+                            'error'
+                        );
+                    }
+                } else {
+                    console.log('Cancellation reason not provided.');
+                    return ;    
+                }
+            }
+        } catch (error) {
+            // console.error('Error cancelling the order:', error);
+            Swal.fire(
+                'Error!',
+                'An error occurred while cancelling the order. Please try again.',
+                'error'
+            );
+        }
+    }
+
+    async function returnOrder(orderId, itemId) {
+        try {
+            
+            const confirmResult = await Swal.fire({   // Step 1: Confirm the action
+                title: 'Are you sure?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, Proceed Further!',
+                cancelButtonText: 'No, I Changed My Mind'
+            });
+
+            
+            if (confirmResult.isConfirmed) {       // Step 2: If confirmed, ask for the reason for return
+                const reasonResult = await Swal.fire({
+                    title: 'Reason For Returning Products',
+                    input: 'select',
+                    inputLabel: 'Please select the reason for returning',
+                    inputOptions: {
+                        'damaged': 'Product is damaged',
+                        'wrongItem': 'Received the wrong item',
+                        'quality': 'Quality issues',
+                        'sizeIssue': 'Size does not fit',
+                        'others': 'Other reasons'
+                    },
+                    inputPlaceholder: 'Select a reason',
+                    showCancelButton: true,
+                    confirmButtonText: 'Submit',
+                    cancelButtonText: 'Cancel',
+                    inputValidator: (value) => {  // this is for validating the  field
+                        if (!value) {
+                            return 'Please select a reason!';
+                        }
+                    }
+                });
+               
+                let reason = reasonResult.value;                   // Step 3:  selected reason stored in a variable
+                console.log('option reason -> ',reason)
+
+                if (reasonResult.isConfirmed && reason === 'others') {         // If the user selected "Other reasons", again giving swalfire to get the specific reason 
+                    const customReasonResult = await Swal.fire({
+                        title: 'Specify Other Reason',
+                        input: 'text',
+                        inputLabel: 'Please enter your reason for returning',
+                        inputPlaceholder: 'Enter your reason here...',
+                        showCancelButton: true,
+                        confirmButtonText: 'Submit',
+                        cancelButtonText: 'Cancel',
+                        inputValidator: (value) => {
+                            if (!value  || !/[a-zA-Z]/.test(value.trim())) {
+                                return 'Please provide valid reason(only)!';
+                            }
+                        }
+                    });
+                    
+                    
+                    if (customReasonResult.isConfirmed) {        // If the user provides a custom reason, owerriding the reason variable
+                        reason = customReasonResult.value;
+                    } else {
+                        return;                                                   // Step 4: Send the return request
+                    }
+                    console.log('other reason -> ',reason)
+                }
+
+
+                if (reasonResult.isConfirmed) {
+                    const response = await fetch('/order/return', {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            orderId,
+                            itemId,
+                            reason,
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        await Swal.fire(
+                            'Note!',
+                            result.message || 'Return Application request sent successfully',
+                            'info'
+                        );
+                        window.location.reload();
+                    } else {
+                        Swal.fire(
+                            'Alert!',
+                            result.message || 'Return Application Not Valid',
+                            'info'
+                        )
+                    }
+                }
+            }
+        } catch (error) {
+            Swal.fire(
+                'Error!',
+                'An error occurred while processing the return. Please try again.',
+                'error'
+            );
+        }
+    }
+
+</script>
+
+
+<!-- footer -->
+<%- include('../Z_Common_Code/userDashboard/footer.ejs') %>

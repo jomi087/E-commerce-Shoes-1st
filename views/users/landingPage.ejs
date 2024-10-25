@@ -1,0 +1,396 @@
+﻿<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+
+<head>
+    <meta charset="utf-8">
+    <title>Fashion Feet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Favicon -->
+    <!-- <link rel="" type="" href=""> -->
+
+    <!-- logo font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Moul&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+
+    <!-- mine and predifined CSS -->
+    <link rel="stylesheet" href="/css/main.css?v=3.4">
+    <link rel="stylesheet" href="style.css">
+    <!-- bootstarp latest version -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">   
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+        .swal2-custom-font {
+            font-family: 'Poppins', sans-serif; 
+            font-size: 12px; 
+            font-weight: 300; 
+        }
+    </style>
+</head>
+
+
+<body>
+    <!-- Quick view -->
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg bg-body-success mt-2">
+            
+            <div class="container-fluid ">
+                <a class="navbar-brand " href=""><span class="logo g"><u>Fashion-Feet</u></span></a>
+
+                <button class="navbar-toggler " type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div class="container">
+                        <div class=" flex-grow-1">
+                            <ul class="navbar-nav d-flex justify-content-evenly mb-2 mb-lg-0">
+                                <li class="nav-item">
+                                    <a class="nav-link grey" href="/shop"><strong>SHOP</strong></a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link grey" href="#"><strong>Kids</strong></a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link grey" href="#"><strong>Mens</strong></a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link grey" href="#"><strong>Womens</strong></a>
+                                </li>
+                            </ul>
+                        </div> 
+                    </div>                   
+
+<!-- Form -->
+                    <form class="d-flex m-2" role="search" action="/" method="get" >
+                        <div class="d-flex header">
+                            <input class="search_button" type="search" placeholder="Search" name="search" value="<%=searchTerm %>" >
+                            <button><i class="bi bi-search"></i></button>
+                        </div>
+                    </form>
+                    
+<!-- ICON (WIshlist , Cart ,Profile) -->
+                    <div class="d-flex justify-content-start ms-4">
+                        <a class="ms-3 " href="/wishList"><i class="bi bi-heart fs-3" style="color: black;"></i></a>
+                        <a class="ms-3 " href="/cart"><i class="bi bi-cart fs-3" style="color: black;"></i></a>
+                            <%  if (!locals.user) { %>
+                                <a class="ms-3 mb-1" href="/login"><i class="bi bi-person-circle fs-3" style="color: black;"></i></a>
+                                <span></span>
+                            <% } else { %>
+                                <!-- <a href="/personalInfo"><i class="bi bi-person-circle fs-3  ms-3 " style="color: black;"></i></a> -->
+                                <a class="ms-3 mt-2" style="text-transform: uppercase;" href="/personalInfo">Hi,<%=user.firstName %></a>
+                            <% } %>   
+                    </div>
+                </div>           
+            </div>
+        </nav>
+    </div>
+
+      
+    
+    
+    <main class="main">
+        <!-- carouselBanner -->
+        <div >
+            <div id="carouselBanner" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="/imgs/banner/banner2.jpg" class="d-block w-100" alt="Slide 1"> 
+                        
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/imgs/banner/banner1.png" class="d-block w-100" alt="Slide 2">
+                       
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/imgs/banner/banner4.png" class="d-block w-100" alt="Slide 3">
+                        
+                    </div>
+                </div>
+
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselBanner" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselBanner" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+        <!-- carouselBanner finsih -->
+        <section>
+            <div class="container ">
+                <div class="row">
+                    <div class="col-6 col-md-3">
+                      <a href="#"><img style="margin-top: 49px" src="/imgs/Brand/ADIDAS - LOGO.jpeg" class="img-fluid" alt="ADIDAS"></a>  
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="#"><img style="margin-top: 39px" src="/imgs/Brand/Logo da Puma.jpeg" class="img-fluid" alt="PUMA"></a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="#"><img  src="/imgs/Brand/Reebok logo.jpeg" class="img-fluid" alt="REEBOK"></a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href=""><img  style="margin-top: 70px" src="/imgs/Brand/NIKE LOGO.jpeg" class="img-fluid" alt="NIKE"></a> 
+                    </div>
+                    
+                </div>
+            </div> 
+        </section>
+
+       
+            <section class="product-tabs pt-25 pb-20 wow fadeIn animated">
+                <div class="container">
+                    <div class="row d-flex justify-content-center" >
+                        <div>
+                            <div class="tab-header">
+                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="nav-tab-three" data-bs-toggle="tab" data-bs-target="#tab-three" type="button" role="tab" aria-controls="tab-three" aria-selected="false">New added</button>
+                                    </li>
+                                </ul>
+                            </div>
+                            <br>
+                            <!--End nav-tabs-->
+                           
+                                <div class="tab-content wow fadeIn animated" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+                                       
+                                        <div class="row product-grid-4">
+                                                                 <!-- row 1 -->
+                                            <% for( let i = 0 ; i < product.length ; i++ ) { %>
+                                                <div class="col-lg-3 col-md-4 col-12 col-sm-6">
+                                                    <div class="product-cart-wrap mb-30">
+                                                        <div class="product-img-action-wrap ">
+                                                            <div class="product-img product-img-zoom ">
+                                                                <a href="/productDetails?id=<%=product[i]._id %>">
+                                                                    <img class="default-img" src="/imgs/product/<%=product[i].images[0] %>" alt="">
+                                                                    <img class="hover-img" src="/imgs/product/<%=product[i].images[1] %>"  alt="">
+                                                                </a>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                        <div class="product-content-wrap">
+                                                            <div class="product-category">
+                                                                <a href="/productDetails?id=<%=product[i]._id %>"><%=product[i].category.name %></a>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between">
+                                                                <h2><a href="/productDetails?id=<%=product[i]._id %>"><%=product[i].productName %></a></h2>
+                                                                <!-- <a aria-label="Add To Cart" class="action-btn hover-up" href="/cart/add-to-cart"><i class="fi-rs-shopping-bag-add"></i></a> -->
+                                                            </div>
+
+                                                            <div class="rating-result" title="90%"></div>
+                                                            <div class="product-price d-flex justify-content-between ">
+                                                                <div>
+                                                                    <% if (product[i].OfferSalePrice) { %>
+                                                                        <span>₹<%=product[i].OfferSalePrice %> </span>
+                                                                     <% } else { %>
+                                                                        <span> ₹<%=product[i].salePrice %> </span>
+                                                                    <% } %>
+                                                                    <span class="old-price">₹<%=product[i].regularPrice %></span>
+                                                                </div>
+                                                                <div>
+                                                                    <% if (!locals.user) { %>
+                                                                        <button  class="ms-3 bg-transparent border-0 p-0" style="cursor: pointer;" onclick="userLogin()"><i class="bi bi-heart fs-5 wishList-btn-icon " data-product-id="<%=product[i]._id %>" style="color: black;"></i></button>
+                                                                    <% } else { %>
+                                                                        <button  class="ms-3 bg-transparent border-0 p-0" style="cursor: pointer;" onclick="wishlist('<%=product[i]._id %>')"><i class="bi bi-heart fs-5 wishList-btn-icon " data-product-id="<%=product[i]._id %>" style="color: black;"></i></button>
+                                                                    <% } %>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div> 
+                                            <% } %>              
+                                        </div>
+                                        
+                                        <!--End product-grid-4-->
+                                    </div>
+                                </div>
+                            
+                            <!--End tab-content-->
+                        </div>
+                    </div>
+                </div>
+            </section>
+    </main>
+
+    <footer class="main footer_homepage">
+       
+            <section class="footer-mid">
+                <div class="container pt-15 footer-container">
+                    <div class="row d-flex justify-content-evenly">
+                        <div class="col-lg-4 col-md-6" style="width: fit-content;">
+                            <img class="img1 img-fluid"  src="/imgs/Brand/JOMI.png"  alt="">
+                        </div>
+                        <div class="col-lg-2 col-md-3">
+                            <h5 class="widget-title wow fadeIn animated"><u>About</u></h5>
+                            <ul class="footer-list-mine wow fadeIn animated mb-sm-5 mb-md-0">
+                                <li><a href="#">About Us</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Terms &amp; Conditions</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-2  col-md-3">
+                            <h5 class="widget-title wow fadeIn animated"><u>Help</u></h5>
+                            <ul class="footer-list-mine wow fadeIn animated">
+                                <li><a href="#">Contact Us</a></li>
+                            </ul>
+                            <br>
+                            <div class="col-md-4 col-lg-12 mt-md-3 mt-lg-0">
+                                <p class="mb-20 wow fadeIn animated text-body-tertiary"><u>Secured Payment Gateways</u></p>
+                                <img class="wow fadeIn animated" src="/imgs/theme/payment-method.png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 mb-20">
+                            <div class="footer-bottom"></div>
+                        </div>
+                        <div class="col-lg-6">
+                            <p class="float-md-left font-sm text-muted mb-0">&copy; 2024, <strong class="text-brand">Fashion-Feet</strong> -Ecommerce Website </p>
+                        </div>
+                        <div class="col-lg-6">
+                            <p class="text-lg-end text-start font-sm text-muted mb-0"> Designed by
+                                <a href="#" target="_blank">JOMI</a>. All rights reserved
+                            </p>
+                        </div>
+                    </div>
+                
+                </div>
+            </section>
+       
+            
+    </footer>
+   
+    <!-- bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+         let wishlistProducts = [];
+
+        // Fetch wishlist on page load
+        window.onload = async function() {
+            const response = await fetch('/wishlist/check');
+            const data = await response.json();
+            console.log(data)
+
+            wishlistProducts = data.productIdsInWishlist;
+
+            updateHeartIcons();
+        };
+
+        function updateHeartIcons() {
+            wishlistProducts.forEach(productId => {
+                const heartIcon = document.querySelector(`.wishList-btn-icon[data-product-id="${productId}"]`);
+                if (heartIcon) {
+                    heartIcon.classList.remove('bi-heart')
+                    heartIcon.classList.add('bi-heart-fill')
+                }
+            });
+        }
+
+        function userLogin(){
+            window.location.href = "/login";
+        }
+    
+
+        async function wishlist(productId){
+            try {
+                const response = await fetch('/wishlist/toggle',{
+                    method : 'POST',
+                    headers : {
+                        "Content-Type" : 'application/json',
+                    },
+                    body : JSON.stringify({
+                        productId
+
+                    })
+                })
+                const result = await response.json();
+                console.log('result',result)
+
+                if (result.success) {
+                    const heartIcon = document.querySelector(`.wishList-btn-icon[data-product-id="${productId}"]`);
+                    if(result.action === 'added'){
+
+                        heartIcon.classList.remove('bi-heart')
+                        heartIcon.classList.add('bi-heart-fill')
+                          
+
+                        Swal.fire({
+                            icon: 'success',
+                            toast: true, 
+                            position: 'bottom', 
+                            width : 300,
+                            background: '#000',
+                            color: '#fff',
+                            customClass: {
+                                popup: 'swal2-custom-font', // Custom class for font styling
+                            },
+                            showConfirmButton: false, 
+                            timer: 3000, 
+                            text: ' Product Added to Wishlist',
+                        });
+                    }else{
+                        heartIcon.classList.remove('bi-heart-fill')
+                        heartIcon.classList.add('bi-heart')
+                       
+
+                        Swal.fire({
+                            icon: 'success',
+                            toast: true, // Enable toast mode
+                            position: 'bottom', 
+                            width : 310,
+                            background: '#000',
+                            color: '#fff',
+                            showConfirmButton: false, // Hide the confirm button
+                            customClass: {
+                                popup: 'swal2-custom-font', // Custom class for font styling
+                            },
+                            timer: 3000, // Auto-close  after 3 seconds
+                            text: 'Product Removed from Wishlist', 
+                        });
+                        
+                    }
+                } else {
+                    console.error('Error:', result.message);
+                    swal.fire(
+                    'Alert!',
+                    result.message || "Error in Updating Status",
+                    'error'
+                    )
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    toast: true,
+                    position: 'top-end',
+                    background: '#f8d7da',
+                    customClass: {
+                        popup: 'swal2-custom-font', // Custom class for font styling
+                    },
+                    width: '280px', 
+                    text: 'Something went wrong. Please try again later.',
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 1500,
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>
+

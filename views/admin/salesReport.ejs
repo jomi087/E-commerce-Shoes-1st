@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Feet</title>
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Moul&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Swwet Alert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- my-css -->
+    <link rel="stylesheet" href="styleadmin.css">
+  
+</head>
+<body class="page-body">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg nav-bar-custom">
+        <div class="container-fluid">
+            <h3 class="text-white cinzel-decorative mt-2">Fashion Feet</h3>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Account</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar p-3">
+                <nav class="nav flex-column">
+                    <a class="btn btn-primary nav-link" href="/admin/dashboard">Dashboard</a>
+                    <a class="btn btn-primary nav-link" href="/admin/customer">Customers</a>
+                    <a class="btn btn-primary nav-link" href="/admin/product">Products</a>
+                    <a class="btn btn-primary nav-link" href="/admin/orderManagement">Orders</a>
+                    <a class="btn btn-primary nav-link" href="#">Banner Management</a>
+                    <a class="btn btn-primary nav-link" href="/admin/couponManagement">Coupon Management</a>
+                    <a class="btn btn-primary nav-link" href="/admin/salesReport">Sales Report</a>
+                    <a class="btn btn-primary nav-link" href="/admin/category">Category</a>
+                </nav>
+            </div>
+        
+            <div class="col-md-10 content">
+                <h3 class="fw-bold border-bottom">Generate Sales Report</h3>
+                <div class="container mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="btn-group shadow-lg">
+                            <button class="btn btn-outline-dark text-light removebg" id="today"     onclick="fetchSalesReport('today')" >Today</button>
+                            <button class="btn btn-outline-dark text-light removebg" id="thisWeek"  onclick="fetchSalesReport('thisWeek')" >This Week</button>
+                            <button class="btn btn-outline-dark text-light removebg" id="thisMonth" onclick="fetchSalesReport('thisMonth')" >This Month</button>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-dark text-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #82C3C7;">
+                                <i class="bi bi-download me-2"></i> Download
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" onclick="downloadSalesReport('pdf')"><i class="bi bi-file-earmark-pdf-fill text-danger me-2"></i> Download as PDF</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="downloadSalesReport('excel')"><i class="bi bi-file-earmark-excel-fill text-success me-2"></i> Download as Excel</a></li>
+                            </ul>                            
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card shadow-lg border-0 rounded-4">
+                                <div class="card-body rounded-4" style="background: linear-gradient(135deg, #e1dac9, #d4af37);">
+                                    <h5 class="card-title fw-bold text-dark mb-4">
+                                        <i class="bi bi-funnel-fill me-2" style="color: #D4AF37;"></i>Filter Sales
+                                    </h5>
+                                    <form id="filterForm" class="row g-3" >
+                                        <div class="col-md-6">
+                                            <label for="start-date" class="form-label">Start Date</label>
+                                            <input type="date" id="start-date" class="form-control">
+                                            <span id="start-date-error" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="end-date" class="form-label">End Date</label>
+                                            <input type="date" id="end-date" class="form-control">
+                                            <span id="end-date-error" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-12">
+                                            <button type="submit" class="btn w-100 rounded-pill mt-3" style="background: #82C3C7; color: #fff; font-weight: bold; transition: transform 0.3s;">
+                                                Apply Filters
+                                            </button>
+                                        </div>
+                                    </form>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card shadow-lg border-0 rounded-4">
+                                <div class="card-body" style="background: linear-gradient(135deg, #c3e4e6, #82C3C7);">
+                                    <h5 class="card-title fw-bold text-dark mb-4">
+                                        <i class="bi bi-bar-chart-line-fill me-2" style="color: #0288d1;"></i>Sales Summary
+                                    </h5>
+                                    <p class="mb-2">Total Sales: <strong class="text-success fs-5" id="totalSales">₹<%=salesSummary.totalSales%></strong></p>
+                                    <p class="mb-2">Total Orders: <strong class="fs-5" id="totalOrders"><%=salesSummary.totalOrders%></strong></p>
+                                    <p class="mb-2">Total Delivered: <strong class="text-primary fs-5" id="totalDelivered"><%=salesSummary.totalDelivered%></strong></p>
+                                    <p>Total Canceled: <strong class="text-danger fs-5" id="totalCanceled"><%=salesSummary.totalCanceled %></strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle shadow-sm rounded-3">
+                        <thead class="text-white" style="background: linear-gradient(135deg, #d4af37, #82C3C7);">
+                            <tr class="text-center">
+                                <th class="text-start">Order ID</th>
+                                <th>Actual Amount</th>
+                                <th>Discount offer</th>
+                                <th>Coupon Discount</th>
+                                <th>Total Discount</th>
+                                <th>Order Amount</th>
+                                <th>Order Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (orders.length) { %>
+                                <% orders.forEach((order, i) => { %>
+                                    <tr class="text-center">
+                                        <td class="text-start"><%= order._id %></td>
+                                        <td>₹<%=(order.totalRegularPrice.toLocaleString('en-IN')) %></td>
+                                        <td>₹<%= order.discount %></td>
+                                        <td><%= order.coupon && order.coupon.id ? `₹${order.coupon.discount.toLocaleString('en-IN')}` : 'N/A' %></td>
+                                        <td>₹<%=(order.discount + (order.coupon && order.coupon.id ? order.coupon.discount : 0)).toLocaleString('en-IN') %></td>
+                                        <td><%= order.totalSalePrice === 0 ? 'Failed' : `₹${order.totalSalePrice.toLocaleString('en-IN')}` %></td>
+                                        <td><%= new Date(order.orderDate).toLocaleDateString('en-GB') %></td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="7" class="text-center text-dark">No Order Found</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>                
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            document.getElementById('filterForm').addEventListener('submit', async function () {
+                event.preventDefault(); 
+                
+                const startDate = document.getElementById('start-date').value.trim()
+                const endDate = document.getElementById('end-date').value.trim()
+
+                let isValid = true;
+                document.getElementById("start-date-error").textContent = '';
+                document.getElementById("end-date-error").textContent = '';
+                if (!startDate) {
+                    document.getElementById("start-date-error").textContent = "Please select a start date.";
+                    isValid = false;
+                }
+                if (!endDate) {
+                    document.getElementById("end-date-error").textContent = "Please select an end date.";
+                    isValid = false;
+                }
+                if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+                    document.getElementById("end-date-error").textContent = "End date must be after the start date.";
+                    isValid = false;
+                }   
+                
+                if(isValid){
+                    fetchSalesReport(null, startDate, endDate);
+                }
+            })
+        })
+
+
+        async function fetchSalesReport(filter = null, startDate = null, endDate = null){
+            document.querySelectorAll('.removebg').forEach(element => {
+                element.classList.remove("bg-success");
+            });
+
+            let url = '/admin/generateSalesReport';
+            if (filter) {
+                document.getElementById(filter).classList.add("bg-success");
+
+                url += `?filter=${filter}`;
+            } else if (startDate && endDate) {
+
+                url += `?startDate=${startDate}&endDate=${endDate}`;
+            }
+
+            try{
+                const response = await fetch(url)
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log(result)
+                    updateSalesSummary(result.salesSummary);
+                    updateOrdersTable(result.orders);
+                } else {
+                    console.log('Failed to fetch sales report');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed!',
+                        text: 'Failed to fetch sales report,Try again later',
+                        confirmButtonText: 'OK'
+                    });
+                }
+
+            }catch(error){
+                console.log(error)
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed!',
+                    text: 'Technical Issue , Plz try agian later',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+
+        function updateSalesSummary(salesSummary){
+            document.getElementById('totalSales').textContent =`₹${salesSummary.totalSales}`;
+            document.getElementById('totalOrders').textContent =`${salesSummary.totalOrders}`;
+            document.getElementById('totalDelivered').textContent =`${salesSummary.totalDelivered}`;
+            document.getElementById('totalCanceled').textContent =`${salesSummary.totalCanceled}`;
+        }
+
+    function updateOrdersTable(orders) {
+        const tableBody = document.querySelector('tbody');
+
+        if (orders.length > 0) {
+            // Generate the rows using map and join to create a single string of HTML
+            const rows = orders.map(order => `
+                <tr class="text-center">
+                    <td class="text-start">${order._id}</td>
+                    <td>₹${order.totalRegularPrice.toLocaleString('en-IN')}</td>
+                    <td>₹${order.discount.toLocaleString('en-IN')}</td>
+                    <td>${order.coupon && order.coupon.id ? `₹${order.coupon.discount.toLocaleString('en-IN')}` : 'N/A'}</td>
+                    <td>₹${(order.discount + (order.coupon && order.coupon.id ? order.coupon.discount : 0)).toLocaleString('en-IN')}</td>
+                    <td>${order.totalSalePrice === 0 ? 'Failed':`₹${order.totalSalePrice.toLocaleString('en-IN')}`}</td>
+                    <td>${new Date(order.orderDate).toLocaleDateString('en-GB')}</td>
+                </tr>
+            `).join('');
+            tableBody.innerHTML = rows;    // Set the innerHTML of the table body
+        } else {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center text-dark">No Order Found</td>
+                </tr>
+            `;
+        }
+    } 
+    
+    function downloadSalesReport(format) {
+    const startDate = document.getElementById('start-date').value.trim();
+    const endDate = document.getElementById('end-date').value.trim();
+    let filter = document.querySelector('.bg-success')?.id || null;
+    console.log(filter)
+    let url = '/admin/downloadSalesReport?format=' + format;
+
+    if (filter) {
+        url += `&filter=${filter}`;
+    } else if (startDate && endDate) {
+        url += `&startDate=${startDate}&endDate=${endDate}`;
+    } else {
+        return Swal.fire({
+            title: 'Alert!',
+            text: 'Please select a range of date or day ',
+            confirmButtonText: 'OK'
+        });
+    }
+
+    window.location.href = url;
+}
+
+
+    </script>
+</body>
+
+</html>

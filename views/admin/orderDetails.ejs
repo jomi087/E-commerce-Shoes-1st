@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Detail</title>
+    <!-- toastify -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f4f7;
+            font-family: Arial, sans-serif;
+        }
+
+        .order-header {
+            background-color: #eef4f7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #0d6efd;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .order-details {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .order-details h5 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .icon {
+            font-size: 22px;
+            margin-right: 10px;
+            color: #0d6efd;
+        }
+
+        .table thead {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 12px;
+        }
+
+        .btn-save {
+            font-size: 0.9em;
+        }
+
+        .section-icon {
+            background-color: #e9f5ff;
+            padding: 10px;
+            border-radius: 50%;
+            color: #0d6efd;
+            margin-right: 8px;
+        }
+
+        .summary-box {
+            background-color: #f9fbfc;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .textarea-custom {
+            height: 30px;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container my-4">
+        <h3 class="mb-3"><i class="bi bi-receipt-cutoff"></i> Order Detail</h3>
+        <p class="text-muted">Details for Order ID: <strong>#<%=order._id%></strong></p>
+
+        <!-- Order Header -->
+        <div class="order-header">
+            <i class="bi bi-calendar-check-fill section-icon"></i>
+            <div>
+                <span><strong><%=new Date(order.orderDate).toLocaleString()%></strong></span>
+                <small class="text-muted">Order ID: #<%=order._id%></small>
+            </div>
+        </div>
+
+        <!-- Customer and Order Info -->
+        <div class="order-details">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <h5><i class="bi bi-person-fill icon"></i> Customer</h5>
+                    <h6 style="text-transform:uppercase;"> <%=order.user.firstName+' '+order.user.lastName %></h6>
+                    <h6><%=order.user.email %></h6>
+                    <h6><%=order.user.mobile %></h6>
+                </div>
+                <div class="col-md-5">
+                    <h5><i class="bi bi-geo-alt-fill icon"></i> Deliver to</h5>
+                    <p>Name: <%=order.shippingAddress.name %><br> City: <%=order.shippingAddress.locality %> <%=order.shippingAddress.district%><br> Address: <%=order.shippingAddress.address%>,<br>
+                        Pincode: <%=order.shippingAddress.pincode %> , <%=order.shippingAddress.state%><br> Phone: <%=order.shippingAddress.phone %></p>
+                </div>
+                <div class="col-md-3">
+                    <h5><i class="bi bi-credit-card-fill icon"></i> Payment Info</h5>
+                    <p>
+                        Payment Method : <span style="text-transform: uppercase;" class="fw-bold"> <%=order.paymentMethod%> </span>
+                        <br>
+                        <% if(order.paymentId != null) { %>
+                        Payment ID : <span><%=order.paymentId %> </span>
+                        <br>
+                        <% } %>
+                        Status: <span class="fw-bold"> <%=order.paymentStatus%> </span>
+                    </p>
+                </div>
+            </div>
+            <!-- Order Table -->
+            <table class="table table-bordered align-middle">
+                <thead>
+                    <tr>
+                        <th width="550px">Product</th>
+                        <th width="100px">Unit Price</th>
+                        <th width="80px">Quantity</th>
+                        <th width="100px">Status</th>
+                        <th>Change Status</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <% order.items.forEach((item) => { %>
+                        <tr>
+                            <td class="d-flex align-items-center">
+                                <img src="/imgs/product/<%=item.images%>" width="80" height="90" class="img-xs" alt="Item">
+                                <%=item.productName %>
+                            </td>
+                            <td class="text-center">₹ <%=item.salePrice%></td>
+                            <td class="text-center"> <%=item.quantity%></td>
+                            <td class="text-center">
+                                <% if (item.OrderStatus === "Confirmed" || item.OrderStatus === "Delivered"|| item.OrderStatus === 'Return-Approved') { %>
+                                    <span class="badge bg-success status-badge"><%=item.OrderStatus%></span>
+                                <% } else if (item.OrderStatus === "Canceled" || item.OrderStatus === "Return-Rejected") { %>
+                                    <span class="badge bg-danger status-badge"><%=item.OrderStatus%></span>
+                                <% } else if (item.OrderStatus === "Shipped" || item.OrderStatus === "Returned") { %>
+                                    <span class="badge bg-primary status-badge"><%=item.OrderStatus%></span>
+                                <% } else { %>
+                                    <span class="badge bg-warning status-badge"><%=item.OrderStatus%></span>
+                                <% } %>
+                            </td>
+                            
+                            <% if (item.OrderStatus === "Canceled" || item.OrderStatus === "Return-Rejected" || item.OrderStatus === "Returned" || item.OrderStatus === "Pending Payment" ) { %>
+                                <td>
+                                    <select class="form-select form-select-sm status">
+                                        <option value="<%=item.OrderStatus%>" selected disabled><%=item.OrderStatus%></option>
+                                    </select>
+                                    <input type="hidden" class="item-id" value="<%= item._id %>">
+                                    <button hidden class="btn btn-primary btn-sm btn-save mt-1">Save</button>
+                                    <textarea class="form-control border mt-2 textarea-custom" disabled><%= item.Reason %></textarea>
+                                </td>
+                            <% } else if (item.OrderStatus === "Return-initiated" ) { %>
+                                <td>
+                                    <select class="form-select form-select-sm status">
+                                        <option value="<%=item.OrderStatus%>" selected disabled><%=item.OrderStatus%></option>
+                                    </select>
+                                    <input type="hidden" class="item-id" value="<%= item._id %>">
+
+                                    <button hidden class="btn btn-primary btn-sm btn-save mt-1">Save</button>
+                                    <textarea class="form-control border mt-2 textarea-custom" disabled><%= item.Reason %></textarea>
+
+                                    <button class="btn btn-success btn-sm btn-approve mt-1">Approve</button>
+                                    <button class="btn btn-danger btn-sm btn-reject mt-1">Reject</button>
+                                </td>
+                             <% } else if (item.OrderStatus === "Return-Approved" ) { %>
+                                <td>
+                                    <select class="form-select form-select-sm status">
+                                        <option value="<%=item.OrderStatus%>" selected disabled><%=item.OrderStatus%></option>
+                                        <option value="Returned" >Returned</option>
+                                    </select>
+                                    <input type="hidden" class="item-id" value="<%= item._id %>">
+
+                                    <button class="btn btn-primary btn-sm btn-save mt-1">Save</button>
+                                    <textarea class="form-control border mt-2 textarea-custom" disabled><%= item.Reason %></textarea>
+                                </td>
+                            <% } else { %>
+                                <td>
+                                    <select class="form-select form-select-sm status">
+                                        <option value="Confirmed" selected disabled>Confirmed</option>
+                                        <option value="Shipped" <%=item.OrderStatus === "Shipped" ? 'selected' : '' %>>Shipped</option>
+                                        <option value="Delivered" <%=item.OrderStatus === "Delivered" ? 'selected' : '' %>>Delivered</option>
+                                    </select>
+                                    <input type="hidden" class="item-id" value="<%= item._id %>">
+                                    <button class="btn btn-primary btn-sm btn-save mt-1">Save</button>
+                                </td>
+                            <% } %>
+                            <td class="text-center">₹ <%=item.salePrice * item.quantity%></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+
+            <!-- Order Summary -->
+            <div class="d-flex justify-content-end summary-box">
+                <div class="text-end">
+                    <p>Subtotal: ₹ <%=order.totalSalePrice%></p>
+                    <p>Shipping Cost: ₹ 0.00</p>
+                    <h5 class="text-primary">Grand Total: ₹ <%=order.totalSalePrice%></h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('click', async function (event) {
+                const target = event.target;
+
+                if (target.classList.contains('btn-save')) {
+                    const row = target.closest('tr');
+                    const select = row.querySelector('.status');
+                    const itemId = row.querySelector('.item-id').value;
+                    const status = select.value;
+
+                    try {
+                        const response = await fetch(`/admin/orderStatus/<%=order._id%>`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ status, itemId })
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            Toastify({
+                                text: "Status updated successfully!",
+                                duration: 3000,
+                                close: true,
+                                gravity: 'top',
+                                position: 'right',
+                                style: { background: "#0d6efd" }
+                            }).showToast();
+                            location.reload();
+                        } else {
+                            Toastify({
+                                text: result.message || "Update failed",
+                                duration: 3000,
+                                close: true,
+                                gravity: 'top',
+                                position: 'right',
+                                style: { background: "#dc3545" }
+                            }).showToast();
+                        }
+                    } catch (error) {
+                        Toastify({
+                            text: 'An unexpected error occurred. Please try again!',
+                            duration: 3000,
+                            close: true,
+                            gravity: 'top',
+                            position: 'right',
+                            style: { background: "#dc3545" }
+                        }).showToast();
+                    }
+                }
+
+                if (target.classList.contains('btn-approve') || target.classList.contains('btn-reject')) {
+                    const row = target.closest('tr');
+                    const itemId = row.querySelector('.item-id').value;
+                    const status = target.classList.contains('btn-approve') ? 'Return-Approved' : 'Return-Rejected';
+
+                    try {
+                        const response = await fetch(`/admin/returnOrderRequest/<%=order._id%>`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ status, itemId })
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok) {
+                            Toastify({
+                                text: "Request updated successfully!",
+                                duration: 3000,
+                                close: true,
+                                gravity: 'top',
+                                position: 'right',
+                                style: { background: "#0d6efd" }
+                            }).showToast();
+                            location.reload();
+                        } else {
+                            Toastify({
+                                text: result.message || "Update failed",
+                                duration: 3000,
+                                close: true,
+                                gravity: 'top',
+                                position: 'right',
+                                style: { background: "#dc3545" }
+                            }).showToast();
+                        }
+                    } catch (error) {
+                        Toastify({
+                            text: 'An unexpected error occurred. Please try again!',
+                            duration: 3000,
+                            close: true,
+                            gravity: 'top',
+                            position: 'right',
+                            style: { background: "#dc3545" }
+                        }).showToast();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

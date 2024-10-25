@@ -1,0 +1,276 @@
+<!-- header -->
+<%- include('../Z_Common_Code/userDashboard/header.ejs') %>
+
+<!-- navbar -->
+<%- include('../Z_Common_Code/userDashboard/navbar.ejs') %>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3 border-end border-dark">
+            <div class="list-group">
+                <h4 class="mb-3">Account Info</h4>
+                <a href="/editProfile" class="list-group-item list-group-item-action">Update Profile </a>
+                <a href="/address" class="list-group-item list-group-item-action">Manage Address <i class="bi bi-arrow-left"></i></a>
+                <a href="/order/history" class="list-group-item list-group-item-action">My Orders</a>
+                <a href="/user/wallet" class="list-group-item list-group-item-action">Wallet</a>
+                <h4 class="mt-4 mb-3">Personal</h4>
+                <a href="#" class="list-group-item list-group-item-action">Terms of Use</a>
+                <a href="#" class="list-group-item list-group-item-action">Privacy Policy</a>
+                <a href="/logout" class="list-group-item list-group-item-action">Logout</a>
+            </div>
+        </div>
+        <div class="col-md-9  py-4">
+            <h2 class="mb-4">Edit Address</h2>
+            
+            <form id="addressForm" >
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="inputName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="inputName" name="name"  value="<%=address.name%>">
+                        <span id="nameError" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="inputMobile" class="form-label">Mobile Number</label>
+                        <input type="text" class="form-control" id="inputMobile" name="mobile"  value="<%=address.phone%>">
+                        <span id="mobileError" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="inputPincode" class="form-label">Pincode</label>
+                        <input type="text" class="form-control" id="inputPincode" name="pincode"  value="<%=address.pincode%>" >
+                        <span id="pincodeError" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="inputLocality" class="form-label">Locality</label>
+                        <input type="text" class="form-control" id="inputLocality" name="locality"  value="<%=address.locality%>" >
+                        <span id="localityError" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="inputCity" class="form-label">City/District/Town</label>
+                        <input type="text" class="form-control" id="inputCity" name="district"  value="<%=address.district%>" >
+                        <span id="cityError" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="inputState" class="form-label">State</label>
+                        <select id="inputState" name="state" class="form-select text-center">
+                            <option value="" disabled>Select State</option>
+                            <option value="Andaman and Nicobar Islands" <%= address.state === "Andaman and Nicobar Islands" ? 'selected' : '' %>>Andaman and Nicobar Islands</option>
+                            <option value="Andhra Pradesh" <%= address.state === "Andhra Pradesh" ? 'selected' : '' %>>Andhra Pradesh</option>
+                            <option value="Arunachal Pradesh" <%= address.state === "Arunachal Pradesh" ? 'selected' : '' %>>Arunachal Pradesh</option>
+                            <option value="Assam" <%= address.state === "Assam" ? 'selected' : '' %>>Assam</option>
+                            <option value="Bihar" <%= address.state === "Bihar" ? 'selected' : '' %>>Bihar</option>
+                            <option value="Chhattisgarh" <%= address.state === "Chhattisgarh" ? 'selected' : '' %>>Chhattisgarh</option>
+                            <option value="Chandigarh" <%= address.state === "Chandigarh" ? 'selected' : '' %>>Chandigarh</option>
+                            <option value="Dadra and Nagar Haveli and Daman and Diu" <%= address.state === "Dadra and Nagar Haveli and Daman and Diu" ? 'selected' : '' %>>Dadra and Nagar Haveli and Daman and Diu</option>
+                            <option value="Delhi" <%= address.state === "Delhi" ? 'selected' : '' %>>Delhi</option>
+                            <option value="Goa" <%= address.state === "Goa" ? 'selected' : '' %>>Goa</option>
+                            <option value="Gujarat" <%= address.state === "Gujarat" ? 'selected' : '' %>>Gujarat</option>
+                            <option value="Haryana" <%= address.state === "Haryana" ? 'selected' : '' %>>Haryana</option>
+                            <option value="Himachal Pradesh" <%= address.state === "Himachal Pradesh" ? 'selected' : '' %>>Himachal Pradesh</option>
+                            <option value="Jammu and Kashmir" <%= address.state === "Jammu and Kashmir" ? 'selected' : '' %>>Jammu and Kashmir</option>
+                            <option value="Jharkhand" <%= address.state === "Jharkhand" ? 'selected' : '' %>>Jharkhand</option>
+                            <option value="Karnataka" <%= address.state === "Karnataka" ? 'selected' : '' %>>Karnataka</option>
+                            <option value="Kerala" <%= address.state === "Kerala" ? 'selected' : '' %>>Kerala</option>
+                            <option value="Ladakh" <%= address.state === "Ladakh" ? 'selected' : '' %>>Ladakh</option>
+                            <option value="Lakshadweep" <%= address.state === "Lakshadweep" ? 'selected' : '' %>>Lakshadweep</option>
+                            <option value="Madhya Pradesh" <%= address.state === "Madhya Pradesh" ? 'selected' : '' %>>Madhya Pradesh</option>
+                            <option value="Maharashtra" <%= address.state === "Maharashtra" ? 'selected' : '' %>>Maharashtra</option>
+                            <option value="Manipur" <%= address.state === "Manipur" ? 'selected' : '' %>>Manipur</option>
+                            <option value="Meghalaya" <%= address.state === "Meghalaya" ? 'selected' : '' %>>Meghalaya</option>
+                            <option value="Mizoram" <%= address.state === "Mizoram" ? 'selected' : '' %>>Mizoram</option>
+                            <option value="Nagaland" <%= address.state === "Nagaland" ? 'selected' : '' %>>Nagaland</option>
+                            <option value="Odisha" <%= address.state === "Odisha" ? 'selected' : '' %>>Odisha</option>
+                            <option value="Punjab" <%= address.state === "Punjab" ? 'selected' : '' %>>Punjab</option>
+                            <option value="Puducherry" <%= address.state === "Puducherry" ? 'selected' : '' %>>Puducherry</option>
+                            <option value="Rajasthan" <%= address.state === "Rajasthan" ? 'selected' : '' %>>Rajasthan</option>
+                            <option value="Sikkim" <%= address.state === "Sikkim" ? 'selected' : '' %>>Sikkim</option>
+                            <option value="Tamil Nadu" <%= address.state === "Tamil Nadu" ? 'selected' : '' %>>Tamil Nadu</option>
+                            <option value="Telangana" <%= address.state === "Telangana" ? 'selected' : '' %>>Telangana</option>
+                            <option value="Tripura" <%= address.state === "Tripura" ? 'selected' : '' %>>Tripura</option>
+                            <option value="Uttar Pradesh" <%= address.state === "Uttar Pradesh" ? 'selected' : '' %>>Uttar Pradesh</option>
+                            <option value="Uttarakhand" <%= address.state === "Uttarakhand" ? 'selected' : '' %>>Uttarakhand</option>
+                            <option value="West Bengal" <%= address.state === "West Bengal" ? 'selected' : '' %>>West Bengal</option>
+                        </select>
+                        <span id="stateError" class="text-danger"></span>
+                    </div>
+                    
+                </div>
+                <div class="mb-3">
+                    <label for="inputAddress" class="form-label">Address (area and street)</label>
+                    <textarea class="form-control" id="inputAddress" name="address" rows="3" ><%=address.address%></textarea>
+                    <span id="addressError" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+
+    
+<script>  
+       
+    document.getElementById('inputPincode').addEventListener('blur',async function(){
+        const pincode = document.getElementById('inputPincode').value.trim()
+        const pincodeError = document.getElementById("pincodeError");
+
+        pincodeError.textContent = '';
+
+        if(pincode.length !==6 || isNaN(pincode)){
+            pincodeError.textContent = 'Please enter a valid 6-digit pincode' ;
+            return ;
+        }
+        try {
+            const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+            const data = await response.json()
+
+            if(data[0].Status === "Success"){
+                const district = data[0].PostOffice[0].District;
+                const state = data[0].PostOffice[0].State;
+
+                document.getElementById('inputCity').value = district;
+                document.getElementById('inputState').value = state
+            }else{
+                pincodeError.textContent = 'Invalid Pincode'; 
+            }
+
+        } catch (error) {
+            console.error('Error fetching pincode data:', error);
+            pincodeError.textContent = 'Your network Connection is slow';
+        }
+    })
+
+
+    document.getElementById('addressForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        // Clear all error messages
+        document.getElementById('nameError').textContent = '';
+        document.getElementById('mobileError').textContent = '';
+        document.getElementById('pincodeError').textContent = '';
+        document.getElementById('localityError').textContent = '';
+        document.getElementById('cityError').textContent = '';
+        document.getElementById('stateError').textContent = '';
+        document.getElementById('addressError').textContent = '';
+
+        const name = document.getElementById('inputName').value.trim();
+        const mobile = document.getElementById('inputMobile').value.trim();
+        const pincode = document.getElementById('inputPincode').value.trim();
+        const locality = document.getElementById('inputLocality').value.trim();
+        const city = document.getElementById('inputCity').value.trim();
+        const state = document.getElementById('inputState').value;
+        const address = document.getElementById('inputAddress').value.trim();
+
+        let isValid = true;
+
+        if (!name) {
+            document.getElementById('nameError').textContent = 'Please enter your name.';
+            isValid = false;
+        }
+
+        if (!mobile || mobile.length !== 10 || isNaN(mobile)) {
+            document.getElementById('mobileError').textContent = 'Please enter a valid 10-digit mobile number.';
+            isValid = false;
+        }
+
+        if (!pincode || pincode.length !== 6 || isNaN(pincode)) {
+            document.getElementById('pincodeError').textContent = 'Please enter a valid 6-digit pincode.';
+            isValid = false;
+        }
+
+        if (!locality) {
+            document.getElementById('localityError').textContent = 'Please enter your locality.';
+            isValid = false;
+        }
+
+        if (!city) {
+            document.getElementById('cityError').textContent = 'Please enter your city/district/town.';
+            isValid = false;
+        }
+
+        if (state === "") {
+            document.getElementById('stateError').textContent = 'Please select your state.';
+            isValid = false;
+        }
+
+        if (!address) {
+            document.getElementById('addressError').textContent = 'Please enter your address.';
+            isValid = false;
+        }
+
+        if (isValid) {
+            try{                    
+                const response = await fetch('/address/update/<%=address._id %>',{
+                    method : "PATCH",
+                    headers : {
+                        'Content-Type' : 'application/json'
+                    },
+                    body : JSON.stringify({
+                        name ,
+                        mobile,
+                        pincode,
+                        locality,
+                        city,
+                        state,
+                        address,
+                    })
+                })
+                // console.log(response);
+                
+                const result = await response.json()
+
+                if(response.ok){
+                    Toastify({
+                        text : result.message || 'Address has been updated successfully !',
+                        duration : 3000,
+                        close : true , 
+                        gravity : 'top',
+                        position : 'center',
+                        style : {
+                            background : "#28a745"
+                        },
+                   }).showToast()
+                    setTimeout(() => {
+                        window.location.href = '/address';
+                    }, 2000);
+                }else{
+
+                    Swal.fire({     //then catch way (async await way written in addAddreass.ejs)
+                        icon : "error",
+                        title : 'Opps',
+                        text : result.message  || 'Updation Failed , Try again Later',
+                        confirmButtonText: 'Ok'
+                    }).then((result) => {
+                        if (result.isConfirmed) {  
+                            window.location.href = '/address';
+                        }
+                    });
+                    
+                }
+            }catch(error){
+                console.error('Error', error);
+                Toastify({
+                        text :  'An unexpected error occurred. Please try again. !',
+                        duration : 3000,
+                        close : true , 
+                        gravity : 'top',
+                        position : 'right',
+                        style : {
+                            background : "#dc3545"
+                        },
+                }).showToast()
+            }
+        }
+    });
+</script>
+
+
+<!-- footer -->
+<%- include('../Z_Common_Code/userDashboard/footer.ejs') %>

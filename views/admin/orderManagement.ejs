@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Feet</title>
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Moul&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- my-css -->
+    <link rel="stylesheet" href="styleadmin.css">
+    <style>
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            border-collapse: separate;
+            border-spacing: 0 5px;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .table th,
+        .table td {
+            border: none;
+            padding: 12px 15px;
+            vertical-align: middle;
+        }
+
+        .table td {
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="page-body">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg nav-bar-custom">
+        <div class="container-fluid">
+            <h3 class="text-white cinzel-decorative mt-2">Fashion Feet</h3>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class=" nav-link" href="#"><i class="bi bi-person-circle"></i>Account</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-gear-fill"></i>Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/logout"><i class="bi bi-box-arrow-right"></i>Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar p-3">
+                <nav class="nav flex-column">
+                    <a class=" btn btn-primary nav-link" href="/admin/dashboard">Dashboard</a>
+                    <a class="btn btn-primary nav-link" href="/admin/customer">Customers</a>
+                    <a class="btn btn-primary nav-link" href="/admin/product">Products</a>
+                    <a class="btn btn-primary nav-link" href="/admin/orderManagement">Orders</a>
+                    <a class="btn btn-primary nav-link" href="#">Banner Management</a>
+                    <a class="btn btn-primary nav-link" href="/admin/couponManagement">Coupon Management</a>
+                    <a class="btn btn-primary nav-link" href="/admin/salesReport">Sales Report</a>
+                    <a class="btn btn-primary nav-link" href="/admin/category">Category</a>
+                </nav>
+            </div>
+        
+            <div class="col-md-10 content p-4">
+                <!-- Orders Table Header -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="mb-0 border-bottom border-dark border-2">Orders</h4>
+                    <!-- <div class="d-flex align-items-center">
+                        <label for="sort" class="me-2">Sort:</label>
+                        <select class="form-select form-select-sm me-2" id="sort">
+                            <option value="name">Name</option>
+                            <option value="amount">Amount</option>
+                            <option value="date">Date</option>
+                        </select>
+                        <select class="form-select form-select-sm me-2">
+                            <option value="ascending">Ascending</option>
+                            <option value="descending">Descending</option>
+                        </select>
+                        <input type="text" class="form-control form-control-sm" placeholder="Filter">
+                    </div> -->
+                </div>
+            
+                <% if(orders.length > 0) { %>
+                    <!-- Orders Table -->
+                    <table class="table table-hover table-bordered text-center " style="font-size: 14px;">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">S.No</th>
+                                <th scope="col">Order ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Total Amount</th>
+                                <th scope="col">Payment</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Item's Status</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <% orders.forEach((order,index)=>{ %>
+                            <tbody  style="font-family:'Times New Roman', Times, serif;text-transform: uppercase;">
+                                <tr>
+                                    <td style="width: 10px;" class="text-center"><%=index+1%></td>
+                                    <td style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;"><%=order._id%></td>
+                                    <td><%=order.user.firstName+' '+order.user.lastName%></td>
+                                    <td>₹<%=order.totalSalePrice%></td>
+                                    <td><%=order.paymentMethod%></td>
+                                    <td style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;"><%=new Date(order.orderDate).toLocaleString()%></td>
+                                    <td>
+                                    <% order.items.forEach((item, index) => { %>
+                                        <div class="d-flex align-items-center mb-1">
+                                            <% if (item.OrderStatus === "Confirmed") { %>
+                                                <span class="badge bg-success me-2">  <%= item.OrderStatus %></span>
+                                            <% } else if (item.OrderStatus === "Delivered") { %>
+                                                <span class="badge bg-success me-2"> <%= item.OrderStatus %></span>
+                                                <i class="bi bi-check2-circle text-success fs-5"></i>
+                                            <% } else if (item.OrderStatus === "Canceled") { %>
+                                                <span class="badge bg-danger me-2"> <%= item.OrderStatus %></span>
+                                            <% } else if (item.OrderStatus === "Shipped") { %>
+                                                <span class="badge bg-primary me-2"> <%= item.OrderStatus %></span>
+                                            <% } else { %>
+                                                <span class="badge bg-warning me-2"> <%= item.OrderStatus %></span>
+                                            <% } %>
+                                        </div>
+                                    <% }) %>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/orderDetails/<%=order._id%>" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                                    </td>
+                                </tr>
+                                <!-- Add more rows as needed -->
+                            </tbody>
+                        <% }) %>
+                    </table>
+                
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-end">
+                            <% if(currentPage > 1){ %>
+                            <li class="page-item " >
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>" tabindex="-1" >Previous</a>
+                            </li> 
+                            <% } %>                          
+                            <% for(let i = 1 ; i <=  totalPages ; i++){ %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" href='?page=<%=i%>'><%= i %></a>
+                                </li>
+                            <% } %> 
+                            <% if (currentPage < totalPages) { %>
+                            <li class="page-item"></li>
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                            </li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                <% } else { %>
+                     <div class="d-flex justify-content-center align-items-center" style="height: 300px">
+                        <h5 class="fw-bold text-Dark">No orders found. It looks like NO One ordered anything yet!</h5>
+                    </div>
+                <%}%>
+            </div>            
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

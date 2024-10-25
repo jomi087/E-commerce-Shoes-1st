@@ -1,0 +1,96 @@
+/**********************************************************************************/
+/*Dashbord , costumer, product 
+/**********************************************************************************/
+
+.page-body {
+    background-color: rgb(112, 109, 109);
+    font-family: 'Cinzel Decorative', cursive;
+}
+.sidebar {
+    height: 100vh;
+    background-color: #a60000;
+    border-right: 1px solid black;
+    color: #ffffff;
+}
+.sidebar .nav-link {
+    color: #ffffff;
+}
+.sidebar .nav-link.active {
+    background-color: #ffffff;
+    color: #000;
+}
+.content {
+    padding: 20px;
+}
+.stats-card {
+    background-color: #f6f0f0e0;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+.stats-card h4 {
+    margin: 0;
+    font-size: 24px;
+}
+.graph-card {
+    background-color: #f6f0f0e0;
+    border-radius: 10px;
+    padding: 20px;
+    height: 300px;
+}
+.recent-sales {
+    background-color: #f6f0f0e0;
+    border-radius: 10px;
+    padding: 20px;
+    height: 300px;
+}
+.nav-bar-custom {
+    background-color: #000000;
+}
+
+.nav-bar-custom .navbar-nav .nav-link {
+    color: #fff;
+}
+.cinzel-decorative {
+    font-family: "Cinzel Decorative";
+    font-weight: 400;
+    font-style: normal;
+}
+
+/********************** PRODUCT IMAGE  ***********************************************************/
+.upload-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    border: 2px dashed #cccccc;
+    border-radius: 5px;
+    background-color: #615b5b;
+    padding: 10px;
+    position: relative;
+    overflow-x: auto; /* Allows horizontal scroll if necessary */
+}
+
+.upload-image input[type="file"] {
+    margin-bottom: 10px;
+    z-index: 1; /* Ensure the file input remains clickable */
+}
+
+#imagePreviewContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-height: 150px; /* Adjusts to prevent images from overflowing vertically */
+    overflow-y: auto; /* Allows vertical scroll if necessary */
+}
+
+#imagePreviewContainer img {
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/*********************************************************************************/

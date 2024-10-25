@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+
+<head>
+    <meta charset="utf-8">
+    <title>Fashion Feet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Favicon -->
+    <!-- <link rel="" type="" href=""> -->
+
+    <!-- logo font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Moul&display=swap" rel="stylesheet">
+
+    <!-- mine and predifined CSS -->
+    <link rel="stylesheet" href="/css/main.css?v=3.4">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- bootstarp latest version -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">   
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+</head>
+
+
+<body>
+    <!-- Quick view -->
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg bg-body-success mt-2">
+            
+            <div class="container-fluid ">
+                <a class="navbar-brand " href="/"><span class="logo g"><u>Fashion-Feet</u></span></a>
+
+                <button class="navbar-toggler " type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div class="container">
+                        <div class=" flex-grow-1">
+                            <ul class="navbar-nav d-flex justify-content-evenly mb-2 mb-lg-0">
+                                <li class="nav-item">
+                                    <a class="nav-link grey" href="/shop"><strong>SHOP</strong></a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link grey" href="#"><strong>Kids</strong></a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link grey" href="#"><strong>Mens</strong></a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link grey" href="#"><strong>Womens</strong></a>
+                                </li>
+                            </ul>
+                        </div>                    
+                </div>
+
+<!-- Form -->
+                    <form class="d-flex" role="search m-2" action="/shop" method="get">
+                        <div class="d-flex header">
+                            <input class="search_button" type="search" placeholder="Search" name="search" value="<%=searchTerm %>" >
+                            <input type="hidden" name="category" value="<%=categoryBase %>">
+                            <button><i class="bi bi-search"></i></button>
+                        </div>
+                    </form>
+
+<!-- ICON (WIshlist , Cart ,Profile) -->
+                    <div class="d-flex justify-content-start ms-4">
+                        <a class="ms-3 " href="/wishList"><i class="bi bi-heart fs-3" style="color: black;"></i></a>
+                        <a class="ms-3 " href="/cart"><i class="bi bi-cart fs-3" style="color: black;"></i></a>
+                            <%  if (!locals.user) { %>
+                                <a class="ms-3 mb-1" href="/login"><i class="bi bi-person-circle fs-3" style="color: black;"></i></a>
+                                <span></span>
+                            <% } else { %>
+                                <!-- <a href="/personalInfo"><i class="bi bi-person-circle fs-3  ms-3 " style="color: black;"></i></a> -->
+                                <a class="ms-3 mt-2" style="text-transform: uppercase;" href="/personalInfo">Hi,<%=user.firstName %></a>
+                            <% } %>   
+                    </div>
+                </div>           
+            </div>
+        </nav>
+    </div>
+
+    <main class="main">
+        <section class="product-tabs pt-25 pb-20 wow fadeIn animated">
+            <div class="container">
+                <div class="tab-header">
+                    <h3 style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;" class="border-bottom border-dark">All-PRODUCT'S</h3>
+                </div>
+                <div class="row wow fadeIn animated" id="myTabContent">
+                    <div class="col-lg-9 tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+                        <div class="row product-grid-4">
+                            <!-- row 1 -->
+                            <%if (product.length > 0){ %>
+                                <% for( let i = 0 ; i < product.length ; i++ ) { %>
+                                    <div class="col-lg-3 col-md-4 col-6">
+                                        <div class="product-cart-wrap mb-30">
+                                            <div class="product-img-action-wrap">
+                                                <div class="product-img product-img-zoom">
+                                                    <a href="/productDetails?id=<%=product[i]._id %>">
+                                                        <img class="default-img" src="/imgs/product/<%=product[i].images[0] %>" alt="">
+                                                        <img class="hover-img" src="/imgs/product/<%=product[i].images[1] %>" alt="">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="product-content-wrap">
+                                                <div class="product-category">
+                                                    <a href="/productDetails?id=<%=product[i]._id %>"><%=product[i].category.name %></a>
+                                                </div>
+                                                <h2><a href="/productDetails?id=<%=product[i]._id %>"><%=product[i].productName %></a></h2>
+                                                <div class="rating-result" title="90%"></div>
+                                                <div class="product-price d-flex justify-content-between">
+                                                    <div>
+                                                        <% if (product[i].OfferSalePrice) { %>
+                                                            <span>₹<%=product[i].OfferSalePrice %> </span>
+                                                         <% } else { %>
+                                                            <span> ₹<%=product[i].salePrice %> </span>
+                                                        <% } %>
+                                                       
+                                                        <span class="old-price">₹<%=product[i].regularPrice %></span>
+                                                    </div>
+                                                    <div>
+                                                        <% if (!locals.user) { %>
+                                                            <button  class="ms-3 bg-transparent border-0 p-0" style="cursor: pointer;" onclick="userLogin()"><i class="bi bi-heart fs-5 wishList-btn-icon " data-product-id="<%=product[i]._id %>" style="color: black;"></i></button>
+                                                        <% } else { %>
+                                                            <button  class="ms-3 bg-transparent border-0 p-0" style="cursor: pointer;" onclick="wishlist('<%=product[i]._id %>')"><i class="bi bi-heart fs-5 wishList-btn-icon " data-product-id="<%=product[i]._id %>" style="color: black;"></i></button>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            <% }else { %>
+                                <div class="mt-4">
+                                    <h4> No Result Product Found for "<%=searchTerm %>" </h4>
+                                </div>
+                            <% } %>
+                        </div>
+                        <!--End product-grid-4-->
+                    </div>
+                    <div class="col-lg-3">
+                        <!-- Category Filter -->
+                        
+                        <div class="border p-3 mb-4">
+                            <h5 class="fw-bold mb-3">Category</h5>
+                            <ul class="list-group list-unstyled">
+                                <% categories.forEach((category) => { %>
+                                    <li class="mb-2">
+                                        <a href="/shop?category=<%= category._id%>" class="text-decoration-none text-dark">
+                                            <i class="bi bi-chevron-right me-1"></i><%= category.name %>
+                                        </a>
+                                    </li>
+                                <% }) %>
+                            </ul>
+                        </div>
+                    
+                        <!-- Sort by Filter -->
+                        <div class="border p-3">
+                            <h5 class="fw-bold mb-3">Sort by</h5>
+                            <form action="/shop" method="GET">
+                                <input type="hidden" name="search" value="<%= searchTerm %>">
+                                <input type="hidden" name="category" value="<%=categoryBase %>">
+
+                                <div class="mb-3">
+                                    <select class="form-select form-select-sm" aria-label="Sort Options" name="sort">
+                                        <option value="" disabled selected>Sort by</option>
+                                        <option value="price_low_high" <%= sortOption === 'price_low_high' ? 'selected' : '' %>>Price: Low to High</option>
+                                        <option value="price_high_low" <%= sortOption === 'price_high_low' ? 'selected' : '' %>>Price: High to Low</option>
+                                        <option value="newest" <%= sortOption === 'newest' ? 'selected' : '' %>>Newest First</option>
+                                        <option value="name_az" <%= sortOption === 'name_az' ? 'selected' : '' %>>Name: A to Z</option>
+                                        <option value="name_za" <%= sortOption === 'name_za' ? 'selected' : '' %>>Name: Z to A</option>
+                                        <option value="discount" <%= sortOption === 'discount' ? 'selected' : '' %>>Discount</option>
+                                        <option value="">Reset</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="bi bi-funnel-fill me-2"></i>Apply Filters
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                    
+                </div>
+                <!--End tab-content-->
+            </div>
+        </section>
+    </main>
+
+    <footer class="main footer_homepage">
+       
+            <section class="footer-mid">
+                <div class="container pt-15 footer-container">
+                    <div class="row d-flex justify-content-evenly">
+                        <div class="col-lg-4 col-md-6" style="width: fit-content;">
+                            <img class="img1 img-fluid"  src="/imgs/Brand/JOMI.png"  alt="">
+                        </div>
+                        <div class="col-lg-2 col-md-3">
+                            <h5 class="widget-title wow fadeIn animated"><u>About</u></h5>
+                            <ul class="footer-list-mine wow fadeIn animated mb-sm-5 mb-md-0">
+                                <li><a href="#">About Us</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Terms &amp; Conditions</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-2  col-md-3">
+                            <h5 class="widget-title wow fadeIn animated"><u>Help</u></h5>
+                            <ul class="footer-list-mine wow fadeIn animated">
+                                <li><a href="#">Contact Us</a></li>
+                            </ul>
+                            <br>
+                            <div class="col-md-4 col-lg-12 mt-md-3 mt-lg-0">
+                                <p class="mb-20 wow fadeIn animated text-body-tertiary"><u>Secured Payment Gateways</u></p>
+                                <img class="wow fadeIn animated" src="/imgs/theme/payment-method.png" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 mb-20">
+                            <div class="footer-bottom"></div>
+                        </div>
+                        <div class="col-lg-6">
+                            <p class="float-md-left font-sm text-muted mb-0">&copy; 2024, <strong class="text-brand">Fashion-Feet</strong> -Ecommerce Website </p>
+                        </div>
+                        <div class="col-lg-6">
+                            <p class="text-lg-end text-start font-sm text-muted mb-0"> Designed by
+                                <a href="#" target="_blank">JOMI</a>. All rights reserved
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+       
+            
+    </footer>
+
+    <!-- Vendor JS-->
+    <script src="/js/vendor/modernizr-3.6.0.min.js"></script>
+    <script src="/js/vendor/jquery-3.6.0.min.js"></script>
+    <script src="/js/vendor/jquery-migrate-3.3.0.min.js"></script>
+    <script src="/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="/js/plugins/slick.js"></script>
+    <script src="/js/plugins/jquery.syotimer.min.js"></script>
+    <script src="/js/plugins/wow.js"></script>
+    <script src="/js/plugins/jquery-ui.js"></script>
+    <script src="/js/plugins/perfect-scrollbar.js"></script>
+    <script src="/js/plugins/magnific-popup.js"></script>
+    <script src="/js/plugins/select2.min.js"></script>
+    <script src="/js/plugins/waypoints.js"></script>
+    <script src="/js/plugins/counterup.js"></script>
+    <script src="/js/plugins/jquery.countdown.min.js"></script>
+    <script src="/js/plugins/images-loaded.js"></script>
+    <script src="/js/plugins/isotope.js"></script>
+    <script src="/js/plugins/scrollup.js"></script>
+    <script src="/js/plugins/jquery.vticker-min.js"></script>
+    <script src="/js/plugins/jquery.theia.sticky.js"></script>
+    <script src="/js/plugins/jquery.elevatezoom.js"></script>
+    <!-- Template  JS -->
+    <script src="/js/main.js?v=3.4"></script>
+    <script src="/js/shop.js?v=3.4"></script>
+    <!-- bootstrap -->
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script>
+        let wishlistProducts = [];
+
+       // Fetch wishlist on page load
+       window.onload = async function() {
+           const response = await fetch('/wishlist/check');
+           const data = await response.json();
+           console.log(data)
+
+           wishlistProducts = data.productIdsInWishlist;
+
+           updateHeartIcons();
+       };
+
+       function updateHeartIcons() {
+           wishlistProducts.forEach(productId => {
+               const heartIcon = document.querySelector(`.wishList-btn-icon[data-product-id="${productId}"]`);
+               if (heartIcon) {
+                   heartIcon.classList.remove('bi-heart')
+                   heartIcon.classList.add('bi-heart-fill')
+               }
+           });
+       }
+
+       function userLogin(){
+           window.location.href = "/login";
+       }
+   
+
+       async function wishlist(productId){
+           try {
+               const response = await fetch('/wishlist/toggle',{
+                   method : 'POST',
+                   headers : {
+                       "Content-Type" : 'application/json',
+                   },
+                   body : JSON.stringify({
+                       productId
+
+                   })
+               })
+               const result = await response.json();
+               console.log('result',result)
+
+               if (result.success) {
+                   const heartIcon = document.querySelector(`.wishList-btn-icon[data-product-id="${productId}"]`);
+                   if(result.action === 'added'){
+
+                       heartIcon.classList.remove('bi-heart')
+                       heartIcon.classList.add('bi-heart-fill')
+                         
+
+                       Swal.fire({
+                           icon: 'success',
+                           toast: true, 
+                           position: 'bottom', 
+                           width : 300,
+                           background: '#000',
+                           color: '#fff',
+                           customClass: {
+                               popup: 'swal2-custom-font', // Custom class for font styling
+                           },
+                           showConfirmButton: false, 
+                           timer: 3000, 
+                           text: ' Product Added to Wishlist',
+                       });
+                   }else{
+                       heartIcon.classList.remove('bi-heart-fill')
+                       heartIcon.classList.add('bi-heart')
+                      
+
+                       Swal.fire({
+                           icon: 'success',
+                           toast: true, // Enable toast mode
+                           position: 'bottom', 
+                           width : 310,
+                           background: '#000',
+                           color: '#fff',
+                           showConfirmButton: false, // Hide the confirm button
+                           customClass: {
+                               popup: 'swal2-custom-font', // Custom class for font styling
+                           },
+                           timer: 3000, // Auto-close  after 3 seconds
+                           text: 'Product Removed from Wishlist', 
+                       });
+                       
+                   }
+               } else {
+                   console.error('Error:', result.message);
+                   swal.fire(
+                   'Alert!',
+                   result.message || "Error in Updating Status",
+                   'error'
+                   )
+               }
+           } catch (error) {
+               Swal.fire({
+                   icon: 'error',
+                   toast: true,
+                   position: 'top-end',
+                   background: '#f8d7da',
+                   customClass: {
+                       popup: 'swal2-custom-font', // Custom class for font styling
+                   },
+                   width: '280px', 
+                   text: 'Something went wrong. Please try again later.',
+                   showConfirmButton: false,
+                   timerProgressBar: true,
+                   timer: 1500,
+               });
+           }
+       }
+   </script>
+      
+</body>
+
+</html>
+
+

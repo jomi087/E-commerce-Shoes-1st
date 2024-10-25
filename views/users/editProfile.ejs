@@ -1,0 +1,261 @@
+<!-- header -->
+<%- include('../Z_Common_Code/userDashboard/header.ejs') %>
+
+<!-- navbar -->
+<%- include('../Z_Common_Code/userDashboard/navbar.ejs') %>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="list-group">
+                <h4 class="mb-3">Account Info</h4>
+                <a href="/editProfile" class="list-group-item list-group-item-action">Update Profile <i class="bi bi-arrow-left"></i></a>
+                <a href="/address" class="list-group-item list-group-item-action">Manage Address</a>
+                <a href="/order/history" class="list-group-item list-group-item-action">My Orders</a>
+                <a href="/user/wallet" class="list-group-item list-group-item-action">Wallet</a>
+                <h4 class="mt-4 mb-3">Personal</h4>
+                <a href="#" class="list-group-item list-group-item-action">Terms of Use</a>
+                <a href="#" class="list-group-item list-group-item-action">Privacy Policy</a>
+                <a href="/logout" class="list-group-item list-group-item-action">Logout</a>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="col-md-9 bg-white p-4 rounded shadow-lg d-flex justify-content-center align-items-center">
+            <form id="updateForm">
+                <div>
+                    <div class="text-center">
+                        <a href="/personalInfo"><img src="/imgs/profile_logo.png" style="height:80%; width:135px" alt=""></a>
+                        <div class="text-danger m-2" id="message"><%= locals.message %></div>
+                        <div class="pe-5 mt-3">
+                            <label for="fname" class="me-2">First Name</label>
+                            <input type="text" id="fname" value="<%= user.firstName %>" class="form-control d-inline-block" style="width: auto;">
+                        </div>
+                        <div class="pe-5 mt-2">
+                            <label for="lname" class="me-2">Last Name</label>
+                            <input type="text" id="lname" value="<%= user.lastName %>" class="form-control d-inline-block" style="width: auto;">
+                        </div>
+                        <div>
+                            <button type="submit" id='submitbtn' class="btn btn-primary mt-3">Update</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <% if (user.googleId==null) { %>
+            <!-- Mobile & Mail Update  (New implementation via HTML and JS ) -->
+            <div id="email-mobile-section" class=" border-start border-dark px-5">
+                <h2>Enter Your Details</h2>
+                <form id="email-mobile-form">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" value="<%=user.email%>">
+                        <div id="email-error" class="text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mobile" class="form-label">Mobile Number:</label>
+                        <input type="text" class="form-control" id="mobile" value="<%=user.mobile%>">
+                        <div id="mobile-error" class="text-danger"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Next</button>
+                </form>
+            </div>
+
+            <div id="password-section"  class=" hidden border-start border-dark px-5">
+                <h2>Confirm Password</h2>
+                <form id="password-form">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password:</label>
+                        <input type="password" class="form-control" id="password">
+                        <div id="password-error" class="text-danger"></div>
+                    </div>
+                    <button id="backButton" type="button" class="btn btn-success">Back</button>
+                    <button type="submit" class="btn btn-success">Submit</button>
+                    <span class="text-danger" id="msg"><%= locals.message %></span>
+                </form>
+            </div>
+            <% } %>
+        </div>
+        <div class="col-12 d-flex justify-content-end">
+            <a href="/changePassword"><button type="" class="btn btn-danger" style="width: auto;">Change Password</button></a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        // Name Updating
+        const updateForm = document.getElementById('updateForm');
+        const submitButton = document.getElementById('submitbtn');
+        const messageElement = document.getElementById('message');
+
+        updateForm.addEventListener('submit', async function (event) {
+
+        messageElement.textContent=''
+
+        // Confirm with user    ( this is the Actual way )
+        // const confirmUpdate = confirm("Are you sure? You can only change your name after 60 days."); 
+
+        event.preventDefault();  // Prevent default form submission
+
+        const confirmUpdate = await Swal.fire({   //attractive way sweet alert2
+            title: 'Are you sure?',
+            text: "You can only change your name after 60 days.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, update it!',
+            cancelButtonText: 'No, cancel',
+            reverseButtons: true
+        });        
+         if (!confirmUpdate.isConfirmed)  return ;
+
+
+        const fname = document.getElementById('fname').value.trim();
+        const lname = document.getElementById('lname').value.trim();
+
+        // Basic validation
+        if (!fname || !lname) {
+            messageElement.classList.remove('text-success');
+            messageElement.classList.add('text-danger');
+            messageElement.textContent = 'First Name and Last Name cannot be empty';
+            return;
+        }
+
+        try {
+            const response = await fetch('/updateProfileName', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({ fname, lname })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {  
+                // messageElement.classList.remove('text-danger');                        //Actual way
+                // messageElement.classList.add('text-success');
+                // messageElement.textContent = result.message || 'Updated Successfully';
+
+                Swal.fire({        // //attractive way sweet alert2
+                    icon: 'success',
+                    title: 'Updated Successfully!',
+                    text: result.message || 'Your profile has been updated.',
+                });
+
+
+                submitButton.hidden = true;
+                document.getElementById('fname').disabled = true;
+                document.getElementById('lname').disabled = true;
+            } else {
+                messageElement.classList.remove('text-success');
+                messageElement.classList.add('text-danger');
+                messageElement.textContent = result.message || 'Error updating profile';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            messageElement.textContent = 'An unexpected error occurred';
+        }
+    });
+
+    // Email & Mobile Update
+    let storedEmail = '';
+    let storedMobile = '';
+
+    const emailMobileForm = document.getElementById('email-mobile-form');
+    const emailMobileSection = document.getElementById('email-mobile-section');
+    const passwordSection = document.getElementById('password-section');
+    const passwordForm = document.getElementById('password-form');
+    const backButton = document.getElementById('backButton');
+
+    emailMobileForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        // Clear previous error messages
+        document.getElementById('email-error').textContent = '';
+        document.getElementById('mobile-error').textContent = '';
+
+        // Store email and mobile in variables
+        storedEmail = document.getElementById('email').value.trim();
+        storedMobile = document.getElementById('mobile').value.trim();
+
+        // Validate email and mobile
+        let valid = true;
+
+        if (!storedEmail) {
+            document.getElementById('email-error').textContent = 'Email is required';
+            valid = false;
+        } else if (!/\S+@\S+\.\S+/.test(storedEmail)) {
+            document.getElementById('email-error').textContent = 'Please enter a valid email address';
+            valid = false;
+        }
+
+        if (!storedMobile) {
+            document.getElementById('mobile-error').textContent = 'Mobile number is required';
+            valid = false;
+        } else if (!/^\d{10}$/.test(storedMobile)) {
+            document.getElementById('mobile-error').textContent = 'Please enter a valid 10-digit mobile number';
+            valid = false;
+        }
+
+        if (valid) {
+            // Hide the email/mobile section and show the password section
+            emailMobileSection.classList.add('hidden');
+            passwordSection.classList.remove('hidden');
+        }
+    });
+
+    backButton.addEventListener('click', function(event) {
+    event.preventDefault();
+
+    // Hide the password section and show the email/mobile section
+    passwordSection.classList.add('hidden');
+    emailMobileSection.classList.remove('hidden');
+    });
+
+    passwordForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        // Clear previous error messages
+        document.getElementById('password-error').textContent = '';
+
+        const password = document.getElementById('password').value.trim();
+
+        // Validate password
+        if (!password) {
+            document.getElementById('password-error').textContent = 'Password is required';
+            return;
+        }
+
+        try {
+            // Send all data (email, mobile, password) together to the backend
+            const response = await fetch('/updateM&M', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: storedEmail,
+                    mobile : storedMobile,
+                    password
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {  
+                alert('Updated successfully!');
+                location.reload();
+            } else {
+                document.getElementById('msg').textContent = data.message || 'Error updating profile';
+            }
+        } catch (error) {
+            // console.error('Error:', error);
+            document.getElementById('msg').textContent = 'unexpected error occurred';
+        }
+    });
+});
+</script>
+<%- include('../Z_Common_Code/userDashboard/footer.ejs') %>

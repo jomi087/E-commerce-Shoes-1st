@@ -1,0 +1,171 @@
+
+/* **************************************Common************************************************ */
+/* **************************************COMMON-START******************************************* */
+.outer_bg_color{
+    background-color: #C9C9C9; 
+}
+
+/* **************************************Common End******************************************* */
+/* **************************************Registration-START******************************************* */
+
+
+.inner_Coustomz_registration {
+    width: 100%;
+    max-width: 490px;
+    color: white ;
+    background-color: #424242 ;
+    opacity: .8;
+    border-radius: 3% ;
+}
+
+/* **************************************Registration End************************************************* */
+/* **************************************LOGIN-START******************************************* */
+
+.inner_Coustomz{
+    color: white !important;
+    width: 40% !important ;
+    background-color: #424242 !important;
+    border-radius: 8% !important; 
+}
+@media (max-width: 991px) {
+    .inner_Coustomz{
+      width: 50% !important;
+    }
+  }
+@media (max-width: 771px) {
+    .inner_Coustomz{
+      width: 70% !important;
+    }
+  }
+
+/* **************************************LOGIN END************************************************* */
+
+/* **************************************Forget-Password Start******************************************* */
+
+.card {
+    background-color: #fcfcfcb9;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.input-group-append .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+
+/***************************************Forget-Password End************************************************* */
+
+/* **************************************HOME PAGE-START******************************************* */
+.logo{
+            font-family: 'Montserrat', sans-serif; /* Primary Font */
+            font-size: 24px;
+            text-decoration: none; /* Remove underline */
+            transition: color 0.4s ease; /* Smooth color transition on hover */
+            font-family: "Moul", serif;
+            
+        }
+        .logo:hover {
+            cursor: pointer;
+            color: #fdfeff; /* Change color on hover */
+        }
+.grey{
+    color: #706F6F; /* Dark color for contrast */
+}
+/*************************************************************************/
+
+.header .search_button{
+    width: 240px;
+    height: 35px;
+    border-radius: 3px;
+}
+
+
+.header button{
+    background-color: #FB2E86;
+    border: 0px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+
+/*****************************BANNER*************************************/
+
+.carousel-item {
+    position: relative;
+    overflow: hidden;
+    height: 450px; /* Fixed height for the carousel */
+}
+.carousel-item img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%; /* Ensure image covers the container */
+    object-fit: cover; /* Ensure the image covers the container without distortion */
+     transform: translate(-50%, -50%);
+}
+.carousel-caption {
+    bottom: 20px;
+    text-align: center;
+}
+/* *****************************load more************************************* */
+
+.load_more{
+        text-decoration: none;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; 
+        font-size: 21px;
+        font-weight: 400;
+        color:black;
+}
+
+
+/*****************************footer*************************************/
+
+.footer_homepage{
+    border-top: 2px solid ;
+    background-color: #706F6F;
+    color: white;
+}
+
+.footer-list-mine {
+    
+    list-style: outside none none;
+    margin: 0;
+    padding: 0;
+    li {
+        display: block;
+        margin: 0 0 13px;
+        transition-duration: 0.3s;
+        &:last-child {
+            margin: 0;
+        }
+        &:hover {
+            padding-left: 5px;
+            transition-duration: 0.3s;
+        }
+        a {
+            text-decoration: none;
+            font-size: 14px;
+            color: white;
+            display: block;
+            &:hover {
+                color: blue;
+            }
+        }
+
+    }
+}
+
+.img1  {
+    max-height: 180px; /* Adjust as necessary */
+    object-fit: cover
+}
+
+
+/* **************************************HOME PAGE-END************************************************* */
+

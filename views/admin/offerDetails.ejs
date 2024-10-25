@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Feet</title>
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Moul&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+
+    <!-- my-css -->
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.875em;
+        }
+
+        body{
+            color: white;
+        }
+
+        .swal2-custom-font {
+            font-family: 'Poppins', sans-serif; 
+            font-size: 12px; 
+            font-weight: 300; 
+        }
+
+        .page-body {
+        background-color: rgb(112, 109, 109);
+        font-family: 'Cinzel Decorative', cursive;
+        }
+        
+        .sidebar {
+            height: 100vh;
+            background-color: #a60000;
+            border-right: 1px solid black;
+            color: #ffffff;
+        }
+
+        .sidebar .nav-link {
+            color: #ffffff;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #ffffff;
+            color: #000;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .stats-card {
+            background-color: #f6f0f0e0;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stats-card h4 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .graph-card {
+            background-color: #f6f0f0e0;
+            border-radius: 10px;
+            padding: 20px;
+            height: 300px;
+        }
+
+        .recent-sales {
+            background-color: #f6f0f0e0;
+            border-radius: 10px;
+            padding: 20px;
+            height: 300px;
+        }
+
+        .nav-bar-custom {
+            background-color: #000000;
+        }
+
+        .nav-bar-custom .navbar-nav .nav-link {
+            color: #fff;
+        }
+
+        .cinzel-decorative {
+            font-family: "Cinzel Decorative";
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .hidden {
+            display: none;
+        }
+        
+    </style>
+</head>
+
+
+<body class="page-body">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg nav-bar-custom">
+        <div class="container-fluid">
+            <h3 class="text-white cinzel-decorative mt-2">Fashion Feet</h3>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Account</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+
+    <!-- Main content -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar p-3">
+                <nav class="nav flex-column">
+                    <a class="btn btn-primary nav-link" href="/admin/dashboard">Dashboard</a>
+                    <a class="btn btn-primary nav-link" href="/admin/customer">Customers</a>
+                    <a class="btn btn-primary nav-link" href="/admin/product">Products</a>
+                    <a class="btn btn-primary nav-link" href="/admin/orderManagement">Orders</a>
+                    <a class="btn btn-primary nav-link" href="#">Banner Management</a>
+                    <a class="btn btn-primary nav-link" href="/admin/couponManagement">Coupon Management</a>
+                    <a class="btn btn-primary nav-link" href="/admin/salesReport">Sales Report</a>
+                    <a class="btn btn-primary nav-link" href="/admin/category">Category</a>
+                </nav>
+            </div>
+            <!-- Content area Section 1 -->
+
+            <div class="col-md-8 content mt-5" id="offerdetail-section">
+                <div class="text-end">
+                    <button class="btn btn-link fs-4 text-white" id="navigationTowardsHistory-btn" style="text-decoration: none;">History</button>
+                </div>  
+                <div class="row">
+                    <div class="col-md-10 offset-md-2">
+                        <h2 class="border-bottom text-warning "><%=category.name %></h2>
+                      
+                        <div id="offerSection" class="mt-1 p-4 bg-light text-dark rounded  shadow-lg">
+                            <% if (category.offer != null) { %>
+                                <div id="offerDetails">
+                                    <h3 class="text-primary " style="text-decoration: underline;">Offer</h3>
+                                    <p><strong>Offer Name :</strong> <span ><%=category.offer.name %></span></p>
+                                    <p><strong>Discount :</strong> <span  class="p-3"><%=category.offer.discount%>%</span></p>
+                                    <p><strong>Start Date :</strong> <span  class="p-3"><%=new Date(category.offer.startDate).toLocaleDateString() %></span></p>
+                                    <p><strong>End Date :</strong> <span  class="p-4" > <%=new Date (category.offer.endDate).toLocaleDateString() %></span></p>
+                                    <p><strong>Description :</strong> <span > <%=category.offer.description %></span></p>
+
+                                    <%if(category.offer.status == true ){ %>
+                                        <p><strong>Status : </strong> <span class="p-3"> Active </span></p>
+                                    <% } else { %>
+                                        <p><strong>Status : </strong> <span> Un-Active </span></p>
+                                    <% } %>
+                    
+                                    <div class="mt-3">
+                                        <button class="btn btn-warning" onclick="editOffer('<%=category._id%>')">Edit Offer</button>
+                                        <% if (category.offer.status == false ) { %>
+                                            <button class="btn btn-danger" onclick="removeOffer('<%=category._id%>')">Remove Offer</button>
+                                        <% } %>
+                                    </div>
+
+                                </div>
+                            <% } else { %>
+                                <div id="noOffer" class="text-center">
+                                    <p class="text-muted">No offer added for this category.</p>
+                                    <button class="btn btn-success" onclick="addOffer('<%=category._id%>')">Add Offer</button>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+
+
+              <!-- History area Section 2 -->
+            <div class="hidden col-md-10 content mt-2" id="offerHistory-section">
+                <div class="text-end">
+                    <button class="btn btn-link fs-4 text-white"  id="navigationTowardsOfferDetails-btn" style="text-decoration: none;"><i class="bi bi-caret-left-fill"></i><i class="bi bi-caret-left-fill"></i>Back</button>
+                </div>
+                <h2 class="border-bottom text-warning"><%= category.name %></h2>
+                <% if (category.offerHistory.length > 0) { %>
+                    <div class="table-responsive"></div>
+                        <table class="table table-bordered table-hover mt-3">
+                            <thead class="table-warning text-center">
+                            <tr>
+                                <th>Offer Name</th>
+                                <th>Discount</th>
+                                <th>Start Date & End Date</th>
+                                <th>Description</th>
+                            </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                <% category.offerHistory.forEach(offer => { %>
+                                    <tr>
+                                        <td><%=offer.name%></td>
+                                        <td><%=offer.discount%>%</td>
+                                        <td><%=new Date(offer.startDate).toLocaleDateString()%> - <%=new Date(offer.endDate).toLocaleDateString()%></td>
+                                        <td><%=offer.description%></td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <div>
+                        <h4 class="text-center fs-4 mt-5">No offers found</h4>
+                    </div>
+                <% } %>
+                    
+              </div>
+              
+        </div>
+    </div>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" defer></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" defer></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script>
+
+        const navigationTowardsHistorybtn = document.getElementById('navigationTowardsHistory-btn');
+        const navigationTowardsOfferDetailsbtn = document.getElementById('navigationTowardsOfferDetails-btn');
+        const offerHistorysection = document.getElementById('offerHistory-section');
+        const offerdetailsection = document.getElementById('offerdetail-section');
+
+
+        navigationTowardsHistorybtn.addEventListener('click', function (){
+            offerdetailsection.classList.add('hidden')
+            offerHistorysection.classList.remove('hidden')
+        })
+
+        navigationTowardsOfferDetailsbtn.addEventListener('click', function (){
+            offerHistorysection.classList.add('hidden')
+            offerdetailsection.classList.remove('hidden')
+        })
+
+
+        async function addOffer(categoryId){
+            try {
+                const result = await Swal.fire({
+                    title : 'Add Offer',
+                    html : 
+                        '<input id="addOfferName"      class="swal2-input" placeholder="Offer Name">' +
+                        '<input id="addOfferDiscount"  class="swal2-input" placeholder="Discount (%)" >' +
+                        '<input id="addOfferStartDate" class="swal2-input" type="date" placeholder="Start Date">' +
+                        '<input id="addOfferEndDate"   class="swal2-input" type="date" placeholder = "End Date">' +
+                        '<textarea id="addOfferDescription" class="swal2-textarea" placeholder="Description"></textarea>',
+                    confirmButtonText: 'Save Offer',
+                    showCancelButton : true,
+                    preConfirm : ()=>{
+                        const offerName = document.getElementById('addOfferName').value
+                        const discount = document.getElementById('addOfferDiscount').value;
+                        const startDate = document.getElementById('addOfferStartDate').value;
+                        const endDate = document.getElementById('addOfferEndDate').value;
+                        const description = document.getElementById('addOfferDescription').value;
+                        
+                        if (!offerName || !discount || !startDate || !endDate || !description) {
+                        Swal.showValidationMessage('All fields are required');
+                        return false;
+                        }
+                    
+                        const discountValue = parseInt(discount);
+                        if (isNaN(discountValue) || discountValue < 1 || discountValue > 90) {
+                            Swal.showValidationMessage('Discount must be a number between 1 and 90');
+                            return false;
+                        }
+
+                        // Validate that end date is after start date
+                        const startDateObj = new Date(startDate);
+                        const endDateObj = new Date(endDate);
+                        if (endDateObj <= startDateObj) {
+                            Swal.showValidationMessage('The end date must come after the start date.');
+                            return false;
+                        }
+
+                        return { offerName, discount, startDate, endDate, description };
+
+                    }
+                })
+                console.log(result)
+                if(result.isConfirmed){
+                    try {
+                        const response = await fetch('/admin/addOffer',{
+                            method : 'POST',
+                            headers : {
+                                'Content-Type' : 'application/json',
+                            },
+                            body : JSON.stringify({
+                                categoryId,
+                                offerName : result.value.offerName,
+                                discount  : result.value.discount,
+                                startDate  : result.value.startDate,
+                                endDate  : result.value.endDate,
+                                description  : result.value.description,
+                            })
+                        })   
+                        const data = await response.json()
+                        
+
+                        if(data.success){
+                            
+                            window.location.reload()
+                        }else{
+
+                            Swal.fire({
+                                icon: 'error',
+                                toast: true,
+                                position: 'top-end',
+                                background: '#f8d7da',
+                                customClass: {
+                                    popup: 'swal2-custom-font', 
+                                },
+                                width: '280px', 
+                                text: 'Something went wrong. Please try again later.',
+                                showConfirmButton: false,
+                                timerProgressBar: true,
+                                timer: 1500,
+                            });
+                        }
+
+                    } catch (error) {
+                        console.log(error)
+                        Swal.fire({
+                            icon: 'error',
+                            toast: true,
+                            position: 'top-end',
+                            background: '#f8d7da',
+                            customClass: {
+                                popup: 'swal2-custom-font', 
+                            },
+                            width: '280px', 
+                            text: 'Something went wrong. Please try again later.',
+                            showConfirmButton: false,
+                            timerProgressBar: true,
+                            timer: 1500,
+                        });
+                    }   
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    toast: true,
+                    position: 'top-end',
+                    background: '#f8d7da',
+                    customClass: {
+                    popup: 'swal2-custom-font', // Custom class for font styling
+                    },
+                    width: '280px', 
+                    text: 'Something went wrong. Please try again later.',
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 1500,
+                });
+            }
+        }
+        
+        async function editOffer(categoryId){
+            try {
+                const result = await Swal.fire({
+                    title : 'Edit Offer',
+                    html : 
+                        '<input id="editOfferName"      class="swal2-input" placeholder="Offer Name" value="<%= category.offer ? category.offer.name : "" %>">' +
+                        '<input id="editOfferDiscount"  class="swal2-input" placeholder="Discount (%)" value="<%=category.offer? category.offer.discount : "" %>">' +
+                        '<input id="editOfferStartDate" class="swal2-input" type="date" placeholder="Start Date" value="<%= category.offer ? new Date(category.offer.startDate).toISOString().slice(0, 10) : "" %>" >' +
+                        '<input id="editOfferEndDate"   class="swal2-input" type="date" placeholder="End Date"  value="<%= category.offer  ? new Date(category.offer.endDate).toISOString().slice(0, 10) : "" %>" >' +
+                        '<textarea id="editOfferDescription" class="swal2-textarea" placeholder="Description"><%= category.offer ?  category.offer.description : "" %></textarea>',
+
+                    confirmButtonText : 'Save Offer',
+                    showCancelButton : true,
+                    preConfirm : ()=>{
+                        const offerName = document.getElementById('editOfferName').value
+                        const discount = document.getElementById('editOfferDiscount').value;
+                        const startDate = document.getElementById('editOfferStartDate').value;
+                        const endDate = document.getElementById('editOfferEndDate').value;
+                        const description = document.getElementById('editOfferDescription').value;
+                        
+                        if (!offerName || !discount || !startDate || !endDate || !description) {
+                        Swal.showValidationMessage('All fields are required');
+                        return false;
+                        }
+                    
+                        const discountValue = parseInt(discount);
+                        if (isNaN(discountValue) || discountValue < 1 || discountValue > 90) {
+                            Swal.showValidationMessage('Discount must be a number between 1 and 90');
+                            return false;
+                        }
+
+                        // Validate that end date is after start date
+                        const startDateObj = new Date(startDate);
+                        const endDateObj = new Date(endDate);
+                        if (endDateObj <= startDateObj) {
+                            Swal.showValidationMessage('The end date must come after the start date.');
+                            return false;
+                        }
+
+                        return { offerName, discount, startDate, endDate, description };
+                    }
+                })
+
+                console.log(result)
+                if(result.isConfirmed){
+                    try {
+                        const response = await fetch('/admin/editOffer',{
+                            method : 'PATCH',
+                            headers : {
+                                'Content-Type' : 'application/json',
+                            },
+                            body : JSON.stringify({
+                                categoryId,
+                                offerName : result.value.offerName,
+                                discount  : result.value.discount,
+                                startDate  : result.value.startDate,
+                                endDate  : result.value.endDate,
+                                description  : result.value.description,
+                            })
+                        })
+                        const data = await response.json()
+
+                        if(data.success){
+                            await Swal.fire({
+                                icon: 'success',
+                                toast: true,
+                                position: 'top-end',
+                                background: '#008000',
+                                color: '#fff',
+                                customClass: {
+                                    popup: 'swal2-custom-font', 
+                                },
+                                width: '280px', 
+                                text: 'Offer has been updated',
+                                showConfirmButton: false,
+                                timerProgressBar: true,
+                                timer: 1200,
+                            });
+                            window.location.reload()
+                        }else{
+                            Swal.fire({
+                                icon: 'error',
+                                toast: true,
+                                position: 'top-end',
+                                background: '#f8d7da',
+                                customClass: {
+                                    popup: 'swal2-custom-font', 
+                                },
+                                width: '280px', 
+                                text: 'Something went wrong. Please try again later.',
+                                showConfirmButton: false,
+                                timerProgressBar: true,
+                                timer: 1500,
+                            })
+                        }
+                    } catch (error) {
+                        console.log(error)
+                        Swal.fire({
+                            icon: 'error',
+                            toast: true,
+                            position: 'top-end',
+                            background: '#f8d7da',
+                            customClass: {
+                                popup: 'swal2-custom-font', 
+                            },
+                            width: '280px', 
+                            text: 'Something went wrong. Please try again later.',
+                            showConfirmButton: false,
+                            timerProgressBar: true,
+                            timer: 1500,
+                        });
+                    }
+                }
+            } catch (error) {
+                console.log(error)
+                Swal.fire({
+                    icon: 'error',
+                    toast: true,
+                    position: 'top-end',
+                    background: '#f8d7da',
+                    customClass: {
+                        popup: 'swal2-custom-font', // Custom class for font styling
+                    },
+                    width: '300px', 
+                    text: 'Something went wrong. Please try again later.',
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 1500,
+                });
+            }
+        }
+
+        async function removeOffer(categoryId){
+            
+            try {
+                const confirmDelete =  await Swal.fire({
+                    title : 'Alert',
+                    text : 'Are you sure you want to delete this offer',
+                    showCancelButton : true ,
+                    cancelButtonText : 'Cancel',
+                    confirmButtonText : 'yes Delete',
+                    reverseButton : true
+                })
+                if (!confirmDelete.isConfirmed ) return
+                
+                try {
+                    const response = await fetch('/admin/deleteOffer',{
+                        method : 'DELETE',
+                        headers : {
+                            'Content-Type' : 'application/json',
+                        },
+                        body : JSON.stringify({
+                            categoryId
+                        })
+                    })
+                    const result = await response.json()
+
+                    if(result.success){
+                        window.location.reload()
+                    }else{
+                        Swal.fire({
+                        icon: 'error',
+                        toast: true,
+                        position: 'top-end',
+                        background: '#f8d7da',
+                        customClass: {
+                            popup: 'swal2-custom-font', 
+                        },
+                        width: '300px', 
+                        text: result.message||'Something went wrong. Please try again later.',
+                        showConfirmButton: false,
+                        timerProgressBar: true,
+                        timer: 1500,
+                    }); 
+                    }
+                } catch (error) {
+                    console.log(error)
+                    Swal.fire({
+                        icon: 'error',
+                        toast: true,
+                        position: 'top-end',
+                        background: '#f8d7da',
+                        customClass: {
+                            popup: 'swal2-custom-font', 
+                        },
+                        width: '300px', 
+                        text: 'Something went wrong. Please try again later.',
+                        showConfirmButton: false,
+                        timerProgressBar: true,
+                        timer: 1500,
+                    });                    
+                }
+                
+            } catch (error) {
+                console.log(error)
+                Swal.fire({
+                    icon: 'error',
+                    toast: true,
+                    position: 'top-end',
+                    background: '#f8d7da',
+                    customClass: {
+                        popup: 'swal2-custom-font', 
+                    },
+                    width: '300px', 
+                    text: 'Something went wrong. Please try again later.',
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    timer: 1500,
+                });
+            }
+        }
+
+
+    </script>
+   
+</body>
+
+</html>
