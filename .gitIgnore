@@ -1,5 +1,7 @@
 .env
 node_modules/
+
+
 test.html
 cropping_1_image_logic.html
 cropping_multiple_image_logic.html
