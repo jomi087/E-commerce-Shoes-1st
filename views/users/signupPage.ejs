@@ -30,7 +30,7 @@
             <h2 class="text-center p-4"><u>Create an Account</u></h2>
         
             <p class="text-success mx-2 fs-8"><strong><%= locals.message %></strong></p>
-            <p class="text-danger"><%= locals.txt %></p>
+            <p class="text-danger text-center"><%= locals.txt %></p>
         
             <div class="row mb-3">
                 <div class="col">
@@ -103,8 +103,24 @@
     
 <script>
     let otpSent = false;
-    let timerDuration = 30;  // in seconds
-    let timer;
+    let otpVerified = false;
+    let timerDuration = 60;  // in seconds
+   
+
+    //  timer
+    function startTimer(duration, display) {
+        let timeLeft = duration;
+            let timeInterval = setInterval(()=> {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                display.textContent = `${minutes}m ${seconds}s`; 
+                if (timeLeft <= 0) {
+                    clearInterval(timeInterval)
+                    display.textContent = "Time's up! Please resend OTP.";
+                }   
+            },1000)
+    }
 
     //  MailOtp
     document.getElementById('send-otp-btn').addEventListener('click', async function() {
@@ -127,15 +143,17 @@
                 body: JSON.stringify({ email : email })
             });
             const result = await response.json();
-            console.log(result);
+            // console.log(result);
             
             if (response.ok) {
                 otpSent = true;
-                alert("Verification OTP sent successfully");
+                otpVerified = false
+                // alert("Verification OTP sent successfully");
                 document.getElementById('email-error').textContent = result.msg;
                 document.getElementById('email-error').classList.remove('text-danger');
                 document.getElementById('email-error').classList.add('text-success');
                 document.getElementById('email').readOnly = true; // readOnly the email field
+                document.getElementById('timer').textContent = ''
                 startTimer(timerDuration, document.getElementById('timer'));
 
             } else if(!response.ok){
@@ -147,22 +165,23 @@
             }
         } catch (error) {
             document.getElementById('email-error').textContent = 'An error occurred. Please try again ->later';
-            console.log(error.message);
-            
+            console.log(error.message);  
         }
     });
 
     // verifyOtp
     document.getElementById('verify-otp').addEventListener('click', async () => {
+
         const email = document.getElementById('email').value.trim();
         const otp = document.getElementById('otp').value.trim();
-
+        
         if (!otp) {
             document.getElementById('otp-error').textContent = 'OTP is required.';
+            return ;
         } else if (!otpSent) {
             document.getElementById('otp-error').textContent = 'You must send email to verify your email.';
+            return ;
         }
-
         try{
             const response = await fetch('/verifyOtp', {
                 method: 'POST',
@@ -171,48 +190,29 @@
                     email,
                     otp: otp
                 })
-            });
+            })
 
             const result = await response.json();
 
             if (result.success) {
-                clearTimeout(timer);  // Stop the timer
-                document.getElementById("otp-error").innerText = 'Verified successfully';
+                otpVerified = true
+                document.getElementById("otp-error").innerText = result.msg || 'Verified successfully';
+                document.getElementById('email-error').textContent = 'Submit all Data before Otp Expires';
                 document.getElementById('otp-error').classList.remove('text-danger');
                 document.getElementById('otp-error').classList.add('text-success');
                 document.getElementById('verify-otp').disabled = true;
                 document.getElementById('otp').readOnly = true; // readOnly the otp field
                 document.getElementById('send-otp-btn').disabled = true;
-                
-        
             } else {
-                document.getElementById("otp-error").textContent = "Otp is in-correct"
+                otpVerified = false
+                document.getElementById("otp-error").textContent =  result.msg || "Otp is in-correct"
             }
         } catch (error) {
             document.getElementById('otp-error').innerText = 'An error occurred. Please try again.';
             console.log(error.message)
         }
-    });
+    })
 
-    //  timer
-    function startTimer(duration, display) {
-        let timeLeft = duration;
-
-        function updateTimer() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            display.textContent = `${minutes}m ${seconds}s`;
-
-            if (timeLeft <= 0) {
-                display.textContent = "Time's up! Please resend OTP.";
-            } else {
-                timeLeft--;
-                timer = setTimeout(updateTimer, 1000);
-            }
-        }
-
-        updateTimer();
-    }
 
     //  FormValidation
     function validateForm() {
@@ -276,13 +276,19 @@
         if (!confirmPassword) {
             document.getElementById('confirm-password-error').textContent = 'Confirm your password.';
             isValid = false;
+           
         } else if (password !== confirmPassword) {
             document.getElementById('confirm-password-error').textContent = 'Passwords do not match.';
             isValid = false;
+            
         }
 
         if (!otpSent) {
             document.getElementById('otp-error').textContent = 'Please verify your email by sending OTP.';
+            isValid = false;
+      
+        } else if(!otpVerified) {
+            document.getElementById('otp-error').textContent = 'You must verify the OTP before submitting.';
             isValid = false;
         }
 
