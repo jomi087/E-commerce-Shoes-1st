@@ -1,5 +1,5 @@
-const User = require('../model/userModel');
-const Address = require("../model/addressModel")
+const User = require('../../model/userModel');
+const Address = require("../../model/addressModel")
 
 /**********************************             ADDRESS PAGE             ******************************************** */
 const addressPage = async(req, res) => {

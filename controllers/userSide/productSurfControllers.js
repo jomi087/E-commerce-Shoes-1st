@@ -1,6 +1,6 @@
-const User = require('../model/userModel');
-const Product = require('../model/productModel')
-const Category = require("../model/categoryModel")
+const User = require('../../model/userModel');
+const Product = require('../../model/productModel')
+const Category = require("../../model/categoryModel")
 
 /********************************************************************************************************************* */
 //landing page  ( shorter way  using ternery ) (for regular way refer admin controllers -> usersDetails  )

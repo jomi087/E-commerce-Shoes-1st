@@ -1,5 +1,5 @@
-const Cart = require('../model/cartModel')
-const Coupon = require('../model/couponModel')
+const Cart = require('../../model/cartModel')
+const Coupon = require('../../model/couponModel')
 
 /************************************       COUPON VALIDATE     ****************************************************** */
 const validateCoupon = async(req,res)=>{

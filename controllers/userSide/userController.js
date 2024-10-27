@@ -1,14 +1,14 @@
 
-const User = require('../model/userModel');
-const Otp = require('../model/otp') 
+const User = require('../../model/userModel');
+const Otp = require('../../model/otp') 
 
 
 
 const bcrypt = require('bcrypt');
 
-const nodeMailer = require('../helpers/mailer');
-const {twoMinuteExpiry} = require('../helpers/otpValidate');
-const {securePassword ,generateRandom4Digit} = require('../helpers/utility')
+const nodeMailer = require('../../helpers/mailer');
+const {twoMinuteExpiry} = require('../../helpers/otpValidate');
+const {securePassword ,generateRandom4Digit} = require('../../helpers/utility')
 
 /************************************************************************************************************************************ */
 // Signup page

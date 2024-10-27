@@ -1,8 +1,8 @@
 
-const User = require('../model/userModel');
+const User = require('../../model/userModel');
 
 const bcrypt = require('bcrypt');
-const {securePassword} = require('../helpers/utility')
+const {securePassword} = require('../../helpers/utility')
 
 /*******************************************    USER DASHBOARD     *************************************************** */
 const userDashboard = async (req,res)=>{

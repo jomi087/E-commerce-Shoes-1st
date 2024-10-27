@@ -24,16 +24,16 @@ user_Route.use(passport.session());
 
 
 /***************************************************************************** */
-const userControllers = require('../controllers/userController');
-const couponControllers = require('../controllers/couponControllers')
-const paymentControllers = require('../controllers/paymentControllers')
-const walletControllers = require('../controllers/walletControllers');
-const orderControllers = require('../controllers/orderControllers')
-const addressControllers = require('../controllers/addressControllers');
-const accountControllers = require('../controllers/accountControllers')
-const cartControllers = require('../controllers/cartControllers');
-const wishListControllers = require('../controllers/wishListControllers');
-const productSurfControllers = require('../controllers/productSurfControllers');
+const userControllers = require('../controllers/userSide/userController');
+const couponControllers = require('../controllers/userSide/couponControllers')
+const paymentControllers = require('../controllers/userSide/paymentControllers')
+const walletControllers = require('../controllers/userSide/walletControllers');
+const orderControllers = require('../controllers/userSide/orderControllers')
+const addressControllers = require('../controllers/userSide/addressControllers');
+const accountControllers = require('../controllers/userSide/accountControllers')
+const cartControllers = require('../controllers/userSide/cartControllers');
+const wishListControllers = require('../controllers/userSide/wishListControllers');
+const productSurfControllers = require('../controllers/userSide/productSurfControllers');
 
 const userAuth = require('../middleware/userAuth')  // not yet implemented need to do that ....
 

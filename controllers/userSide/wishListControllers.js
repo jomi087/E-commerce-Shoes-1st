@@ -1,5 +1,5 @@
 
-const Wishlist = require("../model/wishListModel")
+const Wishlist = require("../../model/wishListModel")
 
 /********************************************************************************************************************************************** */
 const productWishListPage = async(req,res)=>{

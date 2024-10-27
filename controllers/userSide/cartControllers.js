@@ -1,9 +1,9 @@
 
-const User = require('../model/userModel');
-const Product = require('../model/productModel')
-const Cart = require('../model/cartModel')
+const User = require('../../model/userModel');
+const Product = require('../../model/productModel')
+const Cart = require('../../model/cartModel')
 
-const {calculateCartTotals} = require('../helpers/utility')
+const {calculateCartTotals} = require('../../helpers/utility')
 /**************************************         CART PAGE      ***************************************************** */
 const cartPage = async(req,res)=>{
     try {

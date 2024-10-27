@@ -1,7 +1,7 @@
-const Product = require('../model/productModel')
-const Order = require('../model/orderModel')
-const Wallet = require('../model/walletModel')
-const Coupon = require('../model/couponModel')
+const Product = require('../../model/productModel')
+const Order = require('../../model/orderModel')
+const Wallet = require('../../model/walletModel')
+const Coupon = require('../../model/couponModel')
 /*************************************************       ORDER HISTORY        ****************************************************************** */
 const orderHistory = async (req, res) => {
     try {
