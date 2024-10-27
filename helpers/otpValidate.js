@@ -1,7 +1,7 @@
 
 /* Send Otp time gyap :-  once you have send otp then after 2 minuts later only u can send next otp that 2 minuts logic is achived by this code                                                         */
 
-const twoMinuteExpiry = async (recentOtpTime)=>{   //curently i have set it for 30 sec
+const twoMinuteExpiry = async (recentOtpTime)=>{   //curently i have set it for 1 mint
     try {
                             // console.log(`Recent otp get timestamp = ${recentOtpTime}`);
 
@@ -16,10 +16,12 @@ const twoMinuteExpiry = async (recentOtpTime)=>{   //curently i have set it for 
         timeDifferenceValue = timeDifferenceValue/60; //again converted it into minutes
                             console.log(`converting in to Minutes (seconds / 60 = minutes )=> ${Math.abs(timeDifferenceValue)}`)
 
-        if(Math.abs(timeDifferenceValue) > 0.5){
-            return true ;  // time difference greater than 0.5 minut
+        if(Math.abs(timeDifferenceValue) > 1){
+            console.log('time difference greater than 1 minut')
+            return true ;  
         }
-            return false;  // time difference less than 0.5  minut
+            console.log('time difference less than 1  minut');
+            return false;  
         
     } catch (error) {
         console.log(error.message);
