@@ -43,6 +43,8 @@ const sendMailOtp = async (req, res) => {
         
 
         if(oldOtpData){
+            console.log(new Date(oldOtpData.timestamp))
+            console.log(new Date())
             const sendNextOtp = await twoMinuteExpiry(oldOtpData.timestamp) //recent otp time of that user
                 // console.log(sendNextOtp) 
                 // console.log(!sendNextOtp) 
@@ -52,13 +54,8 @@ const sendMailOtp = async (req, res) => {
                     success:false,
                     msg:"An Otp already has been send to your mail"
                 })  
-            }else{
-                console.log("expiry time exided");
-                res.status(200).json({ 
-                success:true,       
-                msg:"An OTP has been sent to your email" 
-                })
-            }  
+            }
+            console.log("expiry time exided");
         }
         const cDAte = new Date() //cDAte => current-Date
 
@@ -71,6 +68,7 @@ const sendMailOtp = async (req, res) => {
             i dont need write a code to insertOne document  and (for adding (saving )new document ) 
             which i have commented from line number 57 to 61(insertOne code)*/
         )
+
         console.log(otpData);
         
         // const enter_otp = new Otp({  //this work as insertOne  
@@ -84,6 +82,7 @@ const sendMailOtp = async (req, res) => {
         const msgToUser = `<p>Use OTP:-<h3>${g_otp},</h3><br>To verifiying your Mail ,<br> DO-Not Share this code with anyone</p>`;
 
         nodeMailer.sendMaiL(Useremail, subject, msgToUser);
+
         console.log('email sent successfully');
         res.status(200).json({ 
             success:true,     
@@ -94,6 +93,7 @@ const sendMailOtp = async (req, res) => {
 
         console.log('Failed to send  email', error.message);
         return res.status(500).redirect('/error')
+
     }
 };
 /********************************************************************************************************************** */
@@ -106,37 +106,60 @@ const verifyOtp= async (req,res) => {
         const otp = req.body.otp
 
         const otpData = await Otp.findOne({user_id : email})
-        
-        if(otpData && otpData.otp==otp){
-            
-            console.log("Otp is Correct");
-                res.status(200).json({
-                success:true
+
+        if(!otpData){
+            console.log('Otp document is not exist in database')
+            return res.status(400).json({
+                success:false,
+                msg : 'Technical Issue, Click on Reset and Try again'
             })
-        }else{
+        }
+
+        if(otpData.otp != otp){
             console.log("Otp is Not Correct");
                return res.status(400).json({
                 success:false,
+                msg : 'Otp is in-Correct'
             })
         }
+
+        const otpExpiery = await twoMinuteExpiry(otpData.timestamp)
+        if(otpExpiery){
+            console.log("Otp has been Expiered");
+               return res.status(400).json({
+                success:false,
+                msg : 'Otp has been Expiered'
+            })
+        }             
+            console.log("Otp is Correct");
+            res.status(200).json({
+            success:true ,
+            msg : 'Verified successfully'
+        })
     } catch (error) {
         console.log('Failed to verify otp:-', error.message);
-        // return res.status(500).redirect('/error')
-        
+        return res.status(500).redirect('/error')
     }
 }
 /********************************************************************************************************************* */
 
 //Storing  users in database
 const  insertUser = async(req,res)=>{
-    try {
-        // await Otp.deleteOne({user_id : req.body.email})     //??????????????is this required????????????
-       
+    try {        
+        //to check mobile-No exist or not 
         const existingMob = await User.findOne({ mobile: req.body.mob });
         if (existingMob) {
             res.render('signupPage', { txt:'Mobile number already exists.Please use a different Number.' });
             return;
         }
+
+        const otpData = await Otp.findOne({user_id : req.body.email})
+        const otpExpiery = await twoMinuteExpiry(otpData.timestamp)
+        if(otpExpiery){
+            console.log("Otp has been Expiered at sign up time");
+            res.render('signupPage', { txt:'Otp has been Expiered, Click on Reset & try again' });
+            return;
+        }     
 
         const spassword =await securePassword(req.body.password)
         
