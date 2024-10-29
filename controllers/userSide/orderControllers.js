@@ -113,9 +113,9 @@ const orderCancellation = async(req,res)=>{
             orderData.totalSalePrice = orderData.actualSalePrice - (item.salePrice * item.quantity)
             orderData.actualSalePrice = orderData.totalSalePrice
            
-           if(orderData.totalSalePrice < coupon.minPurchaseAmount){
+           if(orderData.totalSalePrice < coupon.minPurchaseAmount){     //doubt over here does it should be  orderData.totalSalePrice  or orderData.actualPrice
                coupon.usageLimit += 1;
-               refundAmouut = item.salePrice - orderData.coupon.discount 
+               refundAmouut = item.salePrice - orderData.coupon.discount
                orderData.coupon.id= null;
                orderData.coupon.discount= 0;
            }else{
@@ -125,7 +125,7 @@ const orderCancellation = async(req,res)=>{
                refundAmouut = item.salePrice - (orderData.coupon.discount - newDiscount)
                orderData.totalSalePrice =  orderData.totalSalePrice - newDiscount
                orderData.coupon.discount = newDiscount;
-           }
+            }
            await coupon.save();
         }else{
             orderData.totalSalePrice =  orderData.totalSalePrice - (item.salePrice * item.quantity)
@@ -165,7 +165,7 @@ const orderCancellation = async(req,res)=>{
                 displayMessage = 'Order item cancelled ,Your Money has beeen added to your Wallet'
             }else{
                 wallet.transactions.push(walletTransaction)
-                wallet.balance =  wallet.balance + (item.salePrice * item.quantity)
+                wallet.balance =  wallet.balance + (refundAmouut * item.quantity)
                 await wallet.save()
                 displayMessage = 'Order item cancelled ,Your Money has beeen added to your Wallet'
             }
