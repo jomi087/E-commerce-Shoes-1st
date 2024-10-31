@@ -75,7 +75,7 @@ admin_route.delete('/deleteCoupon',adminAuth.isLogin ,couponControllers.deleteCo
 //salesReport
 admin_route.get('/salesReport',adminAuth.isLogin,salesControllers.salesReportPage)
 admin_route.get('/generateSalesReport',adminAuth.isLogin,salesControllers.generateSalesReport)
-admin_route.get('/downloadSalesReport',adminAuth.isLogin,salesControllers.salesReportDownloadPdf)
+admin_route.get('/downloadSalesReport',adminAuth.isLogin,salesControllers.salesReportDownload)
 
 //logout
 admin_route.get('/logout', adminAuth.isLogin , adminControllers.adminLogout)
