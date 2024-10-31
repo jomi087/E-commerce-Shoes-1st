@@ -141,7 +141,7 @@ user_Route.post('/couponvalidation',userAuth.isLogin,couponControllers.validateC
 //Payment  
 user_Route.get('/checkout',userAuth.isLogin, paymentControllers.confirmOrderPage)
 user_Route.post('/address/addAddress',userAuth.isLogin, paymentControllers.addAddressFromCheckout)
-user_Route.post('/address/editAddress',userAuth.isLogin, paymentControllers.editAddressFromCheckout)
+user_Route.patch('/address/editAddress',userAuth.isLogin, paymentControllers.editAddressFromCheckout)
 user_Route.post('/checkout',userAuth.isLogin,  paymentControllers.confirmOrder)
 user_Route.post('/payment/failed', userAuth.isLogin, paymentControllers.paymentFailed)
 user_Route.post('/payment/verify', userAuth.isLogin, paymentControllers.verifyPayment)
