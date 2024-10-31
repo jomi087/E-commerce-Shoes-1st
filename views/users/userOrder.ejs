@@ -1,6 +1,5 @@
 <!-- header -->
 <%- include('../Z_Common_Code/userDashboard/header.ejs') %>
-
 <!-- navbar -->
 <%- include('../Z_Common_Code/userDashboard/navbar.ejs') %>
 
@@ -202,7 +201,6 @@
                                                         <% } %>
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>
@@ -223,10 +221,18 @@
                                         </div>
                                     </div>
                                 </div>
+                                
                             <% } %>
-                            <div class="text-end mt-3">
+                           <div class="d-flex justify-content-between">
+                            <div class="mt-1">
+                                <a class="invoice-link fw-bold" onclick="downloadInvoice(event, '<%= orders[i]._id %>')" href="#">
+                                    Invoice <i class="bi bi-download"></i>
+                                </a>
+                            </div>                            
+                            <div class="mt-3">
                                 <h5 class="fw-bold text-secondary">Total: ₹<%= orders[i].totalSalePrice %></h5>
                             </div>
+                           </div>
                         </div>
                     <% } %>
                 <% } else { %>
@@ -254,6 +260,17 @@
             });
         });
     });
+
+    async function downloadInvoice(event,invoiceId){
+        event.preventDefault()
+        try{
+            window.location.href = `/order/downloadInvoice/${invoiceId}`
+        }catch(err){
+            console.log(err)
+            swal.fire('error!',err.message || 'An error Occcured while downloading the invoice','error')
+        }
+    }
+
 
     async function cancelOrder(orderId, itemId) {
         try {
@@ -442,6 +459,8 @@
     }
 
 </script>
+
+
 
 
 <!-- footer -->
