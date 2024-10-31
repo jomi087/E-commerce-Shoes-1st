@@ -102,6 +102,7 @@ user_Route.patch('/updateProfileName' ,userAuth.isLogin, accountControllers.upda
 user_Route.patch('/updateM&M' ,userAuth.isLogin, accountControllers.updateMail_Mobile)
 user_Route.get('/changePassword' , userAuth.isLogin , accountControllers.updatePasswordpage)
 user_Route.patch('/changePassword' , userAuth.isLogin, accountControllers.updatePassword)
+
 //Address 
 user_Route.get('/address' , userAuth.isLogin , addressControllers.addressPage)
 user_Route.get('/address/add' , userAuth.isLogin , addressControllers.addAddressPage)
@@ -126,6 +127,7 @@ user_Route.delete('/cart/delete-item',userAuth.isLogin, cartControllers.removepr
 user_Route.get('/order/history' , userAuth.isLogin , orderControllers.orderHistory)
 user_Route.patch('/order/cancel' ,userAuth.isLogin, orderControllers.orderCancellation)
 user_Route.patch('/order/return' ,userAuth.isLogin,  orderControllers.orderReturn)
+user_Route.get('/order/downloadInvoice/:id', userAuth.isLogin , orderControllers.invoiceDownload)
 
 //Wallet 
 user_Route.get('/user/wallet' , userAuth.isLogin , walletControllers.userWalletPage)
@@ -146,6 +148,7 @@ user_Route.post('/payment/verify', userAuth.isLogin, paymentControllers.verifyPa
 
 //logout
 user_Route.get('/logout' , userAuth.isLogin , userControllers.userLogout)
+
 
 //others
 user_Route.get('/error',userControllers.errorpage)
