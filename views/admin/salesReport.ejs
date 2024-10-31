@@ -275,26 +275,26 @@
     } 
     
     function downloadSalesReport(format) {
-    const startDate = document.getElementById('start-date').value.trim();
-    const endDate = document.getElementById('end-date').value.trim();
-    let filter = document.querySelector('.bg-success')?.id || null;
-    console.log(filter)
-    let url = '/admin/downloadSalesReport?format=' + format;
+        const startDate = document.getElementById('start-date').value.trim();
+        const endDate = document.getElementById('end-date').value.trim();
+        let filter = document.querySelector('.bg-success')?.id || null;
+        console.log(filter)
+        let url = '/admin/downloadSalesReport?format=' + format;
 
-    if (filter) {
-        url += `&filter=${filter}`;
-    } else if (startDate && endDate) {
-        url += `&startDate=${startDate}&endDate=${endDate}`;
-    } else {
-        return Swal.fire({
-            title: 'Alert!',
-            text: 'Please select a range of date or day ',
-            confirmButtonText: 'OK'
-        });
+        if (filter) {
+            url += `&filter=${filter}`;
+        } else if (startDate && endDate) {
+            url += `&startDate=${startDate}&endDate=${endDate}`;
+        } else {
+            return Swal.fire({
+                title: 'Alert!',
+                text: 'Please select a range of date or day ',
+                confirmButtonText: 'OK'
+            });
+        }
+
+        window.location.href = url;
     }
-
-    window.location.href = url;
-}
 
 
     </script>
