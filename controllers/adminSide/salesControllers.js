@@ -55,7 +55,7 @@ const generateSalesReport = async (req, res) => {
     }
 };
 /*********************************     SALES REPORT PDF DOWNLOAD     ******************************** */
-const salesReportDownloadPdf = async(req,res)=>{
+const salesReportDownload = async(req,res)=>{
     try {  
         const { startDate, endDate } =  getDateRange(req.query);
 
@@ -70,7 +70,7 @@ const salesReportDownloadPdf = async(req,res)=>{
         // const { orders, salesSummary } = result;                                        //Destructured
 
         const { orders, salesSummary }  = await generateSaleReport(startDate, endDate);   // bettter way Destructured
-        // console.log(orders,salesSummary)
+        console.log(orders,salesSummary)
 
         if(req.query.format == 'pdf'){
             // Create a PDF document                                              //PDFDocument = require('pdfkit')
@@ -109,6 +109,7 @@ const salesReportDownloadPdf = async(req,res)=>{
                 doc.end();
                 doc.pipe(res);   //pipe() - it connects the output of one stream to be the input of another.( Here, PDF document stream -to-> response (res) stream )
         }
+        
         if(req.query.format == 'excel'){
             // Create a Excel doucment
             const workbook = new ExcelJS.Workbook();
@@ -163,5 +164,5 @@ const salesReportDownloadPdf = async(req,res)=>{
 module.exports={
     salesReportPage,
         generateSalesReport,
-        salesReportDownloadPdf,
+        salesReportDownload,
 }
