@@ -2,6 +2,12 @@ const Product = require('../../model/productModel')
 const Order = require('../../model/orderModel')
 const Wallet = require('../../model/walletModel')
 const Coupon = require('../../model/couponModel')
+
+
+const PDFDocument = require('pdfkit');
+
+
+
 /*************************************************       ORDER HISTORY        ****************************************************************** */
 const orderHistory = async (req, res) => {
     try {
@@ -244,8 +250,111 @@ const orderReturn = async(req,res)=>{
     }
                                
 }
+/********************************************************          INVOICE DOWNLOAD          ************************************************* */
+const invoiceDownload = async(req,res)=>{
+    try {
+        const order = await Order.findById(req.params.id).populate('user') 
+        const doc = new PDFDocument();   
+
+        let filename = `INVOICE_${new Date().toISOString()}.pdf`;
+
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        res.setHeader('Content-Type', 'application/pdf');
+                
+        doc.fontSize(20).text('INVOICE', { align: 'center' });
+        doc.moveDown(1);
+        doc.fontSize(12).text('Sold By: Fashion Feet',{ align: 'center' });
+        doc.text('GSTIN: 0000000001 | FSSAI License No: 0000000001',{ align: 'center' });
+        doc.moveDown();
+
+
+        // Order ID and Date
+        doc.fontSize(12).text(`Invoice ID: #FFF${order._id}`,{ align: 'center' })
+        doc.moveDown();
+        doc.fontSize(12).text(`Details for Order ID: `, { continued: true, align: 'left'  })
+        doc.text(`Order Date: `, { align: 'right' });
+        doc.text(`${order._id}`, { continued: true, align: 'left'  })
+        doc.text(`${new Date(order.orderDate).toLocaleDateString()} `, { align: 'right' });
+        doc.moveDown(1.5);
+
+        // Draw a line
+        doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+        doc.moveDown();
+
+        // Customer and Delivery Info
+        doc.font('Helvetica-Bold').fontSize(14).text('Customer', 50, doc.y);
+        doc.font('Helvetica').fontSize(10).text(order.user.firstName + ' ' + order.user.lastName);
+        doc.text(order.user.email);
+        doc.text(order.user.mobile);
+
+        doc.font('Helvetica-Bold').fontSize(14).text('Deliver to', 205, doc.y - 55);
+        doc.font('Helvetica').fontSize(10).text(`Name: ${order.shippingAddress.name} `, 205);
+        doc.text(`City: ${order.shippingAddress.locality} ${order.shippingAddress.district}`, 205);
+        doc.text(`Address: ${order.shippingAddress.address}`,205);
+        doc.text(`Pincode: ${order.shippingAddress.pincode}, ${order.shippingAddress.state}`, 205);
+        doc.text(`Phone: ${order.shippingAddress.phone}`, 205);
+        doc.moveDown(1.5);
+
+        // Payment Info
+        doc.font('Helvetica-Bold').fontSize(14).text('Payment Info', 410, doc.y - 100);
+        doc.font('Helvetica').fontSize(10).text(`Payment Method: ${order.paymentMethod} `, 415);
+        doc.text(`Payment ID: ${order.paymentId || 'COD'}`, 415);
+        doc.text(`Status: ${order.paymentStatus}`, 415);
+        doc.moveDown();
+      
+        doc.fontSize(14).text('Product', 30, 350);
+        doc.text('Unit Price', 200, 350);
+        doc.text('Quantity', 300, 350);
+        doc.text('Status', 400, 350);
+        doc.text('Total', 500, 350);
+
+        doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+
+        order.items.forEach((item,i)=>{
+            const y = 370 + i * 30;
+            doc.fontSize(12).text(item.productName, 30, y);
+            doc.text(item.salePrice, 200, y);
+            doc.text(item.quantity, 300, y);
+            doc.text(item.OrderStatus, 400, y);
+            doc.text(item.salePrice * item.quantity , 500, y);
+           
+        })
+        doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+ 
+        let startY = 370 + order.items.length * 30 + 30; // Adjust the "+ 20" if you want more space
+
+        // Subtotal
+        doc.fontSize(10).text(`Subtotal:`, 400, startY);
+        doc.text(`${order.totalSalePrice}`, 500, startY);
+
+        // Delivery Charge
+        startY += 15; // Move down by 15 (or adjust as needed)
+        doc.text(`Delivery Charge:`, 400, startY);
+        doc.text(`0.00`, 500, startY);
+
+        // Coupon
+        startY += 15;
+        doc.text(`Coupon:`, 400, startY);
+        doc.text(`${order.coupon.discount|| "0.00" }`, 500, startY);
+
+        doc.moveTo(400, doc.y).lineTo(550, doc.y).stroke();
+        // Grand Total
+        startY += 20; // Slightly larger space for emphasis
+        doc.fontSize(14).text(`Grand Total:`, 400, startY);
+        doc.text(`${order.totalSalePrice}`, 500, startY);
+
+        doc.end();
+        doc.pipe(res);
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).redirect('/error');
+    }
+}
+
+
 module.exports={
     orderHistory,
-            orderCancellation,
-            orderReturn,
+        orderCancellation,
+        orderReturn,
+        invoiceDownload,
 }
