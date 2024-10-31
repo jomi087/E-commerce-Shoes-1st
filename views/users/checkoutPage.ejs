@@ -356,13 +356,15 @@
                     <div class="card p-3">
                         <div class="card-body">
                             <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="paymentMethod" id="payment1" value="cod" checked>
-                                <label class="form-check-label" for="payment1">Cash on Delivery</label>
+                                <input class="form-check-input" type="radio" name="paymentMethod" id="payment1" value="cod" <%= cart.totalSalePrice > 10000 ? 'disabled' : 'checked' %> >
+                                <label class="form-check-label" id="cod-msg" for="payment1">Cash on Delivery <%= cart.totalSalePrice > 10000 ? '(Un-available for orders over ₹10,000)' : '' %> </label>
                             </div>
+                           
                             <div class="form-check mb-2">
                                 <input class="form-check-input" type="radio" name="paymentMethod" id="payment2" value="razorpay">
                                 <label class="form-check-label" for="payment2">Online Payment</label>
                             </div>
+
                             <div class="form-check mb-2">
                                 <input class="form-check-input" type="radio" name="paymentMethod" id="payment3" value="wallet" disabled>
                                 <label class="form-check-label" for="payment3">Wallet</label>
@@ -431,15 +433,14 @@
 
                         <div class="d-flex justify-content-between ">
                             <p>Total MRP:</p>
-                            <p id="mrp">₹<%= cart.actualSalePrice %></p>
+                            <p id="mrp">₹<%= cart.actualSalePrice.toLocaleString() %></p>
                         </div>
 
 
                         <div class="d-flex justify-content-between ">
                             <p>Coupon Discounted amount : </p>
-                            <p class="text-success" id="couponDiscountedAmount">₹<%= cart.actualSalePrice - cart.totalSalePrice  %></p>
+                            <p class="text-success" id="couponDiscountedAmount">₹<%= Number(cart.actualSalePrice - cart.totalSalePrice).toLocaleString() %></p>
                         </div>
-                    
                         
                         <div class="d-flex justify-content-between ">
                             <p>Delivery Charge:</p>
@@ -448,7 +449,7 @@
                         <hr>
                         <div class="d-flex justify-content-between fw-bold">
                             <p>Total:</p>
-                            <p id="totalSalePrice">₹<%=cart.totalSalePrice %></p>
+                            <p id="totalSalePrice">₹<%=cart.totalSalePrice.toLocaleString() %></p>
                         </div>
                     </div>
                     <div style="position: relative;top: -17px;">
@@ -851,7 +852,7 @@
                 }
             });
 
-
+            //coupon modal (with bootstrap)
             document.querySelector('.modal-body').addEventListener('click', async function (e) {
                 if (e.target.classList.contains('select-coupon-btn')) {
                     const couponId = e.target.getAttribute('data-coupon-code')
@@ -894,11 +895,19 @@
 
                                 localStorage.setItem('selectedCouponId', couponId);
 
-                                document.getElementById('mrp').innerText = `₹${result.cart.actualSalePrice}`
+                                document.getElementById('mrp').innerText = `₹${result.cart.actualSalePrice.toLocaleString()}`
                                 document.getElementById('couponDiscountedAmount').innerText = `₹${result.cart.actualSalePrice - result.cart.totalSalePrice}`
-                                document.getElementById('totalSalePrice').innerText =  `₹${result.cart.totalSalePrice}`
+                                document.getElementById('totalSalePrice').innerText =  `₹${result.cart.totalSalePrice.toLocaleString()}`
 
-                                
+                                if(result.cart.totalSalePrice < 10000){
+                                    document.getElementById("payment1").disabled = false
+                                    document.getElementById("payment1").checked = true; 
+                                    document.getElementById("cod-msg").innerText = "Cash on Delivery"
+                                }else { 
+                                    document.getElementById("payment1").disabled = true;
+                                    document.getElementById("payment1").checked = false; 
+                                    document.getElementById("cod-msg").innerText = "Cash on Delivery(Un-available for orders over ₹10,000)"
+                                }
                                 const allSelectButtons = document.querySelectorAll('.select-coupon-btn');
                                 allSelectButtons.forEach(button => {
                                     button.style.display = 'none';
@@ -970,153 +979,167 @@
                     });
                     return;
                 }
-                try {
-                    const response = await fetch('/checkout', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            couponId: localStorage.getItem('selectedCouponId'),
-                            paymentMethod: paymentMethod,
-                            selectedAddressId: selectedAddress.querySelector('.addressId').value,
-                        }),
-                    });
 
-                    const result = await response.json();
-                    // console.log('response1',response)                                                                      
-                    console.log('result-',result);
+                const confirmOrderConfirmation = await Swal.fire({
+                    title: 'Confirm Order',
+                    html: "Are you sure you want to place this order ? <br> Press Yes to confirm !",
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No'
+                });
+
+                if(confirmOrderConfirmation.isConfirmed){
+                    try {
+                        const response = await fetch('/checkout', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                couponId: localStorage.getItem('selectedCouponId'),
+                                paymentMethod: paymentMethod,
+                                selectedAddressId: selectedAddress.querySelector('.addressId').value,
+                            }),
+                        });
+
+                        const result = await response.json();
+                        // console.log('response1',response)                                                                      
+                        console.log('result-',result);
               
 
-                    if (response.ok) {
-                        if (paymentMethod === 'razorpay') {
-                            
-                            const options = {                // Set up Razorpay options
-                                key: result.razorpayKeyId, 
-                                amount: result.amount, 
-                                currency: "INR",
-                                name: "Fashion Feet",
-                                description: "Order Payment",
-                                order_id: result.orderId, 
-                                handler: async function (response) {  //here the response will be getting from razor pay modal (which will be - payment id , order id , signature)
-                                    try {
-                                        // console.log('response2',response)  
-                                       
-                                        const verifyResponse = await fetch('/payment/verify', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                            },
-                                            body: JSON.stringify({
-                                                razorpayPaymentId: response.razorpay_payment_id,
-                                                razorpayOrderId: response.razorpay_order_id,
-                                                razorpaySignature: response.razorpay_signature,
-                                                orderId : result.order._id || null ,
-                                                couponId: localStorage.getItem('selectedCouponId')
+                        if (response.ok) {
+                            if (paymentMethod === 'razorpay') {
+                                
+                                const options = {                // Set up Razorpay options
+                                    key: result.razorpayKeyId, 
+                                    amount: result.amount, 
+                                    currency: "INR",
+                                    name: "Fashion Feet",
+                                    description: "Order Payment",
+                                    order_id: result.orderId, 
+                                    handler: async function (response) {  //here the response will be getting from razor pay modal (which will be - payment id , order id , signature)
+                                        try {
+                                            // console.log('response2',response)  
+                                        
+                                            const verifyResponse = await fetch('/payment/verify', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                },
+                                                body: JSON.stringify({
+                                                    razorpayPaymentId: response.razorpay_payment_id,
+                                                    razorpayOrderId: response.razorpay_order_id,
+                                                    razorpaySignature: response.razorpay_signature,
+                                                    orderId : result.order._id || null ,
+                                                    couponId: localStorage.getItem('selectedCouponId')
 
-                                            }),
-                                        });
-
-                                        const verifyResult = await verifyResponse.json();
-                                        // console.log('verifyResult-',verifyResult)
-
-                                        if (verifyResult.success) {
-                                            localStorage.removeItem('selectedCouponId');
-                                            await Swal.fire({
-                                                icon: 'success',
-                                                title: 'Payment Successful!',
-                                                text: 'Your order has been successfully confirmed.',
-                                                confirmButtonText: 'OK'
+                                                }),
                                             });
-                                            window.location.href = '/order/history';
-                                        } else {
+
+                                            const verifyResult = await verifyResponse.json();
+                                            // console.log('verifyResult-',verifyResult)
+
+                                            if (verifyResult.success) {
+                                                localStorage.removeItem('selectedCouponId');
+                                                await Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Payment Successful!',
+                                                    text: 'Your order has been successfully confirmed.',
+                                                    confirmButtonText: 'OK'
+                                                });
+                                                window.location.href = '/order/history';
+                                            } else {
+                                                await Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Payment Verification Failed',
+                                                    text: verifyResult.message||'Your payment could not be verified. Please try again.',
+                                                    confirmButtonText: 'ok'
+                                                });
+                                            }
+                                        } catch (error) {
+                                            console.error('Verification Error:', error);
                                             await Swal.fire({
                                                 icon: 'error',
-                                                title: 'Payment Verification Failed',
-                                                text: verifyResult.message||'Your payment could not be verified. Please try again.',
+                                                title: 'Network Error',
+                                                text: 'An error occurred during payment verification. Please try again.',
                                                 confirmButtonText: 'ok'
                                             });
                                         }
-                                    } catch (error) {
-                                        console.error('Verification Error:', error);
+                                    },
+                                    prefill: {
+                                        name: result.userName,
+                                        email: result.userEmail,
+                                        contact: result.userPhone,
+                                    },
+                                    theme: {
+                                        color: "#3399cc",
+                                    },
+                                };
+
+                                const rzp = new Razorpay(options);
+                                // console.log(rzp)
+                                
+                                rzp.on('payment.failed',async function (response){
+                                    /// console.log('r',result);
+                                    console.log('payment failed', response);
+
+                                    const failedResponse = await fetch('/payment/failed',{
+                                        method : 'POST',
+                                        headers : {
+                                            'Content-Type' : 'application/json',
+                                        },
+                                        body : JSON.stringify({
+                                            couponId: localStorage.getItem('selectedCouponId'),
+                                            orderId : result.order._id || null ,
+                                            error : response.error
+                                        })  
+                                    })
+
+                                    const failedResult = await failedResponse.json();
+
+                                    if (!failedResult.success) {
                                         await Swal.fire({
                                             icon: 'error',
-                                            title: 'Network Error',
-                                            text: 'An error occurred during payment verification. Please try again.',
-                                            confirmButtonText: 'ok'
-                                        });
-                                    }
-                                },
-                                prefill: {
-                                    name: result.userName,
-                                    email: result.userEmail,
-                                    contact: result.userPhone,
-                                },
-                                theme: {
-                                    color: "#3399cc",
-                                },
-                            };
-
-                            const rzp = new Razorpay(options);
-                            // console.log(rzp)
-                            
-                            rzp.on('payment.failed',async function (response){
-                                /// console.log('r',result);
-                                console.log('payment failed', response);
-
-                                const failedResponse = await fetch('/payment/failed',{
-                                    method : 'POST',
-                                    headers : {
-                                        'Content-Type' : 'application/json',
-                                    },
-                                    body : JSON.stringify({
-                                        couponId: localStorage.getItem('selectedCouponId'),
-                                        orderId : result.order._id || null ,
-                                        error : response.error
-                                    })  
+                                            title: 'Payment Failed',
+                                            text : failedResult.message ,
+                                            confirmButtonText: 'ok',
+                                        }); 
+                                    } 
+                                
                                 })
+                                rzp.open(); // Open the Razorpay checkout modal
+                            } else {
+                                localStorage.removeItem('selectedCouponId');      
+                                await Swal.fire({
+                                    icon: 'success',
+                                    title: 'Order Confirmed!',
+                                    text:  result.message||'Your order has been successfully confirmed.',
+                                    confirmButtonText: 'OK'
+                                });
 
-                                const failedResult = await failedResponse.json();
-
-                                if (!failedResult.success) {
-                                    await Swal.fire({
-                                        icon: 'error',
-                                        title: 'Payment Failed',
-                                        text : failedResult.message ,
-                                        confirmButtonText: 'ok',
-                                    }); 
-                                } 
-                               
-                            })
-                            rzp.open(); // Open the Razorpay checkout modal
+                                window.location.href = '/order/history';
+                            }
                         } else {
-                            localStorage.removeItem('selectedCouponId');      
                             await Swal.fire({
-                                icon: 'success',
-                                title: 'Order Confirmed!',
-                                text:  result.message||'Your order has been successfully confirmed.',
-                                confirmButtonText: 'OK'
+                                icon: 'error',
+                                title: 'Order Failed',
+                                text: `${result.message || 'Something went wrong'}`,
+                                confirmButtonText: 'Try Again'
                             });
-
-                            window.location.href = '/order/history';
+                            location.href = '/cart'
                         }
-                    } else {
+                    } catch (error) {
+                        console.error('Error:', error);
                         await Swal.fire({
                             icon: 'error',
-                            title: 'Order Failed',
-                            text: `${result.message || 'Something went wrong'}`,
-                            confirmButtonText: 'Try Again'
+                            title: 'Network Error',
+                            text: 'An error occurred while confirming your order. Please try again.',
+                            confirmButtonText: 'ok'
                         });
-                        location.href = '/cart'
                     }
-                } catch (error) {
-                    console.error('Error:', error);
-                    await Swal.fire({
-                        icon: 'error',
-                        title: 'Network Error',
-                        text: 'An error occurred while confirming your order. Please try again.',
-                        confirmButtonText: 'ok'
-                    });
                 }
             });
 

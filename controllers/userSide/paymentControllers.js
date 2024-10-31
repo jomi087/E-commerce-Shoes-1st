@@ -157,6 +157,12 @@ const confirmOrder = async(req,res)=>{
             })
         }
 
+        if(paymentMethod ===  'cod' && cart.totalSalePrice > 10000){
+            return res.status(404).json({
+                message : 'COD IS NOT AVAILABE FOR AMOUNT MORE THAN 10k'
+            })
+        }
+
         const address = await Address.findById(selctedDeliveryAddressId);
         // console.log(address);
         
@@ -273,6 +279,8 @@ const confirmOrder = async(req,res)=>{
                         message: 'This coupon has reached its usage limit'
                     });
                 }
+
+            
 
                 coupon.usedBy.push(req.session.user_id)
                 coupon.usageLimit = coupon.usageLimit-1
