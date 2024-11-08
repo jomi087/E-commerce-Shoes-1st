@@ -431,8 +431,8 @@ const verifyPayment = async (req,res)=>{      //  Razorpay logic of verify payme
             await order.save();
 
             if(couponId){ 
-                // coupon.usedBy.push(req.session.user_id)
-                // coupon.usageLimit = coupon.usageLimit - 1
+                coupon.usedBy.push(req.session.user_id)
+                coupon.usageLimit = coupon.usageLimit - 1
                 await coupon.save()
             }
             
