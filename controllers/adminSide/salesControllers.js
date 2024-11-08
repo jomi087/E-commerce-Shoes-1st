@@ -9,11 +9,8 @@ const salesReportPage = async (req, res) => {
     try {
         startDate = startOfToday();  
         endDate = endOfToday();
-
-        // const { startDate, endDate } = getDateRange('today');
-
+        // const { startDate, endDate } = getDateRange('today'); destructuring way
         const result  = await generateSaleReport(startDate, endDate);
-
         res.render('salesReport',{orders : result.orders ,salesSummary : result.salesSummary })
     } catch (error) {
         console.log(error.message);
@@ -36,6 +33,7 @@ const generateSalesReport = async (req, res) => {
 
 
         const { startDate, endDate } = getDateRange(req.query);  // destructuring way
+
 
         if (!startDate || !endDate) {
             console.log('Invalid date range or filter')

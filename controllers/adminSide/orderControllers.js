@@ -43,7 +43,7 @@ const orderDetailPage = async(req,res)=>{
             return res.render('errorCatch',{error : 'orderData Not Found'})
         }  
         
-        res.render('orderDetails',{order : orderData})
+        res.render('orderDetails',{ order : orderData , })
 
     } catch (error) {
         console.error('Error in orderDetailPage :', error);
@@ -69,7 +69,6 @@ const orderUpdateStatus = async(req,res)=>{
             });
         }
         
-
         const item = orderData.items.find(item => item._id.toString() === itemId)
         
         if(!item){
@@ -101,6 +100,7 @@ const orderUpdateStatus = async(req,res)=>{
 
         if(item.OrderStatus === 'Delivered'){  
             item.deliveryDate = Date.now()
+            item.Reason = ""
             orderData.paymentStatus = 'Paid'
         }
 
@@ -120,8 +120,11 @@ const orderUpdateStatus = async(req,res)=>{
                         message: 'coupon not found',
                     });
                 }
-                orderData.totalSalePrice = orderData.actualSalePrice - (item.salePrice * item.quantity)
-                orderData.actualSalePrice = orderData.totalSalePrice
+
+                let temp =  orderData.totalSalePrice + orderData.coupon.discount
+                
+                orderData.totalSalePrice = temp - (item.salePrice * item.quantity)
+                temp = orderData.totalSalePrice
                
                if(orderData.totalSalePrice < coupon.minPurchaseAmount){
                    coupon.usageLimit += 1;
@@ -162,7 +165,7 @@ const orderUpdateStatus = async(req,res)=>{
                 await wallet.save()
             }else{
                 wallet.transactions.push(walletTransaction)
-                wallet.balance =  wallet.balance + (item.salePrice * item.quantity)
+                wallet.balance =  wallet.balance + (refundAmouut * item.quantity)
                 await wallet.save()
             }
         }

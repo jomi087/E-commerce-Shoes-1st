@@ -9,7 +9,7 @@ admin_route.use(express.urlencoded({extended:true}))
 
 
 /***************************************************************************** */
-const adminControllers = require('../controllers/adminSide/adminControllers')
+const   adminControllers = require('../controllers/adminSide/adminControllers')
 const   dashboardControllers = require('../controllers/adminSide/dashboardControllers')
 const   customerControllers = require('../controllers/adminSide/customerControllers')
 const   productControllers = require('../controllers/adminSide/productControllers')
@@ -30,6 +30,7 @@ admin_route.post('/', adminAuth.isLogout , adminControllers.verifyLogin)
 
 //dashboard
 admin_route.get('/dashboard', adminAuth.isLogin , dashboardControllers.loadDashboard)
+admin_route.get('/dashboard/fetchReport', adminAuth.isLogin , dashboardControllers.graphRepresentalReport)
 
 //customer
 admin_route.get('/customer' , adminAuth.isLogin , customerControllers.usersDetails)

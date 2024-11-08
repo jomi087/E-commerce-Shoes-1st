@@ -124,7 +124,7 @@
                                     <td style="width: 10px;" class="text-center"><%=index+1%></td>
                                     <td style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;"><%=order._id%></td>
                                     <td><%=order.user.firstName+' '+order.user.lastName%></td>
-                                    <td>₹<%=order.totalSalePrice%></td>
+                                    <td>₹<%=(order.actualSalePrice - (order.coupon.discount ? order.coupon.discount : 0)).toLocaleString()%></td>
                                     <td><%=order.paymentMethod%></td>
                                     <td style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;"><%=new Date(order.orderDate).toLocaleString()%></td>
                                     <td>

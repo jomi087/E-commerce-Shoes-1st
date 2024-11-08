@@ -8,11 +8,7 @@ const Coupon = require('../../model/couponModel')
 const Razorpay = require('razorpay'); 
 const crypto = require('crypto');
 
-//Razorpay intigration
-const razorpayInstance = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+
 /*****************************************       CONFIRM ORDER PAGE    *********************************************************************/
 const confirmOrderPage  = async(req,res)=>{
     try {
@@ -136,6 +132,7 @@ const editAddressFromCheckout = async(req,res)=>{
 /******************************************    PAYMENT & ORDER CREATION(CHECKOUT)     ***************************************************************************************** */
 const confirmOrder = async(req,res)=>{
     try {
+
         const couponId = req.body.couponId || null
     
         const paymentMethod = req.body.paymentMethod
@@ -156,8 +153,8 @@ const confirmOrder = async(req,res)=>{
                 message : 'User or Cart  Not FOund '
             })
         }
-
-        if(paymentMethod ===  'cod' && cart.totalSalePrice > 10000){
+    
+        if(paymentMethod === 'cod' && cart.totalSalePrice > 1000){
             return res.status(404).json({
                 message : 'COD IS NOT AVAILABE FOR AMOUNT MORE THAN 10k'
             })
@@ -212,7 +209,7 @@ const confirmOrder = async(req,res)=>{
                couponinfo = null
             }
         }
-        
+
         const  newOrder = new Order({
             user : req.session.user_id ,
             items : orderItems,    // orderItems is an array cz mentoioned in model
@@ -222,12 +219,20 @@ const confirmOrder = async(req,res)=>{
             totalSalePrice  : cart.totalSalePrice ,
             actualSalePrice : cart.actualSalePrice,
             paymentMethod : paymentMethod ,
-            coupon : couponinfo
+            coupon : couponinfo,
+        
+            
         })
 
         await newOrder.save()
 
         if (paymentMethod === 'razorpay') {
+
+            //Razorpay intigration
+            const razorpayInstance = new Razorpay({
+                key_id: process.env.RAZORPAY_KEY_ID,
+                key_secret: process.env.RAZORPAY_KEY_SECRET,
+            });
 
             const razorpayOrder = await razorpayInstance.orders.create({
                 amount: newOrder.totalSalePrice * 100, // amount in paise
@@ -245,7 +250,6 @@ const confirmOrder = async(req,res)=>{
             }
             await newOrder.save();
             
-        
             res.status(201).json({
                 success : true,
                 message: 'Razorpay order created successfully',
@@ -305,6 +309,36 @@ const confirmOrder = async(req,res)=>{
         return res.status(500).redirect('/error')
     }
 }
+/******************************************************    /order/verify-status     *************************************************************************** */
+const onDismissUpdateStatus = async(req,res)=>{
+    try {
+        const order = await Order.findById(req.body.orderId)
+
+        if(!order){
+            console.log('order not found')
+            return res.json({
+                success : false,
+                message : "Somthing went Wrong ,try again later"
+            })
+        }
+
+        if(order.paymentStatus == "Pending"){
+            order.paymentStatus = 'Canceled'
+
+            order.items.forEach(item => {
+                if (item.OrderStatus === 'Pending Payment') {
+                    item.OrderStatus = 'Canceled';
+                    item.Reason = "Payment was canceled by User"
+                }
+            });
+            await order.save();
+        }
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).redirect('/error')
+    }
+}
 /******************************************************    FAILED PAYMENT    *********************************************************************/
 const paymentFailed =async(req,res)=>{
     
@@ -319,7 +353,7 @@ const paymentFailed =async(req,res)=>{
 
         if (order) {
             order.paymentStatus = 'Failed';
-            order.totalSalePrice = 0 ;
+            // order.totalSalePrice = 0 ;
             order.paymentId = paymentError.metadata.payment_id;
 
             for(const item of order.items){
@@ -331,7 +365,6 @@ const paymentFailed =async(req,res)=>{
 
             return res.json({ success: false, message : paymentError.description })
         }else{
-
             return res.json({ success: false, message : 'Order not found' });
         }
     } catch (error) {
@@ -343,9 +376,9 @@ const paymentFailed =async(req,res)=>{
 /***************************************************    VERIFY ONLINE PAYMENT   *********************************************************/
 const verifyPayment = async (req,res)=>{      //  Razorpay logic of verify payment ? => Q5* on pending
      try {
+        console.log("hoi")
         const { razorpayPaymentId, razorpayOrderId, razorpaySignature ,orderId,couponId } = req.body;
-        console.log(couponId);
-        
+        console.log('couponId',couponId);
 
          // console.log('razorpayPaymentId -', razorpayPaymentId)
         //  console.log('razorpayOrderId -', razorpayOrderId)
@@ -353,6 +386,7 @@ const verifyPayment = async (req,res)=>{      //  Razorpay logic of verify payme
         //    console.log('orderId -', orderId)
 
         const order = await Order.findById(orderId).populate('items.product')
+        
         if(!order) {
             console.log('order not found')
             return res.status(400).json({ success: false, message: 'Order not found , try again later '});
@@ -397,8 +431,8 @@ const verifyPayment = async (req,res)=>{      //  Razorpay logic of verify payme
             await order.save();
 
             if(couponId){ 
-                coupon.usedBy.push(req.session.user_id)
-                coupon.usageLimit = coupon.usageLimit - 1
+                // coupon.usedBy.push(req.session.user_id)
+                // coupon.usageLimit = coupon.usageLimit - 1
                 await coupon.save()
             }
             
@@ -426,6 +460,8 @@ module.exports={
     confirmOrderPage, 
         addAddressFromCheckout,
         editAddressFromCheckout,
-        confirmOrder,paymentFailed,
-        verifyPayment,
+        confirmOrder,
+            onDismissUpdateStatus,
+            paymentFailed,
+            verifyPayment,
 }

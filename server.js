@@ -6,10 +6,8 @@ require('dotenv').config()
 const connectToDatabase = require('./config/mongodb')
 connectToDatabase();
 
-const morgan = require('morgan');
-app.use(morgan('dev'));
-
-
+// const morgan = require('morgan');
+// app.use(morgan('dev'));
 
 const PORT =  process.env.SERVER_PORT||3000
 
@@ -23,7 +21,6 @@ app.use('/',userRoute)
 //for admin_routes     //recomended to give separate routed
 const adminRoute = require('./routes/adminRoute')
 app.use('/admin',adminRoute)
-
 
 
 app.listen(PORT,()=>{

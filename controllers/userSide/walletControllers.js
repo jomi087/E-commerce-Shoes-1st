@@ -15,7 +15,10 @@ const razorpayInstance = new Razorpay({
 const userWalletPage = async(req,res)=>{
     try {
         const wallet = await Wallet.findOne({user : req.session.user_id})
+
+        wallet.transactions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); 
         res.render('userWallet',{wallet})
+        
     } catch (error) {
         console.log(error.message);
         return res.status(500).redirect('/error')

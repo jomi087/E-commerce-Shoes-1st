@@ -39,6 +39,7 @@ const Productspage = async (req,res) => {
         if (searchTerm) {
             searchCondition.productName = new RegExp(searchTerm, 'i');
         }
+        
         if (categoryBase) {
             searchCondition.category = categoryBase;
         }

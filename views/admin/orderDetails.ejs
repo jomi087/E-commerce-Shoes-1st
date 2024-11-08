@@ -214,9 +214,13 @@
             <!-- Order Summary -->
             <div class="d-flex justify-content-end summary-box">
                 <div class="text-end">
-                    <p>Subtotal: ₹ <%=order.totalSalePrice%></p>
+                    <p>Subtotal: ₹ <%=order.actualSalePrice.toLocaleString()%></p>
                     <p>Shipping Cost: ₹ 0.00</p>
-                    <h5 class="text-primary">Grand Total: ₹ <%=order.totalSalePrice%></h5>
+                    <% if (order.coupon && order.coupon.id) { %>
+                        <p>Coupon Applied : ₹<%=order.coupon.discount.toLocaleString() %> </p>
+                    <% } %>
+                    <hr>
+                    <h5 class="text-primary">Grand Total: ₹ <%=order.totalSalePrice.toLocaleString()  %></h5>
                 </div>
             </div>
         </div>

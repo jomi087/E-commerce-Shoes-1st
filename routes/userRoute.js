@@ -4,19 +4,22 @@ const  user_Route=express()
 user_Route.set('view engine','ejs');
 user_Route.set('views','./views/users')
 user_Route.use(express.static('./public'))  
+user_Route.use(express.json())
+user_Route.use(express.urlencoded({extended:true}))
 
 const session = require('express-session');
 const passport =  require('../helpers/passport');
 
 /*************************************************************************** */
-user_Route.use(express.json())
-user_Route.use(express.urlencoded({extended:true}))
-
 user_Route.use(session({
     secret:process.env.sessionSecret,
     resave:true,
     saveUninitialized:true,
-    cookie: { secure: false } 
+    cookie:{
+        secure:false,
+        httpOnly:true,
+        maxAge:24*60*60*1000
+    }
 }))
 
 user_Route.use(passport.initialize());
@@ -35,7 +38,7 @@ const cartControllers = require('../controllers/userSide/cartControllers');
 const wishListControllers = require('../controllers/userSide/wishListControllers');
 const productSurfControllers = require('../controllers/userSide/productSurfControllers');
 
-const userAuth = require('../middleware/userAuth')  // not yet implemented need to do that ....
+const userAuth = require('../middleware/userAuth') 
 
 /***************************************************************************** */
 
@@ -127,6 +130,7 @@ user_Route.delete('/cart/delete-item',userAuth.isLogin, cartControllers.removepr
 user_Route.get('/order/history' , userAuth.isLogin , orderControllers.orderHistory)
 user_Route.patch('/order/cancel' ,userAuth.isLogin, orderControllers.orderCancellation)
 user_Route.patch('/order/return' ,userAuth.isLogin,  orderControllers.orderReturn)
+user_Route.patch('/order/retryPayment' ,userAuth.isLogin,  orderControllers.retryPayment)
 user_Route.get('/order/downloadInvoice/:id', userAuth.isLogin , orderControllers.invoiceDownload)
 
 //Wallet 
@@ -136,6 +140,8 @@ user_Route.post('/walletPayment/verify', userAuth.isLogin ,walletControllers.ver
 user_Route.post('/walletpayment/verify/failed', userAuth.isLogin ,walletControllers.verifyWalletPaymentFailed)
 
 //Coupon
+
+
 user_Route.post('/couponvalidation',userAuth.isLogin,couponControllers.validateCoupon)
 
 //Payment  
@@ -143,6 +149,9 @@ user_Route.get('/checkout',userAuth.isLogin, paymentControllers.confirmOrderPage
 user_Route.post('/address/addAddress',userAuth.isLogin, paymentControllers.addAddressFromCheckout)
 user_Route.patch('/address/editAddress',userAuth.isLogin, paymentControllers.editAddressFromCheckout)
 user_Route.post('/checkout',userAuth.isLogin,  paymentControllers.confirmOrder)
+
+
+user_Route.patch('/order/verify-status',userAuth.isLogin , paymentControllers.onDismissUpdateStatus)
 user_Route.post('/payment/failed', userAuth.isLogin, paymentControllers.paymentFailed)
 user_Route.post('/payment/verify', userAuth.isLogin, paymentControllers.verifyPayment)
 

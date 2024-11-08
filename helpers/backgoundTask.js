@@ -38,8 +38,8 @@ const schedulePendingPaymentCheck = () => {
             await Promise.all(
                 ordersToCancel.map(async (order) => {
                   if(order.paymentStatus === 'Pending'){
-                    order.paymentStatus = 'Canceled';
-                    order.totalSalePrice = 0
+                    order.paymentStatus = 'Failed';
+                    // order.totalSalePrice = 0
                   }
                   order.items.forEach(item => {
                     if (item.OrderStatus === 'Pending Payment') {

@@ -32,17 +32,12 @@
     margin: 0;
     font-size: 24px;
 }
-.graph-card {
-    background-color: #f6f0f0e0;
-    border-radius: 10px;
-    padding: 20px;
-    height: 300px;
-}
+
 .recent-sales {
     background-color: #f6f0f0e0;
     border-radius: 10px;
     padding: 20px;
-    height: 300px;
+    height: 400px;
 }
 .nav-bar-custom {
     background-color: #000000;
