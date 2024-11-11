@@ -25,6 +25,7 @@ app.use('/admin',adminRoute)
 
 app.listen(PORT,()=>{
     console.log(`http://localhost:${PORT}/`);
+    console.log(`http://43.204.245.198:${PORT}/`);
 })
 
 
