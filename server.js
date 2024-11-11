@@ -8,7 +8,6 @@ connectToDatabase();
 
 // const morgan = require('morgan');
 // app.use(morgan('dev'));
-
 const PORT =  process.env.SERVER_PORT||3000
 
 const schedulePendingPaymentCheck = require('./helpers/backgoundTask');
@@ -26,6 +25,7 @@ app.use('/admin',adminRoute)
 app.listen(PORT,()=>{
     console.log(`http://localhost:${PORT}/`);
     console.log(`http://43.204.245.198:${PORT}/`);
+    console.log(`https://jomi.shop/`);
 })
 
 
