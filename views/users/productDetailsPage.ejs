@@ -19,55 +19,91 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- tostify Css -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <!-- jqury color css -->
+    <!-- <link rel="stylesheet" href="color.css"> -->
+
     <style>
         body {
             background-color: #ffff;
         }
+        
         .related-product-img {
             height: 260px;
             width: 240px;
         }
-        #product-image {
-            /* height:550px;
-            width: 500px; */
-            position: absolute;
-        }
 
-        #product-image img {
-            height: 458px;
-            width: 450px;
-            object-fit: cover;
-            cursor: zoom-in;
-        }
-
-
-        #product-image::after {
-            display: var(--display);
-            content: '';
-            width: 650px;
-            height:485px;
-            background-image: var(--url);
-            background-size: 250%;
-            background-position : var(--zoom-x) var(--zoom-y);
-            position : absolute;
-            left:110%;
-            top :-16%; 
-        }
 
         .product-thumb {
             max-width: 120px;
             height: 110px;
             cursor: pointer;
             margin: 5px;
-            position : relative;
-            top: 460px;
-            left: -5px;
         }
 
         h2{
             font-family: 'Times New Roman', Times, serif ;
             font-weight:400 
         }
+
+
+        .zoom, .original {
+            position: relative;
+            height: 458px;
+            width: 450px;
+        }
+
+        .zoom {
+            display: inline-block;
+        }
+
+        .original {
+            cursor: crosshair;
+        }
+
+        #target {
+        /* width: calc(var(--t) / 2); */
+            max-width: 350px;
+        }
+
+        .zoom .viewer {
+            position: absolute;
+            top: 0;
+            left: 460px;
+            width: 700px;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .zoom .viewer img {
+            position: absolute;
+        }
+
+        .original:hover ~ div {
+            display: block;
+        }
+
+        .original::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .magnifier {
+            position: absolute;
+            background: #000;
+            opacity: 0.7;
+            top: 0;
+            left: 0;
+        }
+
+        .magnifier, .viewer {
+            display: none;
+        }
+
     </style>
 </head>
 <body>
@@ -133,159 +169,166 @@
     </div>
     <main>
         <div class="container ">
-            <div class="row d-flex justify-content-between">
-                <!-- Product Images and Details -->
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-12 col-lg-6 mt-5">
-                            <div id="product-image"  style="--url: url('/imgs/product/<%= product.images[0] %>'); --zoom-x : 0% ; --zoom-y : 0% ; --display: none; ">
-                                <img id="mainImage"  src="/imgs/product/<%= product.images[0] %>" alt="product image">
-                            </div>                            
-                            <div class="mt-3">
-                                <% for( let i = 0; i < product.images.length ; i++ ) { %>
-                                    <img class="product-thumb" src="/imgs/product/<%= product.images[i] %>" alt="thumbnail" onclick="changeImage(this)">
-                                <% } %>
-                            </div>
+
+            <div class="row">
+                <div class="col-md-12 col-lg-5 mt-5">
+                    <div class="zoom">
+                        <!-- Small Image -->
+                        <div class="original">
+                            <img id="target" src="/imgs/product/<%= product.images[0] %>" alt="thumbnail"> 
                         </div>
-                        <div class="col-md-12 col-lg-5">
-                            <h2 class="fs-1 mb-5 border-bottom border-dark "><%= product.productName%> </h2>
-                            
-                            <p>Category : <%=product.category.name %></p>
-                            <p class=" fw-medium"><i class="bi bi-check2-circle"></i> Assured by Compony</p>
-                          
-                            <div class="d-flex ">
-                                <% if (product.OfferSalePrice) { %>
-                                    <div class="mx-2">
-                                        <h4 class="text-success" style="text-decoration: underline;"><i>O</i>ffer Price</h4>
-                                        <h2>
-                                            <span>₹<%=product.OfferSalePrice %> </span>
-                                            <span class="text-decoration-line-through fs-5 ms-2">₹<%= product.salePrice %></span> 
-                                            <span class="text-success fs-6 "><%=product.category.offer.discount %>% Off</span> 
-                                        </h2>
-                                    </div>
-                                <% } %>
-                                
-                            <div class="mx-2">
-                                    <h4 class="text-success" style="text-decoration: underline;"><i>S</i>ale Price</h4>
-                                    <h2>
-                                        <span>₹ <%=product.salePrice %> </span>
-                                        <span class="text-decoration-line-through fs-5 ms-2">₹<%= product.regularPrice %></span> 
-                                        <span class="text-success fs-6 "><%= product.discount %>% Off</span>       
-                                    </h2>
-                            </div>
 
-                            </div>
-                            
-
-                            <br><br>
-
-                            <h6>Available offers</h6>
-                                <ul class="list-unstyled">
-                                    <% if (product.OfferSalePrice) { %>
-                                        <li><i class="bi bi-tags-fill"></i><%=product.category.offer.discount %> % discount on <%=product.category.name %> Category</li>
-                                     <% } %>
-                                </ul>
-                            
-                            <ul class="list-unstyled">
-                                <li><i class="bi bi-check2-circle"></i> 1 Year Brand Warranty</li>
-                                <li><i class="bi bi-check2-circle"></i> 7 Day Return Policy</li> 
-                                <li><i class="bi bi-check2-circle"></i> Cash on Delivery available</li>
-                            </ul>
-                            <div class="my-3">
-                                <span>Color: </span>
-                                <div class="d-inline-block">
-                                   <p><%=product.primaryColor%></p>
-                                </div>
-                            </div>
-
-                            <%if(product.sizesAvailable > 5 && !isNaN(product.sizesAvailable)) {%>
-                                <div class="my-3">
-                                    <label for="shoe-size">Size:</label>
-                                    <select id="shoe-size" class="form-select w-25">
-                                        <option value="6">6</option>
-                                        <option value="7">7</option>
-                                        <option value="8" selected>8</option> 
-                                        <option value="9">9</option>
-                                        <option value="10">10</option>
-                                        <option value="11">11</option>
-                                        <option value="12">12</option>
-                                    </select>
-                                </div>
-                            <%}else{ %>
-                                <div class="my-3">
-                                    <label for="shoe-size">Size by Age:</label>
-                                    <select id="shoe-size" class="form-select w-50">
-                                        <option value="1c">3-3.5 Years (1c)</option>
-                                        <option value="2c">3.5-4 Years (2c)</option>
-                                        <option value="3c">4-4.5 Years (3c)</option>
-                                        <option value="4c">4.5-5 Years (4c)</option>
-                                        <option value="5c">5-5.5 Years (5c)</option>
-                                        <option value="6c">5.5-6 Years (6c)</option> 
-                                        <option value="1">6-7 Years (1)</option>
-                                        <option value="2">7-8 Years (2)</option>
-                                        <option value="3">8-9 Years (3)</option>
-                                        <option value="4">9-10 Years (4)</option>
-                                        <option value="5">10-12 Years (5)</option>
-                                    </select>
-                                </div>
-                            <%}%>
-
-                            <h5>
-                                <% if (product.unitsInStock <= 0) { %>
-
-                                    <span style="color: red;">Out Of Stock </span>
-                                    <p class="fs-6  mt-2 text-success border-bottom border-dark"> Dont worry we will Notify you when its availlable</p>
-
-                                <% } else if (product.unitsInStock <= 10) { %>
-                                    
-                                    <div style="color: orange;">"!!! Hurry-up Only" <%= product.unitsInStock %> Unit's Remaining</div>
-                                    <button type="submit" id ="addCart-btn" class="btn btn-success mt-3">Add to Cart</button>
-                                    <!-- <button type="submit" id="buyNow-btn" class="btn btn-success mt-3">Buy Now</button> -->
-
-                                <% } else { %>
-                                    <button type="submit" id ="addCart-btn" class="btn btn-success mt-3">Add to Cart</button>
-                                    <!-- <button type="submit" id="buyNow-btn" class="btn btn-success mt-3">Buy Now</button> -->
-                                <% }  %>
-                            </h5>
-
+                        <!-- Large Image -->
+                        <div class="viewer">
+                            <img  id="zoomed-area" src="/imgs/product/<%= product.images[0] %>" alt="product image">
                         </div>
-                    </div>
 
-                   <br>
-                    
-                    <div class="mt-4">
-                        <ul class="nav nav-tabs">
-                            <li class="nav-item">
-                                <a class="nav-link active" href="#description">Description</a>
-                            </li>
-                            
-                            <li class="nav-item">
-                                <a class="nav-link " href="#reviews">Reviews</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link " href="#relatedProducts">Related-Products</a>
-                            </li>
-                        </ul>
-                        <div id="description" class="mt-3 col-lg-10" >
-                            <p><%= product.description %></p>
+                        <!-- Magnifier Effect -->
+                        <div class="magnifier"></div>
+
+                        <div class="multipleImages mt-3">
+                            <% for( let i = 0; i < product.images.length ; i++ ) { %>
+                                <img class="product-thumb" src="/imgs/product/<%= product.images[i] %>" alt="thumbnail" onclick="changeImage(this)">
+                            <% } %>
                         </div>
-                        <!-- <div id="additional-info" class="mt-3">
-                            <ul class="list-unstyled">
-                                <li>Type Of Packing: Bottle</li>
-                                <li>Color: Green, Pink, Powder Blue, Purple</li>
-                                <li>Quantity Per Case: 100ml</li>
-                                <li>Ethyl Alcohol: 70%</li>
-                                <li>Piece In One: Carton</li>
-                            </ul>
-                        </div> -->
-                        <div id="reviews" class="mt-3">
-                            <p>Customer reviews will go here.</p>
-                        </div>
-                    </div>
+
+                    </div> 
                 </div>
-                <!-- Sidebar -->
-              
+                <div class="col-md-12 col-lg-7">
+                    <h2 class="fs-1 mb-5 border-bottom border-dark "><%= product.productName%> </h2>
+                    
+                    <p>Category : <%=product.category.name %></p>
+                    <p class=" fw-medium"><i class="bi bi-check2-circle"></i> Assured by Compony</p>
+                    
+                    <div class="d-flex ">
+                        <% if (product.OfferSalePrice) { %>
+                            <div class="mx-2">
+                                <h4 class="text-success" style="text-decoration: underline;"><i>O</i>ffer Price</h4>
+                                <h2>
+                                    <span>₹<%=product.OfferSalePrice %> </span>
+                                    <span class="text-decoration-line-through fs-5 ms-2">₹<%= product.salePrice %></span> 
+                                    <span class="text-success fs-6 "><%=product.category.offer.discount %>% Off</span> 
+                                </h2>
+                            </div>
+                        <% } %>
+                        
+                    <div class="mx-2">
+                            <h4 class="text-success" style="text-decoration: underline;"><i>S</i>ale Price</h4>
+                            <h2>
+                                <span>₹ <%=product.salePrice %> </span>
+                                <span class="text-decoration-line-through fs-5 ms-2">₹<%= product.regularPrice %></span> 
+                                <span class="text-success fs-6 "><%= product.discount %>% Off</span>       
+                            </h2>
+                    </div>
+
+                    </div>
+                    
+
+                    <br><br>
+
+                    <h6>Available offers</h6>
+                        <ul class="list-unstyled">
+                            <% if (product.OfferSalePrice) { %>
+                                <li><i class="bi bi-tags-fill"></i><%=product.category.offer.discount %> % discount on <%=product.category.name %> Category</li>
+                                <% } %>
+                        </ul>
+                    
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-check2-circle"></i> 1 Year Brand Warranty</li>
+                        <li><i class="bi bi-check2-circle"></i> 7 Day Return Policy</li> 
+                        <li><i class="bi bi-check2-circle"></i> Cash on Delivery available</li>
+                    </ul>
+                    <div class="my-3">
+                        <span>Color: </span>
+                        <div class="d-inline-block">
+                            <p><%=product.primaryColor%></p>
+                        </div>
+                    </div>
+
+                    <%if(product.sizesAvailable > 5 && !isNaN(product.sizesAvailable)) {%>
+                        <div class="my-3">
+                            <label for="shoe-size">Size:</label>
+                            <select id="shoe-size" class="form-select w-25">
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8" selected>8</option> 
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+                    <%}else{ %>
+                        <div class="my-3">
+                            <label for="shoe-size">Size by Age:</label>
+                            <select id="shoe-size" class="form-select w-50">
+                                <option value="1c">3-3.5 Years (1c)</option>
+                                <option value="2c">3.5-4 Years (2c)</option>
+                                <option value="3c">4-4.5 Years (3c)</option>
+                                <option value="4c">4.5-5 Years (4c)</option>
+                                <option value="5c">5-5.5 Years (5c)</option>
+                                <option value="6c">5.5-6 Years (6c)</option> 
+                                <option value="1">6-7 Years (1)</option>
+                                <option value="2">7-8 Years (2)</option>
+                                <option value="3">8-9 Years (3)</option>
+                                <option value="4">9-10 Years (4)</option>
+                                <option value="5">10-12 Years (5)</option>
+                            </select>
+                        </div>
+                    <%}%>
+
+                    <h5>
+                        <% if (product.unitsInStock <= 0) { %>
+
+                            <span style="color: red;">Out Of Stock </span>
+                            <p class="fs-6  mt-2 text-success border-bottom border-dark"> Dont worry we will Notify you when its availlable</p>
+
+                        <% } else if (product.unitsInStock <= 10) { %>
+                            
+                            <div style="color: orange;">"!!! Hurry-up Only" <%= product.unitsInStock %> Unit's Remaining</div>
+                            <button type="submit" id ="addCart-btn" class="btn btn-success mt-3">Add to Cart</button>
+                            <!-- <button type="submit" id="buyNow-btn" class="btn btn-success mt-3">Buy Now</button> -->
+
+                        <% } else { %>
+                            <button type="submit" id ="addCart-btn" class="btn btn-success mt-3">Add to Cart</button>
+                            <!-- <button type="submit" id="buyNow-btn" class="btn btn-success mt-3">Buy Now</button> -->
+                        <% }  %>
+                    </h5>
+
+                </div>
             </div>
+            <br>
+            <div class="mt-4">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#description">Description</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link " href="#reviews">Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="#relatedProducts">Related-Products</a>
+                    </li>
+                </ul>
+                <div id="description" class="mt-3 col-lg-10" >
+                    <p><%= product.description %></p>
+                </div>
+                <!-- <div id="additional-info" class="mt-3">
+                    <ul class="list-unstyled">
+                        <li>Type Of Packing: Bottle</li>
+                        <li>Color: Green, Pink, Powder Blue, Purple</li>
+                        <li>Quantity Per Case: 100ml</li>
+                        <li>Ethyl Alcohol: 70%</li>
+                        <li>Piece In One: Carton</li>
+                    </ul>
+                </div> -->
+                <div id="reviews" class="mt-3">
+                    <p>Customer reviews will go here.</p>
+                </div>
+            </div>
+
+
             <div class="review-section container">
                 <div class="row">
                     <!-- Left Section: Customer reviews -->
@@ -450,7 +493,7 @@
                     </div>
                     <div class="col-lg-6">
                         <p class="text-lg-end text-start font-sm text-muted mb-0"> Designed by
-                            <a href="#" target="_blank">JOMI</a>. All rights reserved
+                            <a href="#" >JOMI</a>. All rights reserved
                         </p>
                     </div>
                 </div>
@@ -461,29 +504,106 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
-    
+    <!-- zoom js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
-        const imageZoom = document.getElementById('product-image');
-        imageZoom.addEventListener('mousemove',(event)=>{
-            imageZoom.style.setProperty('--display','block')
-            let pointer ={
-                x: (event.offsetX * 100)/ imageZoom.offsetWidth,
-                y:(event.offsetY * 100) / imageZoom.offsetHeight
-            }
-            imageZoom.style.setProperty('--zoom-x',pointer.x + '%')
-            imageZoom.style.setProperty('--zoom-y',pointer.y + '%')
-        })
+        (function () {
 
-        imageZoom.addEventListener('mouseleave', () => {
-            imageZoom.style.setProperty('--display', 'none');
-        });
+            if (typeof $ !== "function")
+                throw Error('JQuery is not present.');
+
+            var times = 2, handler;
+
+            var init = function () {
+
+                var t = $(this),
+                    p = t.parent(),
+                    v = p.next(),
+                    cs = v.next(),
+                    iw = v.children();
+
+                handler = function (e) {
+
+                    var [w, h] = ['width', 'height'].map(x => $.fn[x].call(t)),
+                        nw = w * times, nh = h * times, cw = w / times, ch = h / times;
+
+                    var eventMap = {
+                        mousemove: function (e) {
+
+                            e = e.originalEvent;
+
+                            var x = e.layerX,
+                                y = e.layerY,
+                                rx = cw / 2,
+                                ry = ch / 2,
+                                cx = x - rx,
+                                cy = y - ry,
+                                canY = cy >= 0 && cy <= h - ch,
+                                canX = cx >= 0 && cx <= w - cw
+
+                            cs.css({
+                                top: canY ? cy : cy < 0 ? 0 : h - ch,
+                                left: canX ? cx : cx < 0 ? 0 : w - cw
+                            });
+
+                            iw.css({
+                                top: canY ? -cy / (h - ch) * (nh - h) : cy < 0 ? 0 : -(nh - h),
+                                left: canX ? -cx / (w - cw) * (nw - w) : cx < 0 ? 0 : -(nw - w)
+                            });
+                        }
+                    };
+
+                    p.width(w).height(h);
+                    cs.width(cw).height(ch);
+                    iw.width(nw).height(nh);
+
+                    for (let k in eventMap)
+                        p.on(k, eventMap[k]);
+                };
+
+                t.on('load', handler);
+            };
+
+            $.fn.extend({
+
+                zoom: function (t) {
+                    times = t || times;
+
+                    for (let x of this)
+                        init.call(x);
+
+                    return this;
+                },
+                setZoom: function (t) {
+
+                    times = t || times;
+
+                    if (handler === void 0)
+                        throw Error('Zoom not initialized.');
+
+                    handler();
+
+                }
+
+            });
+
+            }());
+            var zoom = $('#target').zoom(5);
+            zoom.setZoom(5);
+
+    </script>
+    <script>
 
         function changeImage(element) {
             console.log(element)
-            const mainImage = document.getElementById('mainImage');
+            const mainImage = document.getElementById('target');
+            const zoomedArea = document.getElementById('zoomed-area');
+
             const productImageContainer = document.getElementById('product-image');
  
             mainImage.src = element.src;
+            zoomedArea.src = element.src;
+
             productImageContainer.style.setProperty('--url', `url('${element.src}')`);
         }
 
