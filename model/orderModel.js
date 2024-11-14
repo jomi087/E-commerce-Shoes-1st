@@ -139,7 +139,7 @@ const orderSchema = new mongoose.Schema({
     },
     paymentId  :{
         type : String,
-        default : 'COD'
+        default : 'COD'  //no need of default
     },
     orderDate: {
         type: Date,
