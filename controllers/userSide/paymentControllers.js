@@ -4,6 +4,7 @@ const Address = require("../../model/addressModel")
 const Cart = require('../../model/cartModel')
 const Order = require('../../model/orderModel')
 const Coupon = require('../../model/couponModel')
+const Wallet = require('../../model/walletModel')
 
 const Razorpay = require('razorpay'); 
 const crypto = require('crypto');
@@ -130,7 +131,7 @@ const editAddressFromCheckout = async(req,res)=>{
     }
 }
 /******************************************    PAYMENT & ORDER CREATION(CHECKOUT)     ***************************************************************************************** */
-const confirmOrder = async(req,res)=>{
+const confirmOrder = async(req,res)=>{         //order creation logic to be changed 
     try {
 
         const couponId = req.body.couponId || null
@@ -153,13 +154,7 @@ const confirmOrder = async(req,res)=>{
                 message : 'User or Cart  Not FOund '
             })
         }
-    
-        if(paymentMethod === 'cod' && cart.totalSalePrice > 1000){
-            return res.status(404).json({
-                message : 'COD IS NOT AVAILABE FOR AMOUNT MORE THAN 10k'
-            })
-        }
-
+  
         const address = await Address.findById(selctedDeliveryAddressId);
         // console.log(address);
         
@@ -168,6 +163,14 @@ const confirmOrder = async(req,res)=>{
                 message : 'Invalid address selected '
             })
         }
+
+        if(paymentMethod === 'cod' && cart.totalSalePrice > 1000){
+            return res.status(404).json({
+                message : 'COD IS NOT AVAILABE FOR AMOUNT MORE THAN 10k'
+            })
+        }
+
+
 
         for (const item of cart.items) {
             const product = await Product.findById(item.product);
@@ -195,11 +198,10 @@ const confirmOrder = async(req,res)=>{
             size: item.size,
             color: item.color,
             images: item.product.images[0],
-            category: item.product.category.name,   // to get the category from product  i have to populate it 
+            category: item.product.category.name,  // to get the category from product  i have to populate it 
         }))
 
         let couponinfo = null
-
         if(couponId){
             couponinfo = {
                 id : couponId,
@@ -220,13 +222,12 @@ const confirmOrder = async(req,res)=>{
             actualSalePrice : cart.actualSalePrice,
             paymentMethod : paymentMethod ,
             coupon : couponinfo,
-        
-            
+
         })
 
         await newOrder.save()
 
-        if (paymentMethod === 'razorpay') {
+        if(paymentMethod === 'razorpay') {
 
             //Razorpay intigration
             const razorpayInstance = new Razorpay({
@@ -240,7 +241,6 @@ const confirmOrder = async(req,res)=>{
                 receipt: newOrder._id.toString(),
                 payment_capture: 1,
             });
-
 
             console.log('razorpayOrder',razorpayOrder)
 
@@ -264,11 +264,31 @@ const confirmOrder = async(req,res)=>{
 
             //waiting for the payment to be verify by Razorpay. You need to delete the cart after the payment is successfully verified, thats y cart is not deleted from here
 
-        } else {   // for COD
+        }else if(paymentMethod === 'wallet'){
+            
+            const wallet = await Wallet.findOne({ user: req.session.user_id });
+            if (!wallet || wallet.balance < cart.totalSalePrice) {
 
+                for(const item of newOrder.items){
+                    item.OrderStatus = 'Canceled'
+                    item.Reason = 'Insufficient balance in your wallet'
+                }
+                await newOrder.save();
+                return res.status(404).json({
+                    message:'Insufficient balance in your wallet. Please add money'
+                });
+            }
+        
             if(couponId){
                 const coupon = await Coupon.findById(couponId)
                 if(!coupon){
+                    
+                    for(const item of newOrder.items){
+                        item.OrderStatus = 'Canceled'
+                        item.Reason = 'Coupon not found'
+                    }
+                    await newOrder.save();
+
                     console.log('Coupon not found in confirm order')
                      return res.status(404).json({
                         success: false,
@@ -283,8 +303,63 @@ const confirmOrder = async(req,res)=>{
                         message: 'This coupon has reached its usage limit'
                     });
                 }
+                coupon.usedBy.push(req.session.user_id)
+                coupon.usageLimit = coupon.usageLimit-1
+                await coupon.save()
+            }
 
-            
+
+            const walletTransaction = {
+                amount : newOrder.totalSalePrice,  // this amount is the amount  which came from frontend (req.body.amount )
+                status : 'success',
+                type : 'debit',
+                razorpayOrderId : null,
+                razorPaymentId : "wallet",
+            }
+    
+            wallet.transactions.push(walletTransaction)
+            wallet.balance = wallet.balance - newOrder.totalSalePrice
+            await wallet.save()
+
+            newOrder.paymentStatus = 'Paid'
+            newOrder.paymentId = "wallet"
+            await newOrder.save();
+
+            for(const item of cart.items ){
+                const product = await Product.findById(item.product)
+                product.unitsInStock -= item.quantity;
+                await product.save();       
+            }
+            await Cart.findOneAndDelete({ user: req.session.user_id });
+
+            res.status(201).json({
+                message: 'Order successfully placed',
+            });
+        
+        }else { // for COD
+
+            if(couponId){
+                const coupon = await Coupon.findById(couponId)
+                if(!coupon){
+                    for(const item of newOrder.items){
+                        item.OrderStatus = 'Canceled'
+                        item.Reason = 'Coupon not found'
+                    }
+                    await newOrder.save();
+                    console.log('Coupon not found in confirm order')
+                     return res.status(404).json({
+                        success: false,
+                        message: 'Coupon not found'
+                    });
+                }
+
+                if(coupon.usageLimit <= 0){
+                    coupon.isActive = false 
+                    return res.status(404).json({
+                        success: false,
+                        message: 'This coupon has reached its usage limit'
+                    });
+                }
 
                 coupon.usedBy.push(req.session.user_id)
                 coupon.usageLimit = coupon.usageLimit-1
