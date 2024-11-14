@@ -20,10 +20,10 @@ const walletTransaction = new mongoose.Schema({
         type : String,
         enum : ['debit' , 'credit']  //credit (adding money) or debit (spending money).
     },
-    razorPaymentId : {
+    razorPaymentId : {    //jst give payment id
         type : String,
     },
-    razorpayOrderId : {
+    razorpayOrderId : {   //and order id
         type : String,
     }
 },{
