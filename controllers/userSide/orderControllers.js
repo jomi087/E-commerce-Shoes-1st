@@ -152,7 +152,7 @@ const orderCancellation = async(req,res)=>{
         await productData.save();
 
         let displayMessage = 'Order item has been successfully cancelled'
-        if(orderData.paymentMethod == 'razorpay'){
+        if(orderData.paymentMethod == 'razorpay'||orderData.paymentMethod == 'wallet'){
             const walletTransaction = {
                 amount : refundAmouut * item.quantity,
                 status :  'success' ,
