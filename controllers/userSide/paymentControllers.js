@@ -248,6 +248,7 @@ const confirmOrder = async(req,res)=>{         //order creation logic to be chan
                 item.OrderStatus = 'Pending Payment'
                 item.Reason = 'Payment Not Completed'
             }
+            newOrder.paymentId = null
             await newOrder.save();
             
             res.status(201).json({
@@ -273,7 +274,10 @@ const confirmOrder = async(req,res)=>{         //order creation logic to be chan
                     item.OrderStatus = 'Canceled'
                     item.Reason = 'Insufficient balance in your wallet'
                 }
+                newOrder.paymentStatus = "Canceled"
+                newOrder.paymentId = null
                 await newOrder.save();
+
                 return res.status(404).json({
                     message:'Insufficient balance in your wallet. Please add money'
                 });
@@ -287,6 +291,8 @@ const confirmOrder = async(req,res)=>{         //order creation logic to be chan
                         item.OrderStatus = 'Canceled'
                         item.Reason = 'Coupon not found'
                     }
+                    newOrder.paymentStatus = "Canceled"
+                    newOrder.paymentId = null
                     await newOrder.save();
 
                     console.log('Coupon not found in confirm order')
