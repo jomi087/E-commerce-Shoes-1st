@@ -160,9 +160,6 @@ const productStatus = async(req,res)=>{
 /*********************************      EDIT PRODUCT   ***************************************/
 const editProduct = async (req,res)=>{
     try {
-
-      
-
         const imagesToDelete = req.body.imagesToDelete
         console.log('hlo',imagesToDelete)
 
