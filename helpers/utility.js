@@ -35,7 +35,7 @@ const calculateCartTotals = (cart) => {
 
 //---------------------------------------getDateRange function ---------------------------------------
 const getDateRange = (query) => {
-    console.log(query)
+    // console.log(query)
     let startDate = query.startDate;
     let endDate = query.endDate;
     let filter = query.filter;
@@ -52,10 +52,10 @@ const getDateRange = (query) => {
     } else if (filter === 'thisWeek') {
         startDate = startOfWeek(new Date(), { weekStartsOn: 1 }); // Monday start    (default is weekStartsOn : 0, Which is sunday & for default thing u know u dont need to mention it ) 
         startDate.setUTCHours(0, 0, 0, 0); // Set to 12:00 AM
-        console.log(startDate)
+        // console.log(startDate)
         endDate = endOfWeek(new Date(), { weekStartsOn: 1 });
         endDate.setUTCHours(23, 59, 59, 999); // Set to 11:59 PM on Sunday
-        console.log(endDate)
+        // console.log(endDate)
     } else if (filter === 'thisMonth') {
         startDate = startOfMonth(new Date());
         endDate = endOfMonth(startDate);
@@ -92,7 +92,6 @@ const generateSaleReport = async(startDate,endDate)=>{
         };
     
         const orders = await Order.find(query).lean().sort({ orderDate: -1 });    // *7) why included lean() ?
-        
     
         salesSummary.totalOrders = orders.length;
     
@@ -100,14 +99,13 @@ const generateSaleReport = async(startDate,endDate)=>{
             order.items.forEach(item => {
 
                 if (item.OrderStatus === 'Delivered' || item.OrderStatus === 'Return-Rejected') {
-                    salesSummary.totalSales += item.salePrice
+                    salesSummary.totalSales += item.salePrice * item.quantity
 
                     if(order.coupon && order.coupon.id ){
                         salesSummary.totalSales -= order.coupon.discount
                     }
                     salesSummary.totalDelivered += 1;
                     
-
                 } else if (item.OrderStatus === 'Canceled') {
                     salesSummary.totalCanceled += 1;
 
@@ -129,6 +127,7 @@ const generateSalesDataForGraph = async (timeframe) => {
     const today = new Date();
     let xValues = [];
     let yValues = [];
+    let totalRevenue = 0
 
     let startDate, endDate;
 
@@ -136,16 +135,33 @@ const generateSalesDataForGraph = async (timeframe) => {
         case 'day':
             startDate = startOfDay(today);
             endDate = endOfDay(today);
+            
             for (let i = 0; i < 24; i++) {
                 const hour = addHours(startDate, i); // hour =>  5/11/2024, 12:00:00 am  5/11/2024, 1:00:00 am 5/11/2024, 2:00:00 am
-
                 xValues.push(format(hour, 'HH:00')); //formated hour (changed the format ) => '00:00', '01:00', '02:00','03:00', '04:00', '05:00'
                 const sales = await Order.aggregate([
-                    { $match: { orderDate: { $gte: hour, $lt: addHours(hour, 1) } } },
-                    { $group: { _id: null, total: { $sum: '$totalSalePrice' } } }
-                ]);
-                yValues.push(sales[0] ? sales[0].total : 0);
+                    { $match: { orderDate: { $gte: hour, $lt: addHours(hour, 1) },"items.OrderStatus": "Delivered"} },
+                ])
+
+                let revenue = 0
+                if(sales.length > 0){
+                    sales.forEach((order)=>{
+                        order.items.forEach((item)=>{
+                            if(item.OrderStatus === 'Delivered'|| item.OrderStatus === 'Return-Rejected'){
+                                revenue +=  item.salePrice * item.quantity
+                            }
+                        })
+                        if(order.coupon && order.coupon.id ){
+                            revenue -= order.coupon.discount
+                        }
+                    })
+                }
+                yValues.push(sales[0] ? revenue : 0);
             }
+            totalRevenue = yValues.reduce((acc,val)=>{
+                return acc+=val ;
+            },0)
+
             break;
         case 'week':
             startDate = startOfWeek(today);
@@ -155,11 +171,27 @@ const generateSalesDataForGraph = async (timeframe) => {
             for (let i = 0; i < 7; i++) {
                 const day = addDays(startDate, i);
                 const sales = await Order.aggregate([
-                    { $match: { orderDate: { $gte: day, $lt: addDays(day, 1) } } },
-                    { $group: { _id: null, total: { $sum: '$totalSalePrice' } } }
+                    { $match: { orderDate: { $gte: day, $lt: addDays(day, 1) },"items.OrderStatus": "Delivered"  } },
                 ]);
-                yValues.push(sales[0] ? sales[0].total : 0);
+                let revenue = 0
+                if(sales.length > 0){
+                    sales.forEach((order)=>{
+                        order.items.forEach((item)=>{
+                            if(item.OrderStatus === 'Delivered'|| item.OrderStatus === 'Return-Rejected'){
+                                revenue +=  item.salePrice * item.quantity
+                            }
+                        })
+                        if(order.coupon && order.coupon.id ){
+                            revenue -= order.coupon.discount
+                        }
+                    })
+                }
+                yValues.push(sales[0] ? revenue : 0);
             }
+            totalRevenue = yValues.reduce((acc,val)=>{
+                return acc+=val ;
+            },0)
+
             break;
         case 'month':
             startDate = startOfMonth(today);
@@ -169,11 +201,27 @@ const generateSalesDataForGraph = async (timeframe) => {
                 const day = addDays(startDate, i - 1);
                 xValues.push(format(day, 'dd'));
                 const sales = await Order.aggregate([
-                    { $match: { orderDate: { $gte: day, $lt: addDays(day, 1) } } },
-                    { $group: { _id: null, total: { $sum: '$totalSalePrice' } } }
+                    { $match: { orderDate: { $gte: day, $lt: addDays(day, 1) },"items.OrderStatus": "Delivered"  } },
                 ]);
-                yValues.push(sales[0] ? sales[0].total : 0);
+                let revenue = 0
+                if(sales.length > 0){
+                    sales.forEach((order)=>{
+                        order.items.forEach((item)=>{
+                            if(item.OrderStatus === 'Delivered'|| item.OrderStatus === 'Return-Rejected'){
+                                revenue +=  item.salePrice * item.quantity
+                            }
+                        })
+                        if(order.coupon && order.coupon.id ){
+                            revenue -= order.coupon.discount
+                        }
+                    })
+                }
+                yValues.push(sales[0] ? revenue : 0);
             }
+            totalRevenue = yValues.reduce((acc,val)=>{
+                return acc+=val ;
+            },0)
+
             break;
         case 'year':
             startDate = startOfYear(today);
@@ -182,15 +230,31 @@ const generateSalesDataForGraph = async (timeframe) => {
             for (let i = 0; i < 12; i++) {
                 const month = addMonths(startDate, i);
                 const sales = await Order.aggregate([
-                    { $match: { orderDate: { $gte: month, $lt: addMonths(month, 1) } } },
-                    { $group: { _id: null, total: { $sum: '$totalSalePrice' } } }
+                    { $match: { orderDate: { $gte: month, $lt: addMonths(month, 1) },"items.OrderStatus": "Delivered"  } },
                 ]);
-                yValues.push(sales[0] ? sales[0].total : 0);
+                let revenue = 0
+                if(sales.length > 0){
+                    sales.forEach((order)=>{
+                        order.items.forEach((item)=>{
+                            if(item.OrderStatus === 'Delivered'|| item.OrderStatus === 'Return-Rejected'){
+                                revenue +=  item.salePrice * item.quantity
+                            }
+                        })
+                        if(order.coupon && order.coupon.id ){
+                            revenue -= order.coupon.discount
+                        }
+                    })
+                }
+                yValues.push(sales[0] ? revenue : 0);
             }
+            totalRevenue = yValues.reduce((acc,val)=>{
+                return acc+=val ;
+            },0)
+
             break;
     }
 
-    return { xValues, yValues };
+    return { xValues, yValues , totalRevenue };
 };
 /**************************************************************************************************************************************************** */
 module.exports = {
@@ -204,3 +268,4 @@ module.exports = {
 
     generateSalesDataForGraph//(graph days and data)
 }
+
