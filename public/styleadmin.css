@@ -34,10 +34,10 @@
 }
 
 .recent-sales {
-    background-color: #f6f0f0e0;
     border-radius: 10px;
     padding: 20px;
-    height: 400px;
+    min-height: 450px;
+    height: auto;
 }
 .nav-bar-custom {
     background-color: #000000;
