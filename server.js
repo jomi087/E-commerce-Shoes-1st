@@ -11,7 +11,7 @@ connectToDatabase();
 const PORT =  process.env.SERVER_PORT||3000
 
 const schedulePendingPaymentCheck = require('./helpers/backgoundTask');
-// schedulePendingPaymentCheck()  
+schedulePendingPaymentCheck()  
 
 //for user_routes
 const userRoute = require('./routes/userRoute');
