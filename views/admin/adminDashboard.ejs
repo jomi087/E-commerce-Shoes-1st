@@ -19,12 +19,12 @@
     <style>
         
         .graph-card {
-            background-color: #f6f0f0e0;
+            
             border-radius: 10px;
             padding: 20px;
             width: 100%;
-            max-width: 900px;
-            height: 450px; 
+            max-width: auto;
+            height: auto; 
         }
 
         #myChart {
@@ -136,8 +136,8 @@
 
                 <!-- Graph and Recent Sales Row -->
                 <div class="row mt-4">
-                    <div class="col-12 mb-4">
-                        <div class="graph-card">
+                    <div class="col-12 col-md-8 mb-4">
+                        <div class="graph-card bg-light">
                             <div class="btn-group mb-3" role="group" aria-label="Timeframe selection">
                                 <button type="button" class="btn btn-secondary" onclick="changeTimeframe('day')">Daily</button>
                                 <button type="button" class="btn btn-secondary" onclick="changeTimeframe('week')">Weekly</button>
@@ -150,11 +150,49 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="col-12 col-md-4">
-                        <div class="recent-sales">
-                            <h5>Recent Sales</h5>
+                    <div class="col-12 col-md-4">
+                        <div class="recent-sales bg-light p-4  rounded shadow-sm">
+                            <!-- Sales Summary Section -->
+                            <div class="mb-5">
+                                <h5 class="text-secondary border-bottom pb-2 fw-bold" style="text-underline-offset: 5px;">
+                                    Sales Summary
+                                </h5>   
+                                <ul class="list-unstyled mt-3">
+                                    <li class="mt-3 font-lg text-dark" id="timeFrameBaseRevenue" style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">L-o-d-i-n-g..</li>
+                                </ul>
+                            </div>
+                    
+                            <!-- Best Selling Product Section -->
+                            <div class="mb-5">
+                                <h5 class="text-secondary border-bottom pb-2  fw-bold" style="text-underline-offset: 5px;">
+                                    Best Selling Product
+                                </h5>
+                                <div class="d-flex align-items-center justify-content-between bg-white rounded shadow p-3">
+                                    <div class="d-flex align-items-center">
+                                        <img src="/imgs/product/<%=productDetails.images[0]%>" alt="Product Image"
+                                            class="img-thumbnail me-3 border-0" 
+                                            style="width: 80px; height: 80px; border-radius: 10px;">
+                                        <div>
+                                            <h6 class="text-primary mb-1"><%=productDetails.productName%></h6>
+                                            <small class="text-muted">Best Seller</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <!-- Best Selling Categories Section -->
+                            <div>
+                                <h5 class="text-secondary border-bottom pb-2  fw-bold" style="text-underline-offset: 5px;">
+                                    Best Selling Categories
+                                </h5>
+                                <!-- Categories List -->
+                                <ul class="list-unstyled mt-3 ps-2">
+                                    <li class="mb-2"><i class="bi bi-star-fill text-warning"></i> <%=productDetails.category.name%> </li>
+                                </ul>
+                            </div>
                         </div>
-                    </div> -->
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -164,79 +202,79 @@
 
     <script>
 
-const ctx = document.getElementById("myChart").getContext("2d");
-let myChart;
+        const ctx = document.getElementById("myChart").getContext("2d");
+        let myChart;
 
-// Function to update the chart data
-const updateChartData = async (timeframe) => {
-    try {
-        const response = await fetch(`/admin/dashboard/fetchReport?timeframe=${timeframe}`);
-        
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json();
-        const { xValues, yValues } = data;
-
-        if (myChart) {
-            myChart.destroy();  // Destroy the previous chart instance
-        }
-        
-        myChart = new Chart(ctx, {
-            type: "line",
-            data: {
-                labels: xValues,
-                datasets: [{
-                    label: 'Sales',
-                    fill: false,
-                    lineTension: 0.1,
-                    backgroundColor: "rgba(0,0,255,1.0)",
-                    borderColor: "rgba(0,0,255,0.5)",
-                    data: yValues
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: "Sales Data"
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: "Sales (units)"
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: timeframe.charAt(0).toUpperCase() + timeframe.slice(1)
-                        }
-                    }
+        // Function to update the chart data
+        const updateChartData = async (timeframe) => {
+            try {
+                const response = await fetch(`/admin/dashboard/fetchReport?timeframe=${timeframe}`);
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
+
+                const data = await response.json();
+                const { xValues, yValues, totalRevenue } = data;
+
+
+                document.getElementById('timeFrameBaseRevenue').innerText = `${timeframe.toUpperCase()}-BASED-REVENUE : ₹${totalRevenue.toLocaleString()}`
+
+                if (myChart) {
+                    myChart.destroy();  // Destroy the previous chart instance
+                }
+                
+                myChart = new Chart(ctx, {
+                    type: "line",
+                    data: {
+                        labels: xValues,
+                        datasets: [{
+                            label: 'Sales',
+                            fill: false,
+                            lineTension: 0.1,
+                            backgroundColor: "rgba(0,0,255,1.0)",
+                            borderColor: "rgba(0,0,255,0.5)",
+                            data: yValues
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: "Sales Data"
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: "Sales (units)"
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: timeframe.charAt(0).toUpperCase() + timeframe.slice(1)
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Error fetching data:", error);
             }
-        });
-    } catch (error) {
-        console.error("Error fetching data:", error);
-    }
-};
+        };
 
-// Function called by each button's onclick
-const changeTimeframe = (timeframe) => {
-    updateChartData(timeframe);
-};
+        // Function called by each button's onclick
+        const changeTimeframe = (timeframe) => {
+            updateChartData(timeframe);
+        };
 
-// Initial load with 'daily' data
-updateChartData('day');
-
-
- 
-
+        // Initial load with 'daily' data
+        updateChartData('day');
+        
     </script>
         
 </body>
