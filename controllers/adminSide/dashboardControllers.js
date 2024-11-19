@@ -39,10 +39,52 @@ const loadDashboard = async(req,res)=>{
             // User.countDocuments({isBlocked : true ,isAdmin : false})   // i used aggregatioin  above
         ]);
 
+        //Top Selling ProductsDetials with Category 
+        let topSellingProducts = await Order.aggregate([
+            { $unwind: '$items' },
+            { $match: { 'items.OrderStatus': 'Delivered' } },
+            {
+                $group: {
+                    _id: '$items.product',                 // Group by product ID
+                    totalSold: { $sum: '$items.quantity' } // Sum quantities for each product
+                }
+            },
+            { $sort: { totalSold: -1 } },                  // Sort by totalSold in descending order
+            { $limit: 1 },                                 // Limit to top 3 products
+            {
+                $lookup: {
+                    from: 'shoes',                         // Collection name of Shoe
+                    localField: '_id',                     // Product ID from group stage
+                    foreignField: '_id',                   // Match with _id in Shoe collection
+                    as: 'productDetails'
+                }
+            },
+            { $unwind: { path: '$productDetails', preserveNullAndEmptyArrays: true } }, // Unwind productDetails array
+            {
+                $lookup: {
+                    from: 'categories',                    // Collection name of Category
+                    localField: 'productDetails.category', // Category ID from Shoe
+                    foreignField: '_id',                   // Match with _id in Category collection
+                    as: 'productDetails.category'          // Assign result to category field inside productDetails
+                }
+            },
+            { $unwind: { path: '$productDetails.category', preserveNullAndEmptyArrays: true } }, // Unwind category to make it an object
+            {
+                $project: {
+                    _id: 0,                                  // Exclude the product ID from output
+                    totalSold: 1,                            // Include totalSold
+                    productDetails: 1                        // Include productDetails with embedded category details
+                }
+            }
+        ]);
+    
+        // console.log("bestSellingProducts1",topSellingProducts)
+       
+
         orders.forEach((order)=>{
             order.items.forEach((item)=>{
-                if(item.OrderStatus === 'Delivered'){
-                    summary.totalSales  +=  item.salePrice
+                if(item.OrderStatus === 'Delivered'|| item.OrderStatus === 'Return-Rejected'){
+                    summary.totalSales  +=  item.salePrice * item.quantity
                 }
             })
             if(order.coupon && order.coupon.id ){
@@ -64,9 +106,7 @@ const loadDashboard = async(req,res)=>{
         });
 
 
-      
-
-        res.render('adminDashboard',{summary,})
+        res.render('adminDashboard',{summary, productDetails : topSellingProducts[0].productDetails})
     } catch (error) {
         console.log(error.message);
         return res.status(500).redirect('/error');
@@ -98,10 +138,6 @@ const graphRepresentalReport = async(req,res)=>{
         return res.status(500).redirect('/error');
     }
 }
-
-
-
-
 
 module.exports  = {
     loadDashboard,
