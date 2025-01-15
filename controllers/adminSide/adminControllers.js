@@ -7,7 +7,7 @@ const loadLogin = async(req,res)=>{
         res.render('adminLogin')
     } catch (error) {
         console.log(error.message)
-        return res.redirect('/error');
+        return res.redirect('/admin/error');
     }
 }
 /*********************************** VERIFY LOGIN ******************************************/
