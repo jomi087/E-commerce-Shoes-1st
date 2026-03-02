@@ -45,7 +45,6 @@ admin_route.patch('/productStatus',adminAuth.isLogin , productControllers.produc
 admin_route.post('/editProduct', adminAuth.isLogin , upload.array('Pimages',5),productControllers.editProduct)  //recomended to use patch 
 //admin_route.post('/deleteProduct', adminAuth.isLogin , productControllers.deleteProduct) //recomended to use delete
 
-
 //order
 admin_route.get('/orderManagement' , adminAuth.isLogin , orderControllers.orderManagementPage)
 admin_route.get('/orderDetails/:id' , adminAuth.isLogin , orderControllers.orderDetailPage)

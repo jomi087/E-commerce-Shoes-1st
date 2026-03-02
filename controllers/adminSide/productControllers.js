@@ -78,7 +78,7 @@ const addProduct = async (req, res) => {
         and contains details about the file, including its filename,
         ie (req.files[0].filename)
 */ 
-        console.log("Uploaded files: ", req.files);
+        // console.log("Uploaded files: ", req.files);
 
         const product = new Product({
             productName: req.body.Pname,
@@ -116,7 +116,7 @@ const editProductPage  =  async(req,res)=>{
             console.log("req.query.id not Found (editProductPage)");
             return res.status(404).redirect('*')
         }
-        console.log(productId);
+        // console.log(productId);
 
         const product = await Product.findOne({_id : productId}).populate('category')
         const category = await Category.find() 
@@ -161,10 +161,10 @@ const productStatus = async(req,res)=>{
 const editProduct = async (req,res)=>{
     try {
         const imagesToDelete = req.body.imagesToDelete
-        console.log('hlo',imagesToDelete)
+        // console.log('hlo',imagesToDelete)
 
         const existingProduct =  await Product.findOne({_id:req.body.id}) // Storing the document to a variable before  getting updated[this is for removing the uploadfiles from system ]
-        console.log(existingProduct);
+        // console.log(existingProduct);
 
         const regularPrice = parseInt(req.body.PregularPrice);
         const salePrice = parseInt(req.body.PsalePrice);
@@ -172,11 +172,11 @@ const editProduct = async (req,res)=>{
         const Pdiscount = Math.round(((regularPrice - salePrice) / regularPrice) * 100);// to get the percentage
 
         let finalImages = existingProduct.images || []
-        console.log('finalImages',finalImages)
+        // console.log('finalImages',finalImages)
 
         if (imagesToDelete) {
             const imagesToDeleteArray = JSON.parse(imagesToDelete); // Parse the imagesToDelete array from the request
-            console.log('parsed',imagesToDeleteArray)
+            // console.log('parsed',imagesToDeleteArray)
 
             imagesToDeleteArray.forEach(image => {
                 const imageIndex = finalImages.indexOf(image);
@@ -198,10 +198,10 @@ const editProduct = async (req,res)=>{
             const newFilenames = req.files.map(file => file.filename);
             finalImages = finalImages.concat(newFilenames); // Add new images to the final list
 
-            console.log(finalImages.length)
+            // console.log(finalImages.length)
             if (finalImages.length < 3 || finalImages.length > 5) {
 
-               console.log(req.files)
+            //    console.log(req.files)
 
                 req.files.forEach((file) => {
                     const imagePath = path.join(__dirname, '../public/imgs/product/', file.filename);

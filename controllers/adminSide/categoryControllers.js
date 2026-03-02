@@ -28,7 +28,7 @@ const addCategory = async (req,res)=>{
         })
         
        const newCategory = await category.save();
-       console.log(`newCategory = ${newCategory}`);
+    //    console.log(`newCategory = ${newCategory}`);
 
        if(newCategory){
             res.redirect('/admin/category')
@@ -70,13 +70,13 @@ const editCategoryPage = async(req,res)=>{
         const categoryId= req.query.id
 
         if(!categoryId){
-            console.log("req.query.id not Found (editCategoryPage)");
+            // console.log("req.query.id not Found (editCategoryPage)");
             return res.status(404).redirect('*');
         }
-        console.log(categoryId);
+        // console.log(categoryId);
         
         const category = await Category.findOne({_id : categoryId})
-        console.log(category);
+        // console.log(category);
         
         res.render("updateCategory",{category : category})
 
@@ -102,7 +102,7 @@ const editCategory = async(req,res)=>{
         if(updatedCategory){
             res.redirect('/admin/category')
         }else{
-            console.log('Category not found');
+            // console.log('Category not found');
         return res.status(404).redirect('/error');
         }
         

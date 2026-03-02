@@ -8,7 +8,8 @@
     <!-- font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Moul&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Moul&display=swap"
+        rel="stylesheet">
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,21 +18,19 @@
     <!-- my-css -->
     <link rel="stylesheet" href="styleadmin.css">
     <style>
-        
         .graph-card {
-            
+
             border-radius: 10px;
             padding: 20px;
             width: 100%;
             max-width: auto;
-            height: auto; 
+            height: auto;
         }
 
         #myChart {
             width: 100%;
             height: 100%;
         }
-
     </style>
 </head>
 
@@ -40,17 +39,18 @@
     <nav class="navbar navbar-expand-lg nav-bar-custom">
         <div class="container-fluid">
             <h3 class="text-white cinzel-decorative mt-2">Fashion Feet</h3>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="#">Account</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Settings</a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a class="nav-link" href="/admin/logout">Logout</a>
                     </li>
@@ -61,7 +61,7 @@
 
     <!-- Main content -->
     <div class="container-fluid">
-        <div class="row">
+        <div class="row ">
             <!-- Sidebar -->
             <div class="col-md-2 sidebar p-3">
                 <nav class="nav flex-column">
@@ -69,7 +69,6 @@
                     <a class="btn btn-primary nav-link" href="/admin/customer">Customers</a>
                     <a class="btn btn-primary nav-link" href="/admin/product">Products</a>
                     <a class="btn btn-primary nav-link" href="/admin/orderManagement">Orders</a>
-                    <a class="btn btn-primary nav-link" href="#">Banner Management</a>
                     <a class="btn btn-primary nav-link" href="/admin/couponManagement">Coupon Management</a>
                     <a class="btn btn-primary nav-link" href="/admin/salesReport">Sales Report</a>
                     <a class="btn btn-primary nav-link" href="/admin/category">Category</a>
@@ -82,53 +81,71 @@
                 <div class="row">
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="mt-3 stats-card d-flex align-items-center p-2">
-                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white" style="width: 55px; height: 50px;">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white"
+                                style="width: 55px; height: 50px;">
                                 <i class="bi bi-currency-rupee fs-2"></i>
                             </div>
                             <div class="ms-2">
-                                <h4><strong>Total Revenue</strong></h4>
-                                <p class="pt-2 mb-0 fs-1 text-success" style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif">₹<%= summary.totalSales %></p>
+                                <h5><strong>Total Revenue</strong></h5>
+                                <p class="pt-2 mb-0 fs-1 text-success"
+                                    style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif">₹<%=
+                                        summary.totalSales %>
+                                </p>
                             </div>
                         </div>
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="mt-3 stats-card d-flex align-items-center p-2">
-                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white" style="width: 55px; height: 50px;">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white"
+                                style="width: 55px; height: 50px;">
                                 <i class="bi bi-basket3 fs-2"></i>
                             </div>
                             <div class="ms-2">
                                 <h4><strong>Total Orders</strong></h4>
-                                <p class="pt-2 mb-0 fs-1 text-success" style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><%= summary.ordersCount %></p>
+                                <p class="pt-2 mb-0 fs-1 text-success"
+                                    style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif">
+                                    <%= summary.ordersCount %>
+                                </p>
                             </div>
                         </div>
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="stats-card d-flex align-items-center p-2">
-                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white" style="width: 55px; height: 50px;">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white"
+                                style="width: 55px; height: 50px;">
                                 <i class="bi bi-box-seam fs-2"></i>
                             </div>
                             <div class="ms-2">
                                 <h4><strong>Total Products</strong></h4>
-                                <p class="fs-1 text-success mb-0" style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif"><%= summary.productCount %></p>
+                                <p class="fs-1 text-success mb-0"
+                                    style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif">
+                                    <%= summary.productCount %>
+                                </p>
                                 <p style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-                                    <strong>In <span class="text-danger fs-5"><%= summary.categoryCount %></span> Categories</strong>
+                                    <strong>In <span class="text-danger fs-5">
+                                            <%= summary.categoryCount %>
+                                        </span> Categories</strong>
                                 </p>
                             </div>
                         </div>
                     </div>
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="stats-card d-flex align-items-center p-2">
-                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white" style="width: 55px; height: 50px;">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white"
+                                style="width: 55px; height: 50px;">
                                 <i class="bi bi-people fs-2"></i>
                             </div>
                             <div class="ms-2">
                                 <h4><strong>Total Users</strong></h4>
-                                <p class="fs-1 text-success mb-0" style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif">
+                                <p class="fs-1 text-success mb-0"
+                                    style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif">
                                     <%= summary.userCount + summary.userBlockCount %>
                                 </p>
                                 <p style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-                                    <strong><span class="text-danger fs-5"><%= summary.userBlockCount %></span> user's is Blocked</strong>
-                                </p>    
+                                    <strong><span class="text-danger fs-5">
+                                            <%= summary.userBlockCount %>
+                                        </span> user's is Blocked</strong>
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -139,10 +156,14 @@
                     <div class="col-12 col-md-8 mb-4">
                         <div class="graph-card bg-light">
                             <div class="btn-group mb-3" role="group" aria-label="Timeframe selection">
-                                <button type="button" class="btn btn-secondary" onclick="changeTimeframe('day')">Daily</button>
-                                <button type="button" class="btn btn-secondary" onclick="changeTimeframe('week')">Weekly</button>
-                                <button type="button" class="btn btn-secondary" onclick="changeTimeframe('month')">Monthly</button>
-                                <button type="button" class="btn btn-secondary" onclick="changeTimeframe('year')">Yearly</button>
+                                <button type="button" class="btn btn-secondary"
+                                    onclick="changeTimeframe('day')">Daily</button>
+                                <button type="button" class="btn btn-secondary"
+                                    onclick="changeTimeframe('week')">Weekly</button>
+                                <button type="button" class="btn btn-secondary"
+                                    onclick="changeTimeframe('month')">Monthly</button>
+                                <button type="button" class="btn btn-secondary"
+                                    onclick="changeTimeframe('year')">Yearly</button>
 
                             </div>
                             <div>
@@ -154,45 +175,78 @@
                         <div class="recent-sales bg-light p-4  rounded shadow-sm">
                             <!-- Sales Summary Section -->
                             <div class="mb-5">
-                                <h5 class="text-secondary border-bottom pb-2 fw-bold" style="text-underline-offset: 5px;">
+                                <h5 class="text-secondary border-bottom pb-2 fw-bold"
+                                    style="text-underline-offset: 5px;">
                                     Sales Summary
-                                </h5>   
+                                </h5>
                                 <ul class="list-unstyled mt-3">
-                                    <li class="mt-3 font-lg text-dark" id="timeFrameBaseRevenue" style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">L-o-d-i-n-g..</li>
+                                    <li class="mt-3 font-lg text-dark" id="timeFrameBaseRevenue"
+                                        style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">
+                                        L-o-d-i-n-g..</li>
                                 </ul>
                             </div>
-                    
+
                             <!-- Best Selling Product Section -->
                             <div class="mb-5">
-                                <h5 class="text-secondary border-bottom pb-2  fw-bold" style="text-underline-offset: 5px;">
+                                <h5 class="text-secondary border-bottom pb-2 fw-bold"
+                                    style="text-underline-offset: 5px;">
                                     Best Selling Product
                                 </h5>
-                                <div class="d-flex align-items-center justify-content-between bg-white rounded shadow p-3">
-                                    <div class="d-flex align-items-center">
-                                        <img src="/imgs/product/<%=productDetails.images[0]%>" alt="Product Image"
-                                            class="img-thumbnail me-3 border-0" 
-                                            style="width: 80px; height: 80px; border-radius: 10px;">
-                                        <div>
-                                            <h6 class="text-primary mb-1"><%=productDetails.productName%></h6>
-                                            <small class="text-muted">Best Seller</small>
+
+                                <% if (productDetails && productDetails.images && productDetails.images.length> 0) { %>
+
+                                    <div
+                                        class="d-flex align-items-center justify-content-between bg-white rounded shadow p-3">
+                                        <div class="d-flex align-items-center">
+                                            <img src="/imgs/product/<%= productDetails.images[0] %>" alt="Product Image"
+                                                class="img-thumbnail me-3 border-0"
+                                                style="width: 80px; height: 80px; border-radius: 10px;">
+                                            <div>
+                                                <h6 class="text-primary mb-1">
+                                                    <%= productDetails.productName %>
+                                                </h6>
+                                                <small class="text-muted">Best Seller</small>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+
+                                    <% } else { %>
+
+                                        <div class="bg-white rounded shadow p-3 text-center text-muted">
+                                            <small>No best selling product yet</small>
+                                        </div>
+
+                                        <% } %>
                             </div>
-                    
+
                             <!-- Best Selling Categories Section -->
                             <div>
-                                <h5 class="text-secondary border-bottom pb-2  fw-bold" style="text-underline-offset: 5px;">
+                                <h5 class="text-secondary border-bottom pb-2 fw-bold"
+                                    style="text-underline-offset: 5px;">
                                     Best Selling Categories
                                 </h5>
-                                <!-- Categories List -->
-                                <ul class="list-unstyled mt-3 ps-2">
-                                    <li class="mb-2"><i class="bi bi-star-fill text-warning"></i> <%=productDetails.category.name%> </li>
-                                </ul>
+
+                                <% if (productDetails && productDetails.category && productDetails.category.name) { %>
+
+                                    <!-- Categories List -->
+                                    <ul class="list-unstyled mt-3 ps-2">
+                                        <li class="mb-2">
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                            <%= productDetails.category.name %>
+                                        </li>
+                                    </ul>
+
+                                    <% } else { %>
+
+                                        <div class="mt-3 ps-2 text-muted">
+                                            <small>No best selling category yet</small>
+                                        </div>
+
+                                    <% } %>
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -209,7 +263,7 @@
         const updateChartData = async (timeframe) => {
             try {
                 const response = await fetch(`/admin/dashboard/fetchReport?timeframe=${timeframe}`);
-                
+
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -223,7 +277,7 @@
                 if (myChart) {
                     myChart.destroy();  // Destroy the previous chart instance
                 }
-                
+
                 myChart = new Chart(ctx, {
                     type: "line",
                     data: {
@@ -274,9 +328,9 @@
 
         // Initial load with 'daily' data
         updateChartData('day');
-        
+
     </script>
-        
+
 </body>
 
 </html>

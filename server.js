@@ -8,7 +8,7 @@ connectToDatabase();
 
 // const morgan = require('morgan');
 // app.use(morgan('dev'));
-const PORT =  process.env.SERVER_PORT||3000
+const PORT =  process.env.SERVER_PORT||4000
 
 const schedulePendingPaymentCheck = require('./helpers/backgoundTask');
 schedulePendingPaymentCheck()  

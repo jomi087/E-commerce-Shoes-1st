@@ -45,7 +45,7 @@ const cartSchema = new mongoose.Schema({    // actual cartschema
         required: true
     },
 
-    items: [cartItemSchema] ,
+    items: [cartItemSchema],
 
     totalRegularPrice: {  // Total of regular prices of all items
         type: Number,

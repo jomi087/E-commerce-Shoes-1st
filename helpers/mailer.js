@@ -37,3 +37,30 @@ module.exports={
     sendMaiL
 }
  
+
+/*  the below version is Simpler / Direct & the above version is More Advanced / Scalable (SMTP Config on above is done	Explicit (smtp.gmail.com, port 587, TLS) in below is an	Abstracted (service: 'gmail')
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'your_email@gmail.com',
+    pass: 'your_email_password' // or app password
+  }
+});
+
+const mailOptions = {
+  from: 'your_email@gmail.com',
+  to: 'recipient@example.com',
+  subject: 'Hello from Node.js',
+  text: 'This is a test email sent programmatically.'
+};
+
+transporter.sendMail(mailOptions, function(error, info){
+  if (error) {
+    console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+  }
+});
+ */
+
+

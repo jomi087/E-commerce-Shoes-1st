@@ -6,9 +6,8 @@ const User = require("../../model/userModel")
 
 const {generateSalesDataForGraph} = require('../../helpers/utility')
 /*********************************Dashboard*********************************************/
-const loadDashboard = async(req,res)=>{
+const loadDashboard = async (req, res) => {
     try {
-
         const summary = {
             totalSales: 0,
             ordersCount: 0,
@@ -76,10 +75,7 @@ const loadDashboard = async(req,res)=>{
                     productDetails: 1                        // Include productDetails with embedded category details
                 }
             }
-        ]);
-    
-        // console.log("bestSellingProducts1",topSellingProducts)
-       
+        ]);       
 
         orders.forEach((order)=>{
             order.items.forEach((item)=>{
@@ -104,9 +100,7 @@ const loadDashboard = async(req,res)=>{
                 summary.userBlockCount = stat.count; // Blocked users
             }
         });
-
-
-        res.render('adminDashboard',{summary, productDetails : topSellingProducts[0].productDetails})
+        res.render('adminDashboard',{summary, productDetails : topSellingProducts[0]?.productDetails || []})
     } catch (error) {
         console.log(error.message);
         return res.status(500).redirect('/error');

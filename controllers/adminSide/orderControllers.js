@@ -18,7 +18,9 @@ const orderManagementPage = async(req,res)=>{
         if(!orderData){
             console.log("orderManagementPage route responding");
             return res.render('errorCatch',{error : 'orderData Not Found'})
-        }   
+        }
+
+        // console.log(orderData)
         res.render('orderManagement',{
             orders : orderData,
             currentPage : page, 
@@ -188,7 +190,7 @@ const returnRequest = async(req,res)=>{
         const status = req.body.status
         const itemId = req.body.itemId
 
-        console.log(status)
+        // console.log(status)
 
         const orderData = await Order.findById(orderId)
 

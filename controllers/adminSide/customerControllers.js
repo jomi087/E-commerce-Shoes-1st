@@ -6,7 +6,6 @@ const  usersDetails = async (req,res)=>{
 
         if(req.query.search){                                                    //search input
             const searchUser =RegExp(req.query.search,'i')
-            console.log(searchUser);
                 const searchUserData = await User.find({firstName:searchUser,isAdmin : false,})
                 res.render('userInfo',{
                     users:searchUserData ,
