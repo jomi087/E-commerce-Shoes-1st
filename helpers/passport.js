@@ -48,7 +48,7 @@ const { google } = require('googleapis');
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'http://localhost:4000/auth/google/callback',
+    callbackURL: 'https://e-commerce-shoes-1st.onrender.com',//'http://localhost:4000/auth/google/callback',
         scope: [
         'profile',
         'email',
