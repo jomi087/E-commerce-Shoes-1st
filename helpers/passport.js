@@ -31,7 +31,7 @@ const { google } = require('googleapis');
 
 //         const phoneNumbers = response.data.phoneNumbers || [];
 //         // console.log('Phone Numbers:', phoneNumbers);
-        
+
 //         if (phoneNumbers.length > 0) {
 //             return phoneNumbers;
 //         } else {
@@ -48,8 +48,9 @@ const { google } = require('googleapis');
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'https://e-commerce-shoes-1st.onrender.com',//'http://localhost:4000/auth/google/callback',
-        scope: [
+    // callbackURL: "https://jomi.shop/auth/google/callback" || 'http://localhost:4000/auth/google/callback',
+    callbackURL: "https://e-commerce-shoes-1st.onrender.com/auth/google/callback" || 'http://localhost:4000/auth/google/callback',
+    scope: [
         'profile',
         'email',
         'https://www.googleapis.com/auth/user.phonenumbers.read',
@@ -57,7 +58,7 @@ passport.use(new GoogleStrategy({
 }, async (accessToken, refreshToken, profile, done) => {
     // console.log('accessToken inner',accessToken);
     // await inspectToken(accessToken);
-    
+
     try {
         let user = await User.findOne({ googleId: profile.id });
         if (user && user.isBlocked) throw new Error("user is blocked")
@@ -65,7 +66,7 @@ passport.use(new GoogleStrategy({
 
         // const phoneNumbers = await getMyPhoneNumbers(accessToken);
         // console.log("phoneNumbers",phoneNumbers);
-        
+
         // const phoneNumber = phoneNumbers.length > 0 ? phoneNumbers[0].value : null;
 
         if (!user) {
