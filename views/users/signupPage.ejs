@@ -3,218 +3,420 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fashion Feet</title>
-    <!-- bootstrap -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- combined css -->
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- icon -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">   
+    <title>Fashion Feet – Create Account</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * { cursor: default !important; }
+        input, textarea, select, button, a { cursor: pointer !important; }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"] { cursor: text !important; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #0f0f0f;
+            min-height: 100vh;
+        }
+
+        /* NAVBAR */
+        .ff-navbar {
+            background: #0f0f0f;
+            border-bottom: 1px solid #222;
+            padding: 0.85rem 2rem;
+            user-select: none;
+        }
+        .ff-navbar .brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: #f0e6d3;
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+        .ff-navbar .home-link {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .ff-navbar .home-link:hover { color: #f0e6d3; }
+
+        /* CARD */
+        .signup-card {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            padding: 2.5rem 2.75rem;
+            max-width: 540px;
+            width: 100%;
+            margin: 3rem auto 3rem;
+            box-shadow: 0 8px 48px rgba(0,0,0,0.5);
+        }
+
+        .signup-card h2 {
+            font-family: 'Playfair Display', serif;
+            color: #f0e6d3;
+            font-size: 1.85rem;
+            margin-bottom: 0.25rem;
+            letter-spacing: 0.5px;
+        }
+        .signup-card .subtitle {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 2rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* DIVIDER */
+        .section-divider {
+            border: none;
+            border-top: 1px solid #2a2a2a;
+            margin: 1.5rem 0;
+        }
+
+        /* LABELS */
+        .form-label {
+            color: #999;
+            font-size: 0.78rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+        }
+
+        /* INPUTS */
+        .form-control {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #f0e6d3;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            padding: 0.65rem 0.9rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-control:focus {
+            background: #111;
+            border-color: #c9a96e;
+            box-shadow: 0 0 0 3px rgba(201,169,110,0.12);
+            color: #f0e6d3;
+            outline: none;
+        }
+        .form-control::placeholder { color: #444; }
+        .form-control[readonly] {
+            background: #0d0d0d;
+            color: #666;
+            border-color: #222;
+        }
+
+        /* INPUT GROUP */
+        .input-group .form-control { border-radius: 8px 0 0 8px !important; }
+        .input-group .input-group-text {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-right: none;
+            color: #888;
+            font-size: 0.9rem;
+            border-radius: 8px 0 0 8px;
+        }
+        .input-group .form-control.with-prefix { border-radius: 0 8px 8px 0 !important; }
+
+        /* BUTTONS */
+        .btn-gold {
+            background: linear-gradient(135deg, #c9a96e, #a8813d);
+            border: none;
+            border-radius: 8px;
+            color: #0f0f0f;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.82rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 0.6rem 1.1rem;
+            white-space: nowrap;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+        .btn-gold:hover { opacity: 0.88; transform: translateY(-1px); color: #0f0f0f; }
+        .btn-gold:disabled { opacity: 0.4; transform: none; }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #c9a96e, #a8813d);
+            border: none;
+            border-radius: 10px;
+            color: #0f0f0f;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 0.8rem 2.5rem;
+            transition: opacity 0.2s, transform 0.15s;
+            min-width: 160px;
+        }
+        .btn-submit:hover { opacity: 0.88; transform: translateY(-1px); color: #0f0f0f; }
+
+        /* ERROR / SUCCESS TEXT */
+        .field-msg {
+            font-size: 0.78rem;
+            margin-top: 0.3rem;
+            display: block;
+            min-height: 0;
+            line-height: 1.3;
+        }
+        .field-msg:empty { margin: 0; display: none; }
+        .text-gold { color: #c9a96e !important; }
+
+        /* TIMER */
+        #timer {
+            font-size: 0.75rem;
+            color: #666;
+            letter-spacing: 0.5px;
+        }
+
+        /* FOOTER LINK */
+        .login-link {
+            color: #666;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        .login-link a {
+            color: #c9a96e;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .login-link a:hover { text-decoration: underline; }
+
+        /* RESET LINK */
+        .reset-link {
+            font-size: 0.78rem;
+            color: #555;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+        }
+        .reset-link:hover { color: #c9a96e; }
+
+        /* SERVER MESSAGES */
+        .server-msg-success { color: #5fbb7a; font-size: 0.85rem; }
+        .server-msg-error   { color: #e05f5f; font-size: 0.85rem; text-align: center; }
+
+        /* Fade-in animation */
+        .signup-card { animation: fadeUp 0.45s ease both; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-    
-<div class="outer_bg_color">
-        <div>
-            <div class="bg-white d-flex justify-content-between p-2 logo">
-                <a class="text-dark fs-2 text-center" href="/">Fashion-Feet</a>
-                
-                <a class="text-dark fs-2 text-center" href="/">HO<i class="bi bi-house-fill bi fs-3"></i>E</a>
 
-            </div>
-        </div>
-        <div class="container inner_Coustomz_registration pb-2 mt-5">
-        <!-- FORM -->
+<!-- NAVBAR -->
+<nav class="ff-navbar d-flex justify-content-between align-items-center">
+    <a class="brand" href="/">Fashion-Feet</a>
+    <a class="home-link" href="/">
+        <i class="bi bi-house-fill"></i> Home
+    </a>
+</nav>
+
+<!-- CARD -->
+<div class="container px-3">
+    <div class="signup-card">
+
+        <h2>Create an Account</h2>
+        <p class="subtitle">Join Fashion Feet and step into style</p>
+
+        <% if (locals.message) { %>
+        <p class="server-msg-success"><%= locals.message %></p>
+        <% } %>
+        <% if (locals.txt) { %>
+        <p class="server-msg-error"><%= locals.txt %></p>
+        <% } %>
+
         <form action="/signup" method="post" id="registration-form" onsubmit="return validateForm()">
-            <h2 class="text-center p-4"><u>Create an Account</u></h2>
-        
-            <p class="text-success mx-2 fs-8"><strong><%= locals.message %></strong></p>
-            <p class="text-danger text-center"><%= locals.txt %></p>
-        
-            <div class="row mb-3">
-                <div class="col">
+
+            <!-- Name Row -->
+            <div class="row g-3 mb-3">
+                <div class="col-6">
                     <label for="first-name" class="form-label">First Name</label>
-                    <input type="text" class="form-control" name="fname" id="first-name">
-                    <span class="text-danger" id="first-name-error"></span>
+                    <input type="text" class="form-control" name="fname" id="first-name" placeholder="John">
+                    <span class="field-msg text-danger" id="first-name-error"></span>
                 </div>
-                <div class="col">
+                <div class="col-6">
                     <label for="last-name" class="form-label">Last Name</label>
-                    <input type="text" class="form-control" name="lname" id="last-name">
-                    <span class="text-danger" id="last-name-error"></span>
+                    <input type="text" class="form-control" name="lname" id="last-name" placeholder="Doe">
+                    <span class="field-msg text-danger" id="last-name-error"></span>
                 </div>
             </div>
-        
+
+            <!-- Email + OTP -->
             <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
+                <label for="email" class="form-label">Email Address</label>
                 <div class="input-group">
-                    <input type="email" class="form-control" name="email" id="email" placeholder="Enter Registered Email">
-                    <button type="button" class="btn btn-success" id="send-otp-btn">Send OTP</button>
+                    <input type="email" class="form-control" name="email" id="email" placeholder="you@example.com">
+                    <button type="button" class="btn btn-gold" id="send-otp-btn">Send OTP</button>
                 </div>
-                <div class="d-flex justify-content-between">
-                    <span id="email-error" class="text-danger"></span>
-                    <span id="timer" class="form-text text-white text-end"></span>
+                <div class="d-flex justify-content-between align-items-center mt-1">
+                    <span class="field-msg text-danger mb-0" id="email-error"></span>
+                    <span id="timer"></span>
                 </div>
             </div>
-        
+
             <div class="mb-3">
-                <label for="otp" class="form-label">Enter OTP</label>
+                <label for="otp" class="form-label">One-Time Password</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" name="otp" id="otp" placeholder="Enter the OTP">
-                    <button type="button" class="btn btn-success" id="verify-otp">Verify</button>
+                    <input type="text" class="form-control" name="otp" id="otp" placeholder="6-digit OTP" maxlength="6">
+                    <button type="button" class="btn btn-gold" id="verify-otp">Verify</button>
                 </div>
-                <span id="otp-error" class="text-danger"></span>
+                <span class="field-msg text-danger" id="otp-error"></span>
             </div>
-        
+
+            <!-- Mobile -->
             <div class="mb-3">
                 <label for="mobile" class="form-label">Mobile Number</label>
                 <div class="input-group">
                     <span class="input-group-text">+91</span>
-                    <input type="tel" class="form-control" name="mob" id="mobile">
+                    <input type="tel" class="form-control with-prefix" name="mob" id="mobile" placeholder="98765 43210">
                 </div>
-                <span class="text-danger" id="mobile-error"></span>
+                <span class="field-msg text-danger" id="mobile-error"></span>
             </div>
-        
+
+            <!-- Password -->
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" name="password" id="password">
-                <span class="text-danger" id="password-error"></span>
+                <input type="password" class="form-control" name="password" id="password" placeholder="Min. 8 characters">
+                <span class="field-msg text-danger" id="password-error"></span>
             </div>
-        
-            <div class="mb-3">
+
+            <!-- Confirm Password -->
+            <div class="mb-4">
                 <label for="confirm-password" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" name="reppassword" id="confirm-password">
-                <span class="text-danger" id="confirm-password-error"></span>
-                <div class="text-end mt-1" >
-                    <a class="text-white" href="/signup">RESET</a>
+                <input type="password" class="form-control" name="reppassword" id="confirm-password" placeholder="Re-enter password">
+                <div class="d-flex justify-content-between align-items-center mt-1">
+                    <span class="field-msg text-danger mb-0" id="confirm-password-error"></span>
+                    <a class="reset-link" href="/signup">Reset form</a>
                 </div>
             </div>
-        
-            <div class="text-center mb-3 pt-2">
-                <button type="submit" class="btn btn-primary">SIGN UP</button>
+
+            <!-- Submit -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-submit">Create Account</button>
             </div>
+
         </form>
-        
-            
-            <p class="text-center mb-2">Already have an account? <a href="/login">LOGIN</a></p>
-        </div>
+
+        <hr class="section-divider">
+        <p class="login-link mb-0">Already have an account? <a href="/login">Log in</a></p>
 
     </div>
-    
+</div>
+
 <script>
     let otpSent = false;
     let otpVerified = false;
-    let timerDuration = 60;  // in seconds
-   
+    let timerDuration = 60;
 
-    //  timer
     function startTimer(duration, display) {
         let timeLeft = duration;
-            let timeInterval = setInterval(()=> {
-                timeLeft--;
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-                display.textContent = `${minutes}m ${seconds}s`; 
-                if (timeLeft <= 0) {
-                    clearInterval(timeInterval)
-                    display.textContent = "Time's up! Please resend OTP.";
-                }   
-            },1000)
+        let timeInterval = setInterval(() => {
+            timeLeft--;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            display.textContent = `${minutes}m ${seconds < 10 ? '0' : ''}${seconds}s`;
+            if (timeLeft <= 0) {
+                clearInterval(timeInterval);
+                display.textContent = "OTP expired. Please resend.";
+            }
+        }, 1000);
     }
 
-    //  MailOtp
-    document.getElementById('send-otp-btn').addEventListener('click', async function() {
+    document.getElementById('send-otp-btn').addEventListener('click', async function () {
         let email = document.getElementById('email').value.trim();
+        const emailError = document.getElementById('email-error');
+        emailError.classList.remove('text-success');
+        emailError.classList.add('text-danger');
+
         if (!email) {
-            document.getElementById('email-error').textContent = 'Email is required.';
+            emailError.textContent = 'Email is required.';
             return;
         }
-
         let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email)) {
-            document.getElementById('email-error').textContent = 'Invalid email format.';
+            emailError.textContent = 'Invalid email format.';
             return;
         }
 
-        try {  
+        try {
             const response = await fetch('/mailOtp', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email : email })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
             });
             const result = await response.json();
-            // console.log(result);
-            
+
             if (response.ok) {
                 otpSent = true;
-                otpVerified = false
-                // alert("Verification OTP sent successfully");
-                document.getElementById('email-error').textContent = result.msg;
-                document.getElementById('email-error').classList.remove('text-danger');
-                document.getElementById('email-error').classList.add('text-success');
-                document.getElementById('email').readOnly = true; // readOnly the email field
-                document.getElementById('timer').textContent = ''
-                startTimer(timerDuration, document.getElementById('timer'));
-
-            } else if(!response.ok){
-                document.getElementById('email-error').textContent = result.msg;
+                otpVerified = false;
+                emailError.textContent = result.msg;
+                emailError.classList.remove('text-danger');
+                emailError.classList.add('text-success');
                 document.getElementById('email').readOnly = true;
-
-            }else{
-                document.getElementById('email-error').textContent = 'Failed to send OTP. Please try again.';
+                document.getElementById('timer').textContent = '';
+                startTimer(timerDuration, document.getElementById('timer'));
+            } else {
+                emailError.textContent = result.msg;
+                document.getElementById('email').readOnly = true;
             }
         } catch (error) {
-            document.getElementById('email-error').textContent = 'An error occurred. Please try again ->later';
-            console.log(error.message);  
+            emailError.textContent = 'An error occurred. Please try again.';
         }
     });
 
-    // verifyOtp
     document.getElementById('verify-otp').addEventListener('click', async () => {
-
         const email = document.getElementById('email').value.trim();
         const otp = document.getElementById('otp').value.trim();
-        
+        const otpError = document.getElementById('otp-error');
+        otpError.classList.remove('text-success');
+        otpError.classList.add('text-danger');
+
         if (!otp) {
-            document.getElementById('otp-error').textContent = 'OTP is required.';
-            return ;
+            otpError.textContent = 'OTP is required.';
+            return;
         } else if (!otpSent) {
-            document.getElementById('otp-error').textContent = 'You must send email to verify your email.';
-            return ;
+            otpError.textContent = 'You must send OTP to your email first.';
+            return;
         }
-        try{
+        try {
             const response = await fetch('/verifyOtp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    email,
-                    otp: otp
-                })
-            })
-
+                body: JSON.stringify({ email, otp })
+            });
             const result = await response.json();
 
             if (result.success) {
-                otpVerified = true
-                document.getElementById("otp-error").innerText = result.msg || 'Verified successfully';
-                document.getElementById('email-error').textContent = 'Submit all Data before Otp Expires';
-                document.getElementById('otp-error').classList.remove('text-danger');
-                document.getElementById('otp-error').classList.add('text-success');
+                otpVerified = true;
+                otpError.textContent = result.msg || 'Email verified successfully';
+                otpError.classList.remove('text-danger');
+                otpError.classList.add('text-success');
                 document.getElementById('verify-otp').disabled = true;
-                document.getElementById('otp').readOnly = true; // readOnly the otp field
+                document.getElementById('otp').readOnly = true;
                 document.getElementById('send-otp-btn').disabled = true;
             } else {
-                otpVerified = false
-                document.getElementById("otp-error").textContent =  result.msg || "Otp is in-correct"
+                otpVerified = false;
+                otpError.textContent = result.msg || 'Incorrect OTP. Please try again.';
             }
         } catch (error) {
-            document.getElementById('otp-error').innerText = 'An error occurred. Please try again.';
-            console.log(error.message)
+            otpError.textContent = 'An error occurred. Please try again.';
         }
-    })
+    });
 
-
-    //  FormValidation
     function validateForm() {
         let firstName = document.getElementById('first-name').value.trim();
         let lastName = document.getElementById('last-name').value.trim();
@@ -225,78 +427,47 @@
         let confirmPassword = document.getElementById('confirm-password').value.trim();
         let isValid = true;
 
-        // Reset error messages
-        document.getElementById('first-name-error').textContent = '';
-        document.getElementById('last-name-error').textContent = '';
-        document.getElementById('email-error').textContent = '';
-        document.getElementById('otp-error').textContent = '';
-        document.getElementById('mobile-error').textContent = '';
-        document.getElementById('password-error').textContent = '';
-        document.getElementById('confirm-password-error').textContent = '';
+        ['first-name-error','last-name-error','email-error','otp-error','mobile-error','password-error','confirm-password-error'].forEach(id => {
+            const el = document.getElementById(id);
+            el.textContent = '';
+            el.classList.remove('text-success');
+            el.classList.add('text-danger');
+        });
 
-        if (!firstName) {
-            document.getElementById('first-name-error').textContent = 'First name is required.';
-            isValid = false;
-        }
-
-        if (!lastName) {
-            document.getElementById('last-name-error').textContent = 'Last name is required.';
-            isValid = false;
-        }
+        if (!firstName) { document.getElementById('first-name-error').textContent = 'First name is required.'; isValid = false; }
+        if (!lastName)  { document.getElementById('last-name-error').textContent = 'Last name is required.'; isValid = false; }
 
         if (!email) {
-            document.getElementById('email-error').textContent = 'Email is required.';
-            isValid = false;
-        } else {
-            let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(email)) {
-                document.getElementById('email-error').textContent = 'Invalid email format.';
-                isValid = false;
-            }
+            document.getElementById('email-error').textContent = 'Email is required.'; isValid = false;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            document.getElementById('email-error').textContent = 'Invalid email format.'; isValid = false;
         }
 
-        if (!otp) {
-            document.getElementById('otp-error').textContent = 'OTP is required.';
-            isValid = false;
-        }
-
-        if (!mobile) {
-            document.getElementById('mobile-error').textContent = 'Mobile number is required.';
-            isValid = false;
-        }
+        if (!otp) { document.getElementById('otp-error').textContent = 'OTP is required.'; isValid = false; }
+        if (!mobile) { document.getElementById('mobile-error').textContent = 'Mobile number is required.'; isValid = false; }
 
         if (!password) {
-            document.getElementById('password-error').textContent = 'Password is required.';
-            isValid = false;
+            document.getElementById('password-error').textContent = 'Password is required.'; isValid = false;
         } else if (password.length < 8) {
-            document.getElementById('password-error').textContent = 'Password must be at least 8 characters.';
-            isValid = false;
+            document.getElementById('password-error').textContent = 'Password must be at least 8 characters.'; isValid = false;
         }
 
         if (!confirmPassword) {
-            document.getElementById('confirm-password-error').textContent = 'Confirm your password.';
-            isValid = false;
-           
+            document.getElementById('confirm-password-error').textContent = 'Please confirm your password.'; isValid = false;
         } else if (password !== confirmPassword) {
-            document.getElementById('confirm-password-error').textContent = 'Passwords do not match.';
-            isValid = false;
-            
+            document.getElementById('confirm-password-error').textContent = 'Passwords do not match.'; isValid = false;
         }
 
         if (!otpSent) {
-            document.getElementById('otp-error').textContent = 'Please verify your email by sending OTP.';
-            isValid = false;
-      
-        } else if(!otpVerified) {
-            document.getElementById('otp-error').textContent = 'You must verify the OTP before submitting.';
-            isValid = false;
+            document.getElementById('otp-error').textContent = 'Please send OTP to verify your email.'; isValid = false;
+        } else if (!otpVerified) {
+            document.getElementById('otp-error').textContent = 'You must verify the OTP before submitting.'; isValid = false;
         }
 
         return isValid;
     }
 </script>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-wsyH2BZZvx0v9FioObFSCV5pW6sX78OwRPH5cLPwVuoZgKGT3XWzgn/plt6ueueK" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -71,7 +71,7 @@
         }
         .logo:hover {
             cursor: pointer;
-            color: #fdfeff; /* Change color on hover */
+            color: #000000; /* Change color on hover */
         }
 .grey{
     color: #706F6F; /* Dark color for contrast */
