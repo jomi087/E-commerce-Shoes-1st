@@ -149,7 +149,7 @@
                             <% if (orders.length) { %>
                                 <% orders.forEach((order, i) => { %>
                                     <tr class="text-center">
-                                        <td class="text-start"><%= order._id %></td>
+                                        <td class="text-start"><%= order._id.toString().slice(-6)  %></td>
                                         <td>₹<%=(order.totalRegularPrice.toLocaleString('en-IN')) %></td>
                                         <td>₹<%= order.discount %></td>
                                         <td><%= order.coupon && order.coupon.id ? `₹${order.coupon.discount.toLocaleString('en-IN')}` : 'N/A' %></td>
@@ -261,7 +261,7 @@
             // Generate the rows using map and join to create a single string of HTML
             const rows = orders.map(order => `
                 <tr class="text-center">
-                    <td class="text-start">${order._id}</td>
+                    <td class="text-start">${order._id.toString().slice(-6) }</td>
                     <td>₹${order.totalRegularPrice.toLocaleString('en-IN')}</td>
                     <td>₹${order.discount.toLocaleString('en-IN')}</td>
                     <td>${order.coupon && order.coupon.id ? `₹${order.coupon.discount.toLocaleString('en-IN')}` : 'N/A'}</td>

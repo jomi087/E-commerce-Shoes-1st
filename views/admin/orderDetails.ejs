@@ -89,14 +89,14 @@
 <body>
     <div class="container my-4">
         <h3 class="mb-3"><i class="bi bi-receipt-cutoff"></i> Order Detail</h3>
-        <p class="text-muted">Details for Order ID: <strong>#<%=order._id%></strong></p>
+        <p class="text-muted">Details for Order ID: <strong>#<%=order._id.toString().slice(-6) %></strong></p>
 
         <!-- Order Header -->
         <div class="order-header">
             <i class="bi bi-calendar-check-fill section-icon"></i>
             <div>
                 <span><strong><%=new Date(order.orderDate).toLocaleString()%></strong></span>
-                <small class="text-muted">Order ID: #<%=order._id%></small>
+                <small class="text-muted">Order ID: #<%=order._id.toString().slice(-6) %></small>
             </div>
         </div>
 

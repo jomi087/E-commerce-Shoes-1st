@@ -121,7 +121,7 @@
                             <tbody  style="font-family:'Times New Roman', Times, serif;text-transform: uppercase;">
                                 <tr>
                                     <td style="width: 10px;" class="text-center"><%=index+1%></td>
-                                    <td style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;"><%=order._id%></td>
+                                    <td style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;"><%=order._id.toString().slice(-6) %></td>
                                     <td><%=order.user.firstName+' '+order.user.lastName%></td>
                                     <td>₹<%=(order.actualSalePrice - (order.coupon.discount ? order.coupon.discount : 0)).toLocaleString()%></td>
                                     <td><%=order.paymentMethod%></td>

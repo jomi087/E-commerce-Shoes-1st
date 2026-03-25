@@ -10,7 +10,9 @@ const landingPage = async (req, res) => {
       const searchCondition = searchTerm ? { productName: new RegExp(searchTerm, 'i'), forSale: true } : { forSale: true };  
   
       const productData = await Product.find(searchCondition).populate('category');
-      const userData = await User.findOne({ _id: req.session.user_id });
+        const userData = await User.findOne({ _id: req.session.user_id });
+        
+        
   
       res.render('landingPage', {
         user: userData || null,

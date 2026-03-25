@@ -101,7 +101,7 @@
                     <th>Sale Price</th>
                     <th>Size</th>
                     <th>Color</th>
-                    <th>Image</th>
+                    <!-- <th>Image</th> -->
                     <th>Status</th>
                     <th>Update</th>
                 </tr>
@@ -132,14 +132,14 @@
                             <td>₹<%= product.salePrice %></td>
                             <td><%= product.sizesAvailable %></td>
                             <td><%= product.primaryColor %></td>
-                            
+<!--                             
                             <td>
                                 <div class="product-images-row">
                                     <% for (let i = 0; i < product.images.length; i++) { %>
                                         <img src="/imgs/product/<%= product.images[i] %>" alt="Product Image" class="img-thumbnail ">
                                     <% } %>
                                 </div>
-                            </td>
+                            </td> -->
                             <td>
                                 <% if (product.forSale === true) { %>
                                     <button onclick="productStatus('<%= product._id %>')" class="btn fs-3  mx-1 border-0"><i class="bi bi-toggle-on"></i></button>
