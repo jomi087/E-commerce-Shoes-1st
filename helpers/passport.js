@@ -48,12 +48,11 @@ const { google } = require('googleapis');
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    // callbackURL: "https://jomi.shop/auth/google/callback" || 'http://localhost:4000/auth/google/callback',
-    callbackURL: "https://e-commerce-shoes-1st.onrender.com/auth/google/callback" || 'http://localhost:4000/auth/google/callback',
+    callbackURL: process.env.GOOGLE_CALLBACK_URL,
     scope: [
         'profile',
         'email',
-        'https://www.googleapis.com/auth/user.phonenumbers.read',
+        // 'https://www.googleapis.com/auth/user.phonenumbers.read',
     ]
 }, async (accessToken, refreshToken, profile, done) => {
     // console.log('accessToken inner',accessToken);

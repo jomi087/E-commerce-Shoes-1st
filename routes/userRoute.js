@@ -56,7 +56,11 @@ user_Route.post('/signup',userControllers.insertUser)
 
 //Register with Google
 user_Route.get('/auth/google', passport.authenticate('google', {
-    scope: ['profile', 'email', 'https://www.googleapis.com/auth/user.phonenumbers.read']
+    scope: [
+        'profile',
+        'email',
+        // 'https://www.googleapis.com/auth/user.phonenumbers.read'
+    ]
 }));
 user_Route.get('/auth/google/callback',          // Callback route after Google OAuth
     passport.authenticate('google', {
