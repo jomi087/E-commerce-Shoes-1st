@@ -125,11 +125,9 @@
                     })
                 })
                 const result  = await response.json()
-                console.log(result);
                 
 
                 if(result.success){    //or response.ok
-                    console.log('result success')
                     const options = {
                         key : result.razorpayKeyId,
                         amount : result.razorpayOrder.amount,

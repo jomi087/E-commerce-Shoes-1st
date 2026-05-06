@@ -2,6 +2,7 @@
 const User = require('../../model/userModel');
 const Product = require('../../model/productModel')
 const Cart = require('../../model/cartModel')
+const logger = require('../../helpers/winstonLogger');
 
 const {calculateCartTotals} = require('../../helpers/utility')
 /**************************************         CART PAGE      ***************************************************** */
@@ -10,12 +11,10 @@ const cartPage = async(req,res)=>{
         
 
         const userCart = await Cart.findOne({user : req.session.user_id } ).populate('items.product') 
-        // console.log(userCart);
         if (userCart) {
             
             for (const item of userCart.items) {
                 const product = item.product; // Accessing the populated product directly
-                // console.log(product);
 
                 if (product) {
                     if (!product.OfferSalePrice) {
@@ -33,7 +32,7 @@ const cartPage = async(req,res)=>{
         res.render('userCart', { cart : userCart , user  } )
             
     } catch (error) {
-        console.log ( error.message );
+        logger.error ( error.message );
         return res.status(500).redirect('/error')
     }
 }
@@ -43,7 +42,7 @@ const addToCart = async(req,res)=>{
 
         const user_id = req.session.user_id
         const productId  =  req.body.product_id
-        const size  =  req.body.shoeSize                // console.log(productId,size);
+        const size  =  req.body.shoeSize               
 
         const user = await User.findById(user_id)   
         const product = await Product.findById(productId)
@@ -66,10 +65,9 @@ const addToCart = async(req,res)=>{
             }) 
         }   
        
-        let cart = await Cart.findOne({ user: user_id });       //console.log(cart);
-        
+        let cart = await Cart.findOne({ user: user_id });       
         if (!cart) {
-            cart = new Cart({ user: user_id });             // console.log('cartCreation',cart);
+            cart = new Cart({ user: user_id });             
         }
 
         // this is for checking wether the product is already in the cart 
@@ -77,7 +75,6 @@ const addToCart = async(req,res)=>{
             item.product.toString() === productId // && item.size === size 
         ); // if (not equal){} then it will return  -1 (that mean that product has not been added to  cart)  }  else { it wil return that index where it found that consition(1st found)}
         
-        //console.log(existingItemInCart);
         
         if(existingItemInCart === -1){
 
@@ -92,7 +89,6 @@ const addToCart = async(req,res)=>{
 
             };
             cart.items.push(newItem)                                          
-            // console.log('cart-items',cart.items);
 
         }else{
             return res.status(400).json({
@@ -110,7 +106,7 @@ const addToCart = async(req,res)=>{
         }) 
 
     }catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')     
     }
 }
@@ -123,7 +119,6 @@ const updateQuantity = async(req,res)=>{
         
         const cart = await Cart.findOne({ user : req.session.user_id}).populate('items.product')
 
-        //  console.log(cart);
         if(!cart){
             return res.status(404).json({message : 'Cart not Found'})
         }
@@ -135,7 +130,7 @@ const updateQuantity = async(req,res)=>{
 
         const item = cart.items.find((item)=>{  
             return item._id.toString() === itemId
-        })                                            //console.log(item);
+        })                                            
 
         const newQuantity = item.quantity + change;
 
@@ -171,7 +166,7 @@ const updateQuantity = async(req,res)=>{
          })
 
     } catch (error) {
-        console.log(error);
+        logger.error(error);
         res.status(500).json({ message : 'Server error '})
         
     }
@@ -185,8 +180,6 @@ const removeproduct = async (req, res) => {
         {'items._id' : itemId },
         { $pull : { items : { _id : itemId }}},
         {new:true})
-
-        console.log(cart);
         
   
       if (!cart) {
@@ -203,7 +196,7 @@ const removeproduct = async (req, res) => {
 
     } catch (error) {
 
-      console.error(error);
+      logger.error(error);
       res.status(500).json({ message: 'An error occurred while removing the item' });
     }
 }

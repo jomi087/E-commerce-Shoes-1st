@@ -1,16 +1,15 @@
 
 const Wishlist = require("../../model/wishListModel")
+const logger = require('../../helpers/winstonLogger');
 
 /********************************************************************************************************************************************** */
 const productWishListPage = async(req,res)=>{
     try {
         const userWishList = await Wishlist.findOne({ user : req.session.user_id }).populate('products')
-        if(!userWishList){
-            console.log('userWishList not found ')
-        }
+        
         res.render('userWishList',{userWishList})
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -49,7 +48,7 @@ const addRemoveWishList = async(req,res)=>{
             })
         }
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -58,13 +57,11 @@ const wishListStatusUpdate = async (req, res) => {    //not dynamicaly
     try {
         const userId = req.session.user_id;
         const wishlist = await Wishlist.findOne({ user: userId }).populate('products');
-        // console.log(wishlist)
         const productIdsInWishlist = wishlist ? wishlist.products.map(product => product._id.toString()) : [];
-        // console.log(productIdsInWishlist)
         return res.status(200).json({ productIdsInWishlist });
         
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 }

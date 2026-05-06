@@ -2,6 +2,7 @@ const Order = require("../../model/orderModel")
 const Product = require("../../model/productModel")
 const Category = require("../../model/categoryModel")
 const User = require("../../model/userModel")
+const logger = require('../../helpers/winstonLogger');
 
 
 const {generateSalesDataForGraph} = require('../../helpers/utility')
@@ -102,33 +103,18 @@ const loadDashboard = async (req, res) => {
         });
         res.render('adminDashboard',{summary, productDetails : topSellingProducts[0]?.productDetails || []})
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 } 
 /****************************************************************graphReresentalReport****************************************************************************/
-// const graphRepresentalReport = async(req,res)=>{
-//     try {
-//         const timeFrame = req.query.timeframe
-//         console.log(timeFrame)
-
-//         res.json({
-//             success: true,
-//             timeFrame
-//         })
-//     } catch (error) {
-//         console.log(error.message);
-//         return res.status(500).redirect('/error');
-//     }
-// }
-
 const graphRepresentalReport = async(req,res)=>{
     try {
         const { timeframe } = req.query;
         const data = await generateSalesDataForGraph(timeframe);
         res.json(data);
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 }

@@ -518,7 +518,6 @@
     <script>
 
         function changeImage(element) {
-            console.log(element)
             const mainImage = document.getElementById('target');
             const zoomedArea = document.getElementById('zoomed-area');
 
@@ -535,7 +534,6 @@
 
             const product_id = document.getElementById('product-id').value.trim();  // to add products in cart on the base of product_id
             const shoeSize = document.getElementById('shoe-size').value.trim() // dynamic input by user storing that value and adding to cart  // yes color is also dynamic but i have not implimented it //which every value are getting dynamicaly should be passed to db to adding in cart
-            // console.log(shoeSize,quantity); 
             try {
                 const response = await fetch('/cart/add-to-cart', {
                     method: 'POST',
@@ -547,7 +545,6 @@
                         shoeSize,
                     })
                 })
-                console.log(response);
 
 
                 const result = await response.json()

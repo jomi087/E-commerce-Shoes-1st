@@ -1,3 +1,4 @@
+const logger = require('../helpers/winstonLogger');
 
 const isLogin = async(req,res,next)=>{
     try{
@@ -7,7 +8,7 @@ const isLogin = async(req,res,next)=>{
             res.redirect('/admin/')
         }
     }catch(error){
-        console.log(error.message);
+        logger.error(error.message);
     }
 }
 
@@ -20,7 +21,7 @@ const isLogout = async(req,res,next)=>{
             next()
         }
     }catch(error){
-        console.log(error.message);
+        logger.error(error.message);
     }
 }
 

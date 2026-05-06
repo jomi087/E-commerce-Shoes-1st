@@ -35,16 +35,11 @@ const calculateCartTotals = (cart) => {
 
 //---------------------------------------getDateRange function ---------------------------------------
 const getDateRange = (query) => {
-    // console.log(query)
     let startDate = query.startDate;
     let endDate = query.endDate;
     let filter = query.filter;
 
     //let { startDate, endDate, filter } = query; // disructive way
-
-    console.log('startDate',startDate)
-    console.log('endDate',endDate)
-    console.log('filter',filter)
 
     if (filter === 'today') {
         startDate = startOfToday();
@@ -52,10 +47,8 @@ const getDateRange = (query) => {
     } else if (filter === 'thisWeek') {
         startDate = startOfWeek(new Date(), { weekStartsOn: 1 }); // Monday start    (default is weekStartsOn : 0, Which is sunday & for default thing u know u dont need to mention it ) 
         startDate.setUTCHours(0, 0, 0, 0); // Set to 12:00 AM
-        // console.log(startDate)
         endDate = endOfWeek(new Date(), { weekStartsOn: 1 });
         endDate.setUTCHours(23, 59, 59, 999); // Set to 11:59 PM on Sunday
-        // console.log(endDate)
     } else if (filter === 'thisMonth') {
         startDate = startOfMonth(new Date());
         endDate = endOfMonth(startDate);

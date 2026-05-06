@@ -1,4 +1,5 @@
 const User = require('../model/userModel');
+const logger = require('../helpers/winstonLogger');
 
 const isLogin = async(req,res,next)=>{
     try {
@@ -15,7 +16,7 @@ const isLogin = async(req,res,next)=>{
         }
        
     }catch(error) {
-        console.log(error.message);
+        logger.error(error.message);
     }
  }
 
@@ -27,7 +28,7 @@ const isLogout = async(req,res,next)=>{
             next()
         } 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
     }
 }
 

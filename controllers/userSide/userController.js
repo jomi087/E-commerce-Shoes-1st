@@ -1,7 +1,7 @@
 
 const User = require('../../model/userModel');
 const Otp = require('../../model/otp') 
-
+const logger = require('../../helpers/winstonLogger');
 
 
 const bcrypt = require('bcrypt');
@@ -16,7 +16,7 @@ const loadSignup = async(req,res)=>{
     try {
         res.render('signupPage')
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
          return res.status(500).redirect('/error')
     }
 }
@@ -27,7 +27,6 @@ const sendMailOtp = async (req, res) => {
 
     try {
         const existingEmail = await User.find({email:req.body.email})  //these will return a value ( [] ) so it will be true      
-        // console.log(existingEmail); 
         
         if (existingEmail.length > 0) {       //thts y i used existingEmail.length > 0    
             return res.status(400).json({
@@ -43,19 +42,13 @@ const sendMailOtp = async (req, res) => {
         
 
         if(oldOtpData){
-            console.log(new Date(oldOtpData.timestamp))
-            console.log(new Date())
             const sendNextOtp = await twoMinuteExpiry(oldOtpData.timestamp) //recent otp time of that user
-                // console.log(sendNextOtp) 
-                // console.log(!sendNextOtp) 
             if(!sendNextOtp){ 
-                  console.log("expire time not exided");
                     return res.status(400).json({
                     success:false,
                     msg:"An Otp already has been send to your mail"
                 })  
             }
-            console.log("expiry time exided");
         }
         const cDAte = new Date() //cDAte => current-Date
 
@@ -83,7 +76,6 @@ const sendMailOtp = async (req, res) => {
 
         nodeMailer.sendMaiL(Useremail, subject, msgToUser);
 
-        console.log('email sent successfully');
         res.status(200).json({ 
             success:true,     
             msg:"An OTP has been sent to your email" 
@@ -91,7 +83,7 @@ const sendMailOtp = async (req, res) => {
     
     } catch (error) {
 
-        console.log('Failed to send  email', error.message);
+        logger.error('Failed to send  email', error.message);
         return res.status(500).redirect('/error')
 
     }
@@ -108,7 +100,6 @@ const verifyOtp= async (req,res) => {
         const otpData = await Otp.findOne({user_id : email})
 
         if(!otpData){
-            console.log('Otp document is not exist in database')
             return res.status(400).json({
                 success:false,
                 msg : 'Technical Issue, Click on Reset and Try again'
@@ -116,7 +107,6 @@ const verifyOtp= async (req,res) => {
         }
 
         if(otpData.otp != otp){
-            console.log("Otp is Not Correct");
                return res.status(400).json({
                 success:false,
                 msg : 'Otp is in-Correct'
@@ -125,19 +115,17 @@ const verifyOtp= async (req,res) => {
 
         const otpExpiery = await twoMinuteExpiry(otpData.timestamp)
         if(otpExpiery){
-            console.log("Otp has been Expiered");
                return res.status(400).json({
                 success:false,
                 msg : 'Otp has been Expiered'
             })
         }             
-            console.log("Otp is Correct");
             res.status(200).json({
             success:true ,
             msg : 'Verified successfully'
         })
     } catch (error) {
-        console.log('Failed to verify otp:-', error.message);
+        logger.error('Failed to verify otp:-', error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -156,7 +144,6 @@ const  insertUser = async(req,res)=>{
         const otpData = await Otp.findOne({user_id : req.body.email})
         const otpExpiery = await twoMinuteExpiry(otpData.timestamp)
         if(otpExpiery){
-            console.log("Otp has been Expiered at sign up time");
             res.render('signupPage', { txt:'Otp has been Expiered, Click on Reset & try again' });
             return;
         }     
@@ -175,8 +162,7 @@ const  insertUser = async(req,res)=>{
         })
 
         const userData= await user.save()
-        console.log(`new User  => ${userData}`);
-        console.log(`password = ${req.body.password}`);
+
 
         if(userData){
             res.render('signupPage',{message:'Account Creation has been Success-Full,You Can login Now'})
@@ -185,8 +171,8 @@ const  insertUser = async(req,res)=>{
         }
 
     } catch (error) {
-        console.log(error.message);
-        // return res.status(500).redirect('/error')
+        logger.error(error.message);
+        return res.status(500).redirect('/error')
     }
 }
 
@@ -196,7 +182,7 @@ const loadLogin = async(req, res) => {
     try {
         res.render('userLogin');
     } catch (error) {
-        console.error('Error in loadLogin:', error.message);
+        logger.error('Error in loadLogin:', error.message);
         return res.status(500).redirect('/error');
     }
 };
@@ -207,10 +193,8 @@ const verifyLogin = async(req,res)=>{
         const useremail = req.body.email
         const password = req.body.password
 
-        // console.log(useremail,password);
 
         const userData = await User.findOne({isAdmin : false , email:useremail})
-        // console.log(userData);
 
         if(userData){
             if(userData.isBlocked){
@@ -228,8 +212,8 @@ const verifyLogin = async(req,res)=>{
             res.render('userLogin',{message:"Invalid Email & password"})
         }
     } catch (error) {
-        console.log(error.message);
-        // return res.status(500).redirect('/error')
+        logger.error(error.message);
+        return res.status(500).redirect('/error')
     }
 }
 /****************************************       FORGOT PASSWORD      ********************************************************************/
@@ -237,7 +221,7 @@ const verifyLogin = async(req,res)=>{
     try {
         res.render('forgotPassword')
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
  }
@@ -245,7 +229,6 @@ const verifyLogin = async(req,res)=>{
 const verifyPasswordOtp = async(req,res)=>{
    try {
         const existingEmail = await User.find({email:req.body.email})  //fimd will return a value  in an array even if it dosent get anu value  still there but the value(  ie [] empty array  ) so it will be true      
-        console.log(existingEmail); 
         
         if (existingEmail.length === 0) {  
             return res.status(400).json({
@@ -260,7 +243,6 @@ const verifyPasswordOtp = async(req,res)=>{
         if(oldOtpData){
             const sendNextOtp = await twoMinuteExpiry(oldOtpData.timestamp) //recent otp time of that user 
             if(!sendNextOtp){ 
-                  console.log("expire time not exided");
                    return res.status(200).json({
                     success:false,
                     msg:"An Otp already has been send to your mail Or try after 1-mint",
@@ -287,7 +269,6 @@ const verifyPasswordOtp = async(req,res)=>{
         const msgToUser = `<p>Use OTP:-<h3>${g_otp},</h3><br>To verifiying your Mail ,<br> DO-Not Share this code with anyone</p>`;
 
         nodeMailer.sendMaiL(Useremail, subject, msgToUser);
-        console.log('email sent successfully');
         res.status(200).json({ 
             success:true,     
             msg:"An OTP has been sent to your email" 
@@ -295,7 +276,7 @@ const verifyPasswordOtp = async(req,res)=>{
     
     } catch (error) {
 
-        console.log('Failed to send  email', error.message);
+        logger.error('Failed to send  email', error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -315,7 +296,6 @@ const newPassword = async(req,res)=>{
         { $set: { password: spassword } },
         { new: true } // This will return the updated document
     )
-    console.log ('newPasswordData',newPasswordData);
     
     if(newPasswordData){
         res.status(200).json({
@@ -334,7 +314,7 @@ const userLogout = async(req,res)=>{
         req.session.destroy()
         res.redirect('/')  
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }

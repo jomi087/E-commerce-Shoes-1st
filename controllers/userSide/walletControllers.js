@@ -1,6 +1,7 @@
 
 const User = require('../../model/userModel');
 const Wallet = require('../../model/walletModel')
+const logger = require('../../helpers/winstonLogger');
 
 const Razorpay = require('razorpay'); 
 const crypto = require('crypto');
@@ -23,7 +24,7 @@ const userWalletPage = async(req,res)=>{
         res.render('userWallet',{wallet})
         
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -32,8 +33,8 @@ const addMoney = async(req,res)=>{
     try {
 
         const amount = req.body.amount 
-        console.log(amount);
 
+    
         if (!amount) {
             return res.status(404).json({
                 message: 'Amount is Missing '
@@ -52,8 +53,6 @@ const addMoney = async(req,res)=>{
             currency: 'INR',
             payment_capture: 1,
         });
-
-        console.log('razorpayOrder',razorpayOrder)
 
         let wallet = await Wallet.findOne({ user : req.session.user_id })
 
@@ -83,7 +82,7 @@ const addMoney = async(req,res)=>{
         })
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -100,10 +99,6 @@ const verifyWalletPayment = async(req,res)=>{
             }
 
             const { razorpayPaymentId, razorpayOrderId, razorpaySignature  } = req.body;
-
-            console.log('razorpayPaymentId -', razorpayPaymentId)
-            console.log('razorpayOrderId -', razorpayOrderId)
-            console.log('razorpaySignature -', razorpaySignature)
 
             const generatedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
             .update(`${razorpayOrderId}|${razorpayPaymentId}`)
@@ -136,7 +131,7 @@ const verifyWalletPayment = async(req,res)=>{
                 return res.status(400).json({ success: false, message: 'Payment Failed , if Money debited it will be credited with in 48(Working Hour)Hrs ' });
             }
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -152,17 +147,14 @@ const verifyWalletPaymentFailed = async (req,res)=>{
             })
         }
 
-        console.log(wallet);        
 
         const paymentError = req.body.error
 
-        console.log('paymentError',paymentError,)
 
         const transaction  = wallet.transactions.find((transaction)=>{
             return transaction.razorpayOrderId ===  paymentError.metadata.order_id
         })
 
-        console.log(transaction)
 
         transaction.status = 'failed',
         transaction.razorPaymentId = paymentError.metadata.payment_id
@@ -170,7 +162,7 @@ const verifyWalletPaymentFailed = async (req,res)=>{
         await wallet.save()
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }

@@ -3,6 +3,7 @@ const Product = require('../../model/productModel')
 const Order = require('../../model/orderModel')
 const Wallet = require('../../model/walletModel')
 const Coupon = require('../../model/couponModel')
+const logger = require('../../helpers/winstonLogger');
 
 
 const PDFDocument = require('pdfkit');
@@ -37,7 +38,6 @@ const orderHistory = async (req, res) => {
 
         let userOrders = await Order.find(searchCondition).sort({ orderDate : -1 })
 
-        //console.log('userOrders',userOrders);  // a problem -> the usrOrders wil be a full documet , to get specific item  logic is to filter out the items ie,
         // If a search term is provided, filter out items that don't match the product name
         // this over here is only applicable cz items are in  array
 
@@ -62,7 +62,7 @@ const orderHistory = async (req, res) => {
         // Render the filtered orders
         res.render('userOrder', { orders: userOrders ,searchTerm,searchStatus});
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 }
@@ -75,7 +75,6 @@ const orderCancellation = async(req,res)=>{
 
         const reason = req.body.reason
 
-        // console.log(reason);
 
         const orderData = await Order.findById(orderId)
         if(!orderData){
@@ -107,7 +106,7 @@ const orderCancellation = async(req,res)=>{
         if(orderData.coupon && orderData.coupon.id){
             const coupon = await Coupon.findById(orderData.coupon.id)
             if(!coupon){
-                console.log("coupon not found while canceling a product")
+                logger.error("coupon not found while canceling a product")
                 return  res.status(400).json({
                     success: false,
                     message: '',
@@ -182,7 +181,7 @@ const orderCancellation = async(req,res)=>{
         });
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -193,7 +192,6 @@ const orderReturn = async(req,res)=>{
     const itemId = req.body.itemId
     const reason = req.body.reason
 
-    console.log(orderId,reason,itemId);
 
     const orderData = await Order.findById(orderId)
 
@@ -205,7 +203,6 @@ const orderReturn = async(req,res)=>{
     }
 
     const item = orderData.items.find(item => item._id.toString() === itemId)
-    // console.log(item);
 
      if (!item) {
             return res.status(400).json({
@@ -217,13 +214,8 @@ const orderReturn = async(req,res)=>{
     const currentDate = new Date()
     const deliveryDate = new Date(item.deliveryDate)
 
-    // console.log("currentDate :",currentDate );
-    // console.log("deliveryDate :",deliveryDate );
-    // console.log("diffenrceInDay in milliseonds :",currentDate-deliveryDate );
-
     //convert milliseconds into days (by dividing the diffrence  millisecond and with a fullday's-milliseconds which is 1000 (milliseconds) * 60 (seconds) * 60 (minutes) * 24 (hours) = 86,400,000 milliseconds per day.)
     const differnceInDays = Math.floor((currentDate - deliveryDate) / (1000 * 60 * 60 * 24))   
-    console.log('differnceInDays',differnceInDays);
 
     if(differnceInDays > 7){
     return res.status(400).json({
@@ -245,7 +237,7 @@ const orderReturn = async(req,res)=>{
     });
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
                                
@@ -259,7 +251,7 @@ const retryPayment = async(req,res)=>{
         
         const order = await Order.findById(orderId).populate('coupon.id')
         if(!order){
-            console.log('order not found')
+            logger.error('order not found')
             return res.status(404).json({
                 success: false,
                 message: 'Retry Payment is not Possible for this Order'
@@ -267,7 +259,7 @@ const retryPayment = async(req,res)=>{
         }
 
         if(order.paymentMethod != "razorpay" ){
-            console.log('paymentMethod is not razorpay ')
+            logger.error('paymentMethod is not razorpay ')
             return res.status(404).json({
                 success: false,
                 message: 'Retry Payment is not Possible for this Order'
@@ -278,8 +270,8 @@ const retryPayment = async(req,res)=>{
             const coupon = await Coupon.findById(order.coupon.id)
 
             let foundUser = coupon.usedBy.find(user =>user.toString() === req.session.user_id);
-            console.log(`This user (${foundUser}) has alredy used this coupon`)
-            if(foundUser){
+            if (foundUser) {
+                logger.error(`This user (${foundUser}) has alredy used this coupon`)
                 return res.status(404).json({
                     success: false,
                     message: 'Retry Payment is not Applicable cz of used coupon'
@@ -301,8 +293,7 @@ const retryPayment = async(req,res)=>{
         }
 
         razorpayInstance.orders.create(options, function(err, razorpayOrder) {
-            //console.log(razorpayOrder)
-            console.log(err)
+            logger.error(err)
             res.status(201).json({
                 success : true,
                 orderId: razorpayOrder.id,  // generated by razorpay at razorpayInstance.orders.create({....})
@@ -316,7 +307,7 @@ const retryPayment = async(req,res)=>{
         })
         
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -416,7 +407,7 @@ const invoiceDownload = async(req,res)=>{
         doc.end();
         doc.pipe(res);
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 }

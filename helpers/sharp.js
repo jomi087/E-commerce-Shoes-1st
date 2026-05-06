@@ -17,7 +17,6 @@ const multimageCrop = async (req,res,next)=>{
         .toBuffer()
        
        await fs.writeFile(imgpath,processedImage);
-        console.log('image resized successfully');
         next()
         }}
         catch(err){
@@ -38,7 +37,6 @@ const singleimageCrop = async (req,res,next)=>{
         .toFormat('webp')
         .toBuffer()
         await fs.writeFile(imagePath,processedImage)
-        console.log("image resized successfully");
         next()
         
     } catch (error) {

@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
+const logger = require('./winstonLogger');
 
-// console.log(nodemailer);
 
 const transporter = nodemailer.createTransport({
     host:process.env.SMTP_HOST,
@@ -24,12 +24,12 @@ const sendMaiL = async(email,subject,content)=>{  //here sendMail is an identifi
 
         transporter.sendMail(mailOptions,(error,info)=>{  //overhere sendMAil is a method  not an identifier  
             if(error){
-                console.log(error.message);
+                logger.error(error.message);
             }
-            console.log('Mail has been sent ',)
+            logger.error('Mail has been sent ',)
         })
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
     }
 }
 

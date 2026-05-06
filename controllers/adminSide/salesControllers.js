@@ -3,6 +3,7 @@ const {getDateRange ,generateSaleReport} = require('../../helpers/utility')
 const { startOfToday, endOfToday, startOfWeek, endOfWeek, startOfMonth, endOfMonth } = require('date-fns');
 const PDFDocument = require('pdfkit');
 const ExcelJS = require('exceljs');
+const logger = require('../../helpers/winstonLogger');
 
 /*********************************     SALES REPORT PAGE     ************************************** */
 const salesReportPage = async (req, res) => {
@@ -13,7 +14,7 @@ const salesReportPage = async (req, res) => {
         const result  = await generateSaleReport(startDate, endDate);
         res.render('salesReport',{orders : result.orders ,salesSummary : result.salesSummary })
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 };
@@ -21,22 +22,11 @@ const salesReportPage = async (req, res) => {
 const generateSalesReport = async (req, res) => {
     try {
 
-        // const dateRange = getDateRange(req.query);
-
-        // if (!dateRange || !dateRange.startDate || !dateRange.endDate) {
-        //     console.log('Invalid date range or filter')
-        //     return res.status(401)
-        // }
-
-        // const startDate = dateRange.startDate;
-        // const endDate = dateRange.endDate;
-
-
         const { startDate, endDate } = getDateRange(req.query);  // destructuring way
 
 
         if (!startDate || !endDate) {
-            console.log('Invalid date range or filter')
+            logger.error('Invalid date range or filter')
             return res.status(401)
         }
 
@@ -48,7 +38,7 @@ const generateSalesReport = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 };
@@ -58,7 +48,7 @@ const salesReportDownload = async(req,res)=>{
         const { startDate, endDate } =  getDateRange(req.query);
 
         if (!startDate || !endDate) {
-            console.log("Invalid date range or filter")
+            logger.error("Invalid date range or filter")
             return res.status(400)
         }
 
@@ -68,7 +58,6 @@ const salesReportDownload = async(req,res)=>{
         // const { orders, salesSummary } = result;                                        //Destructured
 
         const { orders, salesSummary }  = await generateSaleReport(startDate, endDate);   // bettter way Destructured
-        console.log(orders,salesSummary)
 
         if(req.query.format == 'pdf'){
             // Create a PDF document                                              //PDFDocument = require('pdfkit')
@@ -154,7 +143,7 @@ const salesReportDownload = async(req,res)=>{
             res.end();
         }        
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 }

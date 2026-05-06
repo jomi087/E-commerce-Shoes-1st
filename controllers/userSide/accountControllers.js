@@ -1,5 +1,7 @@
 
 const User = require('../../model/userModel');
+const logger = require('../../helpers/winstonLogger');
+
 
 const bcrypt = require('bcrypt');
 const {securePassword} = require('../../helpers/utility')
@@ -9,13 +11,13 @@ const userDashboard = async (req,res)=>{
     try {
         const userData = await User.findOne({_id : req.session.user_id})
         if(!userData){
-            console.log('userData notfound (from :- userDashboard)');
+            logger.error('userData notfound (from :- userDashboard)');
             return res.status(500).render('errorCatch',{error : " !! Network Issue "})
         }
         res.render('userDashboard',{userData})
     } catch (error) {
-        console.log(error.message);
-        // return res.status(500).redirect('/error')
+        logger.error(error.message);
+        return res.status(500).redirect('/error')
     }
 }
 /********************************************     EDIT PROFILE PAGE    ******************************************************************** */
@@ -24,12 +26,12 @@ const editProfilePage = async(req,res)=>{
         const userData = await User.findOne({_id : req.session.user_id})
         
         if(!userData){
-            console.error('userData notfound (from :- updateProfile)');
+            logger.error('userData notfound (from :- updateProfile)');
             return res.status(500).render('errorCatch',{error : " !! plz Login again "})
         }
         res.render('editProfile',{user:userData})
     } catch (error) {
-        console.log(error.message);
+         logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -61,8 +63,6 @@ const updateProfileName =async(req,res)=>{
             { new: true }  // returns the updated document
         );
             
-        // console.log( "this ",updatedUser);
-
         if(!updatedUser){
             return res.status(404).json({
                 success:false,
@@ -77,7 +77,7 @@ const updateProfileName =async(req,res)=>{
         
         
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -118,7 +118,6 @@ const updateMail_Mobile = async(req,res)=>{
                 },
                     { new: true }
             )
-            // console.log(updatedUser);
             
             if(updatedUser){
                 res.status(200).json({
@@ -138,7 +137,7 @@ const updateMail_Mobile = async(req,res)=>{
         }
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -147,7 +146,7 @@ const updatePasswordpage = async (req,res)=>{
     try {
         res.render('changePasswordPage')
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')   
     }
 }
@@ -162,10 +161,7 @@ const updatePassword = async (req,res)=> {
             });
         }
         const password = req.body.cPassword
-        const newPassword = req.body.nPassword
-
-        console.log(newPassword);
-        
+        const newPassword = req.body.nPassword        
 
         const passwordMatch = await bcrypt.compare(password,user.password)
         if(!passwordMatch){
@@ -197,7 +193,7 @@ const updatePassword = async (req,res)=> {
             })
         }
     } catch (error) {
-         console.log(error.message);
+         logger.error(error.message);
          return res.status(500).redirect('/error')
     }
 }

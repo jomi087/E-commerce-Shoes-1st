@@ -10,31 +10,14 @@ const schedulePendingPaymentCheck = () => {
     cron.schedule('* * * * *', async () => {   //5 star means ->  minute hour day(of a month) month week
         try {
             const currentTime = new Date();
-            console.log(currentTime);
 
             const fiveMinutesAgoTime = new Date(currentTime - 5 * 60 * 1000);  //currenttime - 5 mints  = 15mints before time 
-            console.log(fiveMinutesAgoTime);
             
            
             // To change the pending status  to cancel in the case of order payment not done in  5 mints  
             const ordersToCancel = await Order.find({'items.OrderStatus': 'Pending Payment',orderDate: { $lte: fiveMinutesAgoTime }}); 
             console.log('ordersToCancel-',ordersToCancel);  // This means "find all orders where orderDate is less than or equal to 15 minutes ago."
             
-            // for (const order of ordersToCancel) {
-            //     if(order.paymentStatus === 'Pending'){
-            //         order.paymentStatus = 'Canceled'
-            //     }
-            //     order.items.forEach(item => {
-            //         if (item.OrderStatus === 'Pending Payment') {
-            //             item.OrderStatus = 'Canceled';
-            //         }
-            //     });
-
-            //     await order.save();
-            //     console.log(`Order ${order._id} status updated to Canceled due to pending payment.`);
-            // }
-            //instead of these we can do with promise.all
-
             await Promise.all(
                 ordersToCancel.map(async (order) => {
                   if(order.paymentStatus === 'Pending'){

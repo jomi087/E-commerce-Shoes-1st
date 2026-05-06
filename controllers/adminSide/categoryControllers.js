@@ -1,14 +1,14 @@
 const Category = require("../../model/categoryModel")
+const logger = require('../../helpers/winstonLogger');
 
 /*********************************      CATEGORY DETAILS    ***************************************/
 const categoryDetails  = async (req,res)=>{
     try {
         const categoryData = await Category .find()   //all info login  users
-        // console.log(categoryData);
         
         res.render('productCategory',{category : categoryData})
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 }
@@ -28,7 +28,6 @@ const addCategory = async (req,res)=>{
         })
         
        const newCategory = await category.save();
-    //    console.log(`newCategory = ${newCategory}`);
 
        if(newCategory){
             res.redirect('/admin/category')
@@ -36,7 +35,7 @@ const addCategory = async (req,res)=>{
             res.render('productCategory',{message:"Process Failed,Please check with our team-members"})
        }
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error'); 
     }
 }
@@ -60,7 +59,7 @@ const categoryStatus = async(req,res)=>{
         })
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error'); 
     }
 }
@@ -70,18 +69,15 @@ const editCategoryPage = async(req,res)=>{
         const categoryId= req.query.id
 
         if(!categoryId){
-            // console.log("req.query.id not Found (editCategoryPage)");
             return res.status(404).redirect('*');
         }
-        // console.log(categoryId);
         
         const category = await Category.findOne({_id : categoryId})
-        // console.log(category);
         
         res.render("updateCategory",{category : category})
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error'); 
     }
 }
@@ -102,13 +98,15 @@ const editCategory = async(req,res)=>{
         if(updatedCategory){
             res.redirect('/admin/category')
         }else{
-            // console.log('Category not found');
-        return res.status(404).redirect('/error');
+            return res.status(400).json({
+                success:false,
+                message : 'Category not found'
+            })
         }
         
       } catch (error) {
-        console.log(error.message);
-        // return res.status(500).redirect('/error')
+        logger.error(error.message);
+        return res.status(500).redirect('/error')
       }
 }
 /*****************************************************************************/
@@ -117,7 +115,7 @@ const categoryOffer =  async(req,res)=>{
         const category = await Category.findById(req.params.id)
         res.render('offerDetails',{category})
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -138,7 +136,10 @@ const addOffer = async(req,res)=>{
         const category = await Category.findById(categoryId)
 
         if(!category){
-            console.log('category not found')
+            return res.status(400).json({
+                success:false,
+                message : 'Category not found'
+            })
         }
 
         const currentDate = new Date();
@@ -166,7 +167,7 @@ const addOffer = async(req,res)=>{
         })
 
     } catch (error) {
-        console.log(error.message)
+        logger.error(error.message)
         return res.status(500).redirect('/error');
     }
 }
@@ -194,10 +195,8 @@ const editOffer =  async(req,res)=>{
             }
         }, { new: true });
 
-        // console.log( startDate , new Date(startDate) , new Date() )
-
         if(!updateOffer){
-            console.log(' updateoffer failed , category not found')
+            logger.error(' updateoffer failed , category not found')
             return res.status(404).json({
                 success : false
             })        
@@ -208,7 +207,7 @@ const editOffer =  async(req,res)=>{
         })
 
     } catch (error) {
-        console.log(error.message)
+        logger.error(error.message)
         return res.status(500).redirect('/error');
     }
 }
@@ -241,7 +240,7 @@ const deleteOffer = async(req,res)=>{
         })
 
     } catch (error) {
-        console.log(error.message)
+        logger.error(error.message)
         return res.status(500).redirect('/error');
     }
 }

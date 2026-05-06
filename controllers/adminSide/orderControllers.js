@@ -3,6 +3,7 @@ const Product = require("../../model/productModel") //productControllers
 const Order = require("../../model/orderModel")
 const Wallet = require('../../model/walletModel')
 const Coupon = require('../../model/couponModel')
+const logger = require('../../helpers/winstonLogger');
 
 /*********************************   ORDER MANAGEMENT PAGE   *****************************************/
 const orderManagementPage = async(req,res)=>{
@@ -16,11 +17,10 @@ const orderManagementPage = async(req,res)=>{
         const orderData = await Order.find().populate('user').sort({ orderDate: -1 }).skip(skip).limit(limit)
 
         if(!orderData){
-            console.log("orderManagementPage route responding");
+            logger.error("orderManagementPage route responding");
             return res.render('errorCatch',{error : 'orderData Not Found'})
         }
 
-        // console.log(orderData)
         res.render('orderManagement',{
             orders : orderData,
             currentPage : page, 
@@ -37,11 +37,9 @@ const orderManagementPage = async(req,res)=>{
 const orderDetailPage = async(req,res)=>{
     try {
         const orderId = req.params.id
-        // console.log(orderId);
         const orderData = await Order.findById(orderId).populate('user')
-        // console.log(orderData);
         if(!orderData){
-            console.log("orderDetailPage route not responding");
+            logger.error("orderDetailPage route not responding");
             return res.render('errorCatch',{error : 'orderData Not Found'})
         }  
         
@@ -59,12 +57,11 @@ const orderUpdateStatus = async(req,res)=>{
         const status = req.body.status
         const itemId = req.body.itemId
 
-        console.log(status)
 
         const orderData = await Order.findById(orderId)
 
         if(!orderData){
-        console.log("orderUpdateStatus route not responding");
+        logger.error("orderUpdateStatus route not responding");
             return res.status(404).json({
                 success: false,
                 message: "Updating Failed , Order Id not Found"
@@ -74,7 +71,7 @@ const orderUpdateStatus = async(req,res)=>{
         const item = orderData.items.find(item => item._id.toString() === itemId)
         
         if(!item){
-        console.log("orderUpdateStatus route not responding");
+        logger.error("orderUpdateStatus route not responding");
             return res.status(404).json({
                 success: false,
                 message: "Updating Failed , Item not Found"
@@ -91,7 +88,7 @@ const orderUpdateStatus = async(req,res)=>{
         const product = await Product.findById(item.product)
 
         if(!product){
-            console.log("orderUpdateStatus route not responding");
+            logger.error("orderUpdateStatus route not responding");
             return res.status(404).json({
                 success: false,
                 message: "Updating Failed , product not Found"
@@ -112,11 +109,10 @@ const orderUpdateStatus = async(req,res)=>{
             let  newDiscount
 
             if(orderData.coupon && orderData.coupon.id){
-                console.log("got in",orderData.coupon);
                 
                 const coupon = await Coupon.findById(orderData.coupon.id)
                 if(!coupon){
-                    console.log("coupon not found while updating the order status")
+                    logger.error("coupon not found while updating the order status")
                     return  res.status(400).json({
                         success: false,
                         message: 'coupon not found',
@@ -190,12 +186,12 @@ const returnRequest = async(req,res)=>{
         const status = req.body.status
         const itemId = req.body.itemId
 
-        // console.log(status)
+        // logger.error(status)
 
         const orderData = await Order.findById(orderId)
 
         if(!orderData){
-        console.log("returnRequest route not responding");
+        logger.error("returnRequest route not responding");
             return res.status(404).json({
                 success: false,
                 message: "Updating Failed , Order Id not Found"
@@ -205,7 +201,7 @@ const returnRequest = async(req,res)=>{
         const item = orderData.items.find(item => item._id.toString() === itemId)
 
         if(!item){
-        console.log("returnRequest route not responding");
+        logger.error("returnRequest route not responding");
             return res.status(404).json({
                 success: false,
                 message: "Updating Failed , Item not Found"

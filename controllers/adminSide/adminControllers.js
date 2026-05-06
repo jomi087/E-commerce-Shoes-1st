@@ -1,4 +1,5 @@
 const User = require("../../model/userModel")
+const logger = require('../../helpers/winstonLogger');
 
 const bcrypt = require('bcrypt')
 /**********************************  LOGIN  ******************************************/
@@ -6,7 +7,7 @@ const loadLogin = async(req,res)=>{
     try {
         res.render('adminLogin')
     } catch (error) {
-        console.log(error.message)
+        logger.error(error.message)
         return res.redirect('/admin/error');
     }
 }
@@ -36,7 +37,7 @@ const verifyLogin = async(req,res)=>{
         }
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 }
@@ -47,7 +48,7 @@ const adminLogout = async(req,res)=>{
         req.session.destroy()
         res.redirect('/admin')
     } catch (error) {
-        console.log(error.message)
+        logger.error(error.message)
         return res.status(500).redirect('/error');
     }
 }

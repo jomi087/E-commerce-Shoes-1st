@@ -1,5 +1,6 @@
 const User = require('../../model/userModel');
 const Address = require("../../model/addressModel")
+const logger = require('../../helpers/winstonLogger');
 
 /**********************************             ADDRESS PAGE             ******************************************** */
 const addressPage = async(req, res) => {
@@ -14,11 +15,10 @@ const addressPage = async(req, res) => {
         }
 
         const addressData = user.addresses; //  to get the addresses i have used populate(on top) or else only adressess _id would be  given
-        // console.log(addressData);
         
         res.render('userAddress', { address: addressData });
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 };
@@ -27,7 +27,7 @@ const addAddressPage = async (req,res)=>{
     try {
         res.render('addAddress')
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -79,7 +79,7 @@ const addAddress = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 };
@@ -89,14 +89,14 @@ const editAddressPAge = async(req,res)=>{
         const specificAddress = await Address.findById(req.params.id)
 
         if(!specificAddress){
-            console.log(" cannot found specificAddress (from UserAddressPAge  to editAddressPage )");
+            logger.error(" cannot found specificAddress (from UserAddressPAge  to editAddressPage )");
             return res.status(404).send('Address not found')
         }
 
         res.render('editAddress',{address : specificAddress })
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')  
     }
 }
@@ -110,7 +110,6 @@ const updateAddress = async (req,res)=>{
                 message: "Updation Failed Address Not Found"
             });
         }
-        // console.log(address);
        
         const updateAddress = await Address.findByIdAndUpdate( req.params.id, {
                 name : req.body.name,
@@ -135,7 +134,7 @@ const updateAddress = async (req,res)=>{
                 message: 'Address has been Updated Successfully'
             });
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -169,7 +168,7 @@ const defaultAddress = async(req,res)=>{
         return res.status(204).end();      //204 -> No Content  ->means successful request, no data returned
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 }
@@ -183,7 +182,7 @@ const deleteAddress = async(req,res)=>{
             message : 'Deletion Succesfull'
         })
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 }

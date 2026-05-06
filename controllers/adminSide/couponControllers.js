@@ -1,5 +1,6 @@
 
 const Coupon = require('../../model/couponModel')
+const logger = require('../../helpers/winstonLogger');
 
 /*********************************      COUPON MANAGEMENT    *************************************/
 const couponMangementPage = async(req,res)=>{
@@ -9,7 +10,7 @@ const couponMangementPage = async(req,res)=>{
         res.render('couponManagement',{coupons : allCoupons})
 
     } catch (error) {
-        console.error('Error in couponMangementPage :', error);
+        logger.error('Error in couponMangementPage :', error);
         res.status(500).redirect('/error');
     }
 }
@@ -29,7 +30,7 @@ const addCoupon = async(req,res)=>{
         const newAddedCoupon = await newcoupon.save()
 
         if(!newAddedCoupon){
-            return console.log('newAddedCoupon not found')
+            return logger.error('newAddedCoupon not found')
         }
 
         res.status(201).json({
@@ -37,7 +38,7 @@ const addCoupon = async(req,res)=>{
         })
 
     } catch (error) {
-        console.error('Error in addCoupon :', error);
+        logger.error('Error in addCoupon :', error);
         res.status(500).redirect('/error');
     }
 }
@@ -46,13 +47,13 @@ const editCouponPage = async(req,res)=>{
     try {
         const coupon = await Coupon.findById(req.params.id)
         if(!coupon){
-            console.log('coupon is not found')
+            logger.error('coupon is not found')
             return
         }
 
         res.render('updateCoupon',{coupon})
     } catch (error) {
-        console.log('editCouponPage', error);
+        logger.error('editCouponPage', error);
         res.status(500).redirect('/error');
     }
 }
@@ -70,7 +71,7 @@ const editCoupon = async(req,res)=>{
         },{new : true})
 
         if(!coupon){
-            console.log('coupon updation failed')
+            logger.error('coupon updation failed')
             return res.status(400).json({
                 success : false,
                 message: 'Coupon update failed',
@@ -83,7 +84,7 @@ const editCoupon = async(req,res)=>{
         })
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 }
@@ -99,7 +100,7 @@ const deleteCoupon = async(req,res)=>{
         })
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 }

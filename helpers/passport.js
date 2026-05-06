@@ -55,18 +55,11 @@ passport.use(new GoogleStrategy({
         // 'https://www.googleapis.com/auth/user.phonenumbers.read',
     ]
 }, async (accessToken, refreshToken, profile, done) => {
-    // console.log('accessToken inner',accessToken);
-    // await inspectToken(accessToken);
+
 
     try {
         let user = await User.findOne({ googleId: profile.id });
         if (user && user.isBlocked) throw new Error("user is blocked")
-        // console.log("user",user);
-
-        // const phoneNumbers = await getMyPhoneNumbers(accessToken);
-        // console.log("phoneNumbers",phoneNumbers);
-
-        // const phoneNumber = phoneNumbers.length > 0 ? phoneNumbers[0].value : null;
 
         if (!user) {
             user = new User({
@@ -79,7 +72,6 @@ passport.use(new GoogleStrategy({
                 mobile: null
             });
             const userData = await user.save();
-            // console.log('New user signed up via Google:', userData);
         }
         // else {
         //     if (phoneNumber) {

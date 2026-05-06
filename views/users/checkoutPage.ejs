@@ -746,7 +746,6 @@
         // Function to select an address
         function selectAddress(index) {
           const addressItem = document.querySelectorAll(".address-item")[index];
-          console.log(addressItem);
           const addressId = addressItem.querySelector(".addressId").value;
 
           selectedAddress.innerHTML = addressItem.innerHTML;
@@ -1130,7 +1129,6 @@
           .addEventListener("click", async function (e) {
             if (e.target.classList.contains("select-coupon-btn")) {
               const couponId = e.target.getAttribute("data-coupon-code");
-              console.log(couponId);
 
               const confirmation = await Swal.fire({
                 title: "Are you sure?",
@@ -1240,7 +1238,6 @@
 
             // Check if an address is selected
             const selectedAddress = document.getElementById("selectedAddress");
-            console.log("selectedAddress", selectedAddress.innerHTML.trim());
 
             if (!selectedAddress.innerHTML.trim()) {
               Swal.fire({
@@ -1290,8 +1287,6 @@
                 });
 
                 const result = await response.json();
-                // console.log('response1',response)
-                console.log("result-", result);
 
                 if (response.ok) {
                   if (paymentMethod === "razorpay") {
@@ -1306,7 +1301,6 @@
                       handler: async function (response) {
                         //here the response will be getting from razor pay modal (which will be - payment id , order id , signature)
                         try {
-                          // console.log('response2',response)
 
                           const verifyResponse = await fetch(
                             "/payment/verify",
@@ -1327,7 +1321,6 @@
                           );
 
                           const verifyResult = await verifyResponse.json();
-                          // console.log('verifyResult-',verifyResult)
 
                           if (verifyResult.success) {
                             localStorage.removeItem("selectedCouponId");
@@ -1395,11 +1388,8 @@
                     };
 
                     const rzp = new Razorpay(options);
-                    // console.log(rzp)
 
                     rzp.on("payment.failed", async function (response) {
-                      // console.log('r',result);
-                      // console.log('payment failed', response);
 
                       const failedResponse = await fetch("/payment/failed", {
                         method: "POST",

@@ -1,6 +1,7 @@
 const User = require('../../model/userModel');
 const Product = require('../../model/productModel')
 const Category = require("../../model/categoryModel")
+const logger = require('../../helpers/winstonLogger');
 
 /********************************************************************************************************************* */
 //landing page  ( shorter way  using ternery ) (for regular way refer admin controllers -> usersDetails  )
@@ -20,7 +21,7 @@ const landingPage = async (req, res) => {
         searchTerm,
       });
     } catch (error) {
-      console.log(error.message);
+      logger.error(error.message);
       return res.status(500).redirect('/error');
     }
 }
@@ -32,8 +33,6 @@ const Productspage = async (req,res) => {
         const categoryBase = req.query.category || null 
         
         const sortOption = req.query.sort || '';
-
-        console.log(categoryBase);
         
 
         let searchCondition = { forSale: true };
@@ -85,7 +84,7 @@ const Productspage = async (req,res) => {
             sortOption
         });
     } catch (error) {
-        console.error('Error fetching products:', error);
+        logger.error('Error fetching products:', error);
         return res.status(500).redirect('/error');
     }
 }
@@ -94,15 +93,14 @@ const productDetails = async(req,res)=>{
     try {
         const id = req.query.id
         const specificProduct = await Product.findOne({_id :id}).populate('category')
-        // console.log(specificProduct);
 
         const allProducts = await Product.find().populate('category')
         
         res.render('productDetailsPage',{ product : specificProduct , products : allProducts })
 
     } catch (error) {
-        console.log(error.message);
-        // return res.status(500).redirect('/error')
+        logger.error(error.message);
+        return res.status(500).redirect('/error')
     }
 }
 

@@ -5,6 +5,8 @@ const Cart = require('../../model/cartModel')
 const Order = require('../../model/orderModel')
 const Coupon = require('../../model/couponModel')
 const Wallet = require('../../model/walletModel')
+const logger = require('../../helpers/winstonLogger');
+
 
 const Razorpay = require('razorpay'); 
 const crypto = require('crypto');
@@ -19,7 +21,6 @@ const confirmOrderPage  = async(req,res)=>{
         
         const allCoupon = await Coupon.find({isActive : true})
 
-        // console.log(user);
         if(!user){
             return res.redirect('/logout')
         }
@@ -41,7 +42,7 @@ const confirmOrderPage  = async(req,res)=>{
         })
 
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return res.status(500).redirect('/error')
     }
 }
@@ -87,7 +88,7 @@ const addAddressFromCheckout = async(req,res)=>{
         });
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -126,7 +127,7 @@ const editAddressFromCheckout = async(req,res)=>{
             message: 'Address has been Updated Successfully'
         });
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error')
     }
 }
@@ -138,7 +139,6 @@ const confirmOrder = async(req,res)=>{         //order creation logic to be chan
     
         const paymentMethod = req.body.paymentMethod
         const selctedDeliveryAddressId = req.body.selectedAddressId 
-        // console.log(selctedDeliveryAddressId);
     
         if (!paymentMethod || !selctedDeliveryAddressId) {
             return res.status(400).json({
@@ -156,7 +156,6 @@ const confirmOrder = async(req,res)=>{         //order creation logic to be chan
         }
   
         const address = await Address.findById(selctedDeliveryAddressId);
-        // console.log(address);
         
         if (!address) {
             return res.status(404).json({
@@ -176,7 +175,6 @@ const confirmOrder = async(req,res)=>{         //order creation logic to be chan
             const product = await Product.findById(item.product);
 
             if (!product) {
-                console.log(`Product with ID ${item.product} not found`);
                 return res.status(404).json({
                     message: `Product not found`
                 });
@@ -242,7 +240,6 @@ const confirmOrder = async(req,res)=>{         //order creation logic to be chan
                 payment_capture: 1,
             });
 
-            console.log('razorpayOrder',razorpayOrder)
 
             for(const item of newOrder.items){
                 item.OrderStatus = 'Pending Payment'
@@ -295,7 +292,6 @@ const confirmOrder = async(req,res)=>{         //order creation logic to be chan
                     newOrder.paymentId = null
                     await newOrder.save();
 
-                    console.log('Coupon not found in confirm order')
                      return res.status(404).json({
                         success: false,
                         message: 'Coupon not found'
@@ -352,7 +348,6 @@ const confirmOrder = async(req,res)=>{         //order creation logic to be chan
                         item.Reason = 'Coupon not found'
                     }
                     await newOrder.save();
-                    console.log('Coupon not found in confirm order')
                      return res.status(404).json({
                         success: false,
                         message: 'Coupon not found'
@@ -386,7 +381,7 @@ const confirmOrder = async(req,res)=>{         //order creation logic to be chan
             });
         }         
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return res.status(500).redirect('/error')
     }
 }
@@ -396,7 +391,6 @@ const onDismissUpdateStatus = async(req,res)=>{
         const order = await Order.findById(req.body.orderId)
 
         if(!order){
-            console.log('order not found')
             return res.json({
                 success : false,
                 message : "Somthing went Wrong ,try again later"
@@ -416,7 +410,7 @@ const onDismissUpdateStatus = async(req,res)=>{
         }
 
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return res.status(500).redirect('/error')
     }
 }
@@ -428,7 +422,6 @@ const paymentFailed =async(req,res)=>{
         const orderId = req.body.orderId
         const paymentError = req.body.error
 
-        console.log(paymentError.metadata.payment_id)
 
         const order = await Order.findById(orderId);
 
@@ -450,26 +443,18 @@ const paymentFailed =async(req,res)=>{
         }
     } catch (error) {
         
-        console.error('Failed Payment Error:', error);
+        logger.error('Failed Payment Error:', error);
         return res.status(500).redirect('/error')
     }
 }
 /***************************************************    VERIFY ONLINE PAYMENT   *********************************************************/
 const verifyPayment = async (req,res)=>{      //  Razorpay logic of verify payment ? => Q5* on pending
      try {
-        console.log("hoi")
         const { razorpayPaymentId, razorpayOrderId, razorpaySignature ,orderId,couponId } = req.body;
-        console.log('couponId',couponId);
-
-         // console.log('razorpayPaymentId -', razorpayPaymentId)
-        //  console.log('razorpayOrderId -', razorpayOrderId)
-        //   console.log('razorpaySignature -', razorpaySignature)
-        //    console.log('orderId -', orderId)
 
         const order = await Order.findById(orderId).populate('items.product')
         
         if(!order) {
-            console.log('order not found')
             return res.status(400).json({ success: false, message: 'Order not found , try again later '});
         }
 
@@ -478,7 +463,10 @@ const verifyPayment = async (req,res)=>{      //  Razorpay logic of verify payme
         if(couponId){
             coupon = await Coupon.findById(couponId)
             if(!coupon){
-                return console.log('Coupon not found in confirm order')
+                return res.status(400).json({
+                    success: false,
+                    message: 'Coupon not found in confirm order'
+                });
             }
 
             if(coupon.usageLimit <= 0){
@@ -494,14 +482,13 @@ const verifyPayment = async (req,res)=>{      //  Razorpay logic of verify payme
         // Create a signature hash using the same method as Razorpay
         const generatedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
             .update(`${razorpayOrderId}|${razorpayPaymentId}`)
-            .digest('hex');                                               // console.log('generatedSignature - ',generatedSignature)
+            .digest('hex');                                               
 
         // Compare the generated signature with the received signature
         if (generatedSignature === razorpaySignature) {
 
             for (const item of order.items){
                 const product = item.product
-                // console.log(product);
                 item.product.unitsInStock -= item.quantity
                 await product.save();
                 item.OrderStatus = 'Confirmed'
@@ -532,7 +519,7 @@ const verifyPayment = async (req,res)=>{      //  Razorpay logic of verify payme
             });
         }
     } catch (error) {
-        console.error('Payment Verification Error:', error);
+        logger.error('Payment Verification Error:', error);
         res.status(500).json({ success: false, message: 'Server error during payment verification' });
     }
 }

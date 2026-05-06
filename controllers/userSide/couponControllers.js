@@ -1,5 +1,6 @@
 const Cart = require('../../model/cartModel')
 const Coupon = require('../../model/couponModel')
+const logger = require('../../helpers/winstonLogger');
 
 /************************************       COUPON VALIDATE     ****************************************************** */
 const validateCoupon = async(req,res)=>{
@@ -12,7 +13,7 @@ const validateCoupon = async(req,res)=>{
         const userCart = await Cart.findOne({user : userId})
 
         if(!coupon || !userCart ){
-            console.log('coupon verification failed cz coupon not found')
+            logger.error('coupon verification failed cz coupon not found')
             return res.status(404).json({
                 success : false    
             })
@@ -64,7 +65,7 @@ const validateCoupon = async(req,res)=>{
         })
 
     } catch (error) {
-        console.error('validateCoupon', error);
+        logger.error('validateCoupon', error);
         res.status(500).redirect('/error')
     }
 }

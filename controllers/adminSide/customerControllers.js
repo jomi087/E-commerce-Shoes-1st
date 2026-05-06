@@ -1,4 +1,5 @@
 const User = require("../../model/userModel")
+const logger = require('../../helpers/winstonLogger');
 
 /***********************************    usersDetails     ******************************************/
 const  usersDetails = async (req,res)=>{
@@ -17,7 +18,7 @@ const  usersDetails = async (req,res)=>{
         }   
         
     }catch (error) {      
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error');
     }
 }
@@ -37,7 +38,7 @@ const userStatus = async (req, res) => {
     res.redirect("/admin/customer")
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error') ;   
     }
 };

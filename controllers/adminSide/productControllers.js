@@ -3,6 +3,7 @@ const Product = require("../../model/productModel")
 
 const path = require('path');
 const fs = require('fs') 
+const logger = require('../../helpers/winstonLogger');
 
 
 /******************************     productDetails     *********************************************/
@@ -30,7 +31,7 @@ const productDetails = async(req,res)=>{
             totalPages: Math.ceil(totalProducts / limit),  //if decimal number it will round to the next whole number
         })
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error') ; 
     }
 }
@@ -44,8 +45,8 @@ const addProductPage = async(req,res)=>{
         
         res.render('addProduct',{category})
     } catch (error) {
-        console.log(error.message);
-        // return res.status(500).redirect('/error');
+        logger.error(error.message);
+        return res.status(500).redirect('/error');
     }
 }
 /***********************************    addProduct     ******************************************/
@@ -78,7 +79,6 @@ const addProduct = async (req, res) => {
         and contains details about the file, including its filename,
         ie (req.files[0].filename)
 */ 
-        // console.log("Uploaded files: ", req.files);
 
         const product = new Product({
             productName: req.body.Pname,
@@ -101,7 +101,7 @@ const addProduct = async (req, res) => {
             res.render('addProduct', { message: "Process Failed, Please check with our team members" });
         }
     } catch (error) {
-        console.log("Error in addProduct: ", error);
+        logger.error("Error in addProduct: ", error);
         const category = await Category.find() 
         res.status(500).render('addProduct', { message: "An error occurred while adding the product.",category });
     }
@@ -113,24 +113,23 @@ const editProductPage  =  async(req,res)=>{
         const productId =  req.query.id
            
         if(!productId){
-            console.log("req.query.id not Found (editProductPage)");
+            logger.error("req.query.id not Found (editProductPage)");
             return res.status(404).redirect('*')
         }
-        // console.log(productId);
 
         const product = await Product.findOne({_id : productId}).populate('category')
         const category = await Category.find() 
 
         if(!product){
-            console.log(error.message);
+            logger.error(error.message);
             return res.status(500).redirect('/error'); 
         }
         
         res.render('updateProduct',{product,category})
        
     } catch (error) {
-        console.log(error.message);
-        // return res.status(500).redirect('/error'); 
+        logger.error(error.message);
+        return res.status(500).redirect('/error'); 
     }
 }
 /********************************* PRODUCT ISACTIVE / UNACTIVE *****************************************/
@@ -153,7 +152,7 @@ const productStatus = async(req,res)=>{
         })
 
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error') ;
     }
 }
@@ -161,10 +160,8 @@ const productStatus = async(req,res)=>{
 const editProduct = async (req,res)=>{
     try {
         const imagesToDelete = req.body.imagesToDelete
-        // console.log('hlo',imagesToDelete)
 
         const existingProduct =  await Product.findOne({_id:req.body.id}) // Storing the document to a variable before  getting updated[this is for removing the uploadfiles from system ]
-        // console.log(existingProduct);
 
         const regularPrice = parseInt(req.body.PregularPrice);
         const salePrice = parseInt(req.body.PsalePrice);
@@ -172,11 +169,9 @@ const editProduct = async (req,res)=>{
         const Pdiscount = Math.round(((regularPrice - salePrice) / regularPrice) * 100);// to get the percentage
 
         let finalImages = existingProduct.images || []
-        // console.log('finalImages',finalImages)
 
         if (imagesToDelete) {
             const imagesToDeleteArray = JSON.parse(imagesToDelete); // Parse the imagesToDelete array from the request
-            // console.log('parsed',imagesToDeleteArray)
 
             imagesToDeleteArray.forEach(image => {
                 const imageIndex = finalImages.indexOf(image);
@@ -186,7 +181,6 @@ const editProduct = async (req,res)=>{
                     const imagePath = path.join(__dirname, '../public/imgs/product/', image);
                     if (fs.existsSync(imagePath)) {
                         fs.unlinkSync(imagePath);
-                        console.log(`Successfully deleted file: ${image}`);
                     }
                 }
             });
@@ -198,21 +192,16 @@ const editProduct = async (req,res)=>{
             const newFilenames = req.files.map(file => file.filename);
             finalImages = finalImages.concat(newFilenames); // Add new images to the final list
 
-            // console.log(finalImages.length)
             if (finalImages.length < 3 || finalImages.length > 5) {
 
-            //    console.log(req.files)
 
                 req.files.forEach((file) => {
                     const imagePath = path.join(__dirname, '../public/imgs/product/', file.filename);
                     fs.unlinkSync(imagePath);
-                    console.log(`Successfully deleted file: ${file.filename}`);
                 });
 
                 return res.send( "Please ensure you have between 3 and 5 images")
 
-                // const category = await Category.find()
-                // return res.render('updateProduct', { message: "Please ensure you have between 3 and 5 images.", category,product:existingProduct });
             }
         }
     
@@ -230,30 +219,16 @@ const editProduct = async (req,res)=>{
         }}, { new: true }  // this is given here cz if not given it will return the product details before updation 
     )
 
-        // console.log("updated Product = > ",updatedProduct);
         
         if(!updatedProduct){
             res.render('addProduct', { message: "Process Failed, Please check with our team members" });
         }
         
-            // //removing prvious img path from the folder
-            // if(req.files.length>0){                                            //  console.log(req.files.length);
-            //     existingProduct.images.forEach((image)=>{
-            //         console.log(__dirname);
-            //         const oldImagePath = path.join(__dirname, '../public/imgs/product/', image);
-            //         console.log(oldImagePath);
-            //         fs.unlinkSync(oldImagePath)
-            //         console.log('successfully deleted file');
-            //     })
-            // }else{
-            //     console.log('updatedProduct tym privious image is not getting deteted');
-            //     console.log(error.message); 
-            // }
         
         res.redirect('/admin/product')
         
     } catch (error) {
-        console.log(error.message);
+        logger.error(error.message);
         return res.status(500).redirect('/error'); 
     }
 }
@@ -269,21 +244,18 @@ const deleteProduct = async (req, res) => {
 
         if(deletionProduct){
             deletionProduct.images.forEach((image)=>{
-                console.log(__dirname);
                 const oldImagePath = path.join(__dirname, '../public/imgs/product/', image);
-                console.log(oldImagePath);
                 fs.unlinkSync(oldImagePath)
-                console.log('successfully deleted file');
             })
         }else{
-            console.log('deletionProduct tym image is not getting deteted');
-            console.log(error.message); 
+            logger.error("del product",error.message); 
+
         }
 
         res.redirect('/admin/product');
 
     } catch (error) {
-        console.error('Error in deleteProduct:', error);
+        logger.error('Error in deleteProduct:', error);
         res.status(500).redirect('/error');
     }
 };

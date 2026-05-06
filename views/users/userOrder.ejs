@@ -272,7 +272,6 @@
         try{
             window.location.href = `/order/downloadInvoice/${invoiceId}`
         }catch(err){
-            console.log(err)
             swal.fire('error!',err.message || 'An error Occcured while downloading the invoice','error')
         }
     }
@@ -288,10 +287,8 @@
                     orderId,
                 })
             })
-            // console.log("response",response)
 
             const result = await response.json()
-            // console.log(result)
 
             if(result.success){
 
@@ -318,7 +315,6 @@
                                 })
                             })
                             const verifyResult = await verifyResponse.json();
-                            console.log('verifyResult-',verifyResult)
 
 
                             if (verifyResult.success) {
@@ -359,8 +355,6 @@
                 const rzp = new Razorpay(options);
 
                 rzp.on('payment.failed',async function (response){
-                    // console.log('r',result);
-                    // console.log('payment failed', response);
 
                     const failedResponse = await fetch('/payment/failed',{
                         method : 'POST',
@@ -429,7 +423,6 @@
                 })
        
                    const reason = reasonResult.value;   
-                   console.log(reason) 
 
                 if (reasonResult.isConfirmed) {
                     const response = await fetch('/order/cancel', {
@@ -513,7 +506,6 @@
                 });
                
                 let reason = reasonResult.value;                   // Step 3:  selected reason stored in a variable
-                console.log('option reason -> ',reason)
 
                 if (reasonResult.isConfirmed && reason === 'others') {         // If the user selected "Other reasons", again giving swalfire to get the specific reason 
                     const customReasonResult = await Swal.fire({
@@ -537,7 +529,6 @@
                     } else {
                         return;                                                   // Step 4: Send the return request
                     }
-                    console.log('other reason -> ',reason)
                 }
 
 

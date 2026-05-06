@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
+const logger = require('../helpers/winstonLogger');
 
 
 async function connectToDatabase() {
     try {
         await mongoose.connect(process.env.MONGODB_URL);
-        console.log('Connected to MongoDB');
+        logger.info('Connected to MongoDB')
     } catch (err) {
-        
-        console.error('Failed to connect to MongoDB', err);
+        logger.error(`Failed to connect to MongoDB: ${err.message}`, err);
+        process.exit(1);
     }
 }
 
