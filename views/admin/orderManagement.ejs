@@ -1,187 +1,244 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fashion Feet</title>
-    <!-- font -->
+    <title>Fashion Feet — Orders</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Moul&display=swap" rel="stylesheet">
-
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <!-- my-css -->
-    <link rel="stylesheet" href="styleadmin.css">
     <style>
-        .table-container {
-            overflow-x: auto;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #222222;
+            --border: #2a2a2a; --border2: #333;
+            --cream: #f0e6d3; --muted: #999; --dim: #555;
+            --gold1: #c9a96e; --gold2: #a8813d;
+            --error: #e05f5f; --success: #4caf7d;
+            --sidebar-w: 220px;
         }
+        html, body { height: 100%; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--cream); display: flex; flex-direction: column; min-height: 100vh; }
 
-        .table {
-            border-collapse: separate;
-            border-spacing: 0 5px;
-        }
+        /* NAVBAR */
+        .navbar { position: sticky; top: 0; z-index: 100; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: .85rem 1.5rem; gap: 1rem; }
+        .navbar-brand { font-family: 'Playfair Display', serif; font-size: 1.45rem; color: var(--cream); letter-spacing: 1px; white-space: nowrap; text-decoration: none; }
+        .navbar-right { display: flex; align-items: center; gap: 1rem; }
+        .navbar-badge { font-size: .65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border2); padding: .25rem .65rem; border-radius: 20px; }
+        .logout-btn { font-size: .75rem; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); text-decoration: none; padding: .4rem .9rem; border: 1px solid var(--border2); border-radius: 6px; transition: color .2s, border-color .2s; display: flex; align-items: center; gap: .4rem; }
+        .logout-btn:hover { color: var(--gold1); border-color: var(--gold1); }
+        .hamburger { display: none; background: none; border: 1px solid var(--border2); border-radius: 6px; color: var(--muted); font-size: 1.2rem; padding: .3rem .55rem; cursor: pointer; }
 
-        .table-hover tbody tr:hover {
-            background-color: #f1f1f1;
-        }
+        /* LAYOUT */
+        .layout { display: flex; flex: 1; overflow: hidden; }
 
-        .table th,
-        .table td {
-            border: none;
-            padding: 12px 15px;
-            vertical-align: middle;
-        }
+        /* SIDEBAR */
+        .sidebar { width: var(--sidebar-w); background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 1rem; gap: .35rem; flex-shrink: 0; transition: transform .3s ease; }
+        .sidebar-label { font-size: .6rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--dim); padding: .5rem .65rem .2rem; margin-top: .5rem; }
+        .nav-link { display: flex; align-items: center; gap: .65rem; padding: .65rem .85rem; border-radius: 8px; color: var(--muted); text-decoration: none; font-size: .86rem; font-weight: 500; transition: background .2s, color .2s; }
+        .nav-link i { font-size: 1rem; width: 1.1rem; text-align: center; }
+        .nav-link:hover { background: var(--surface2); color: var(--cream); }
+        .nav-link.active { background: linear-gradient(135deg, rgba(201,169,110,.18), rgba(168,129,61,.1)); color: var(--gold1); border: 1px solid rgba(201,169,110,.2); }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 90; }
 
-        .table td {
-            border-radius: 4px;
+        /* MAIN */
+        .main { flex: 1; overflow-y: auto; padding: 2rem 1.75rem; display: flex; flex-direction: column; gap: 1.75rem; }
+        .page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem; }
+        .page-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: var(--cream); }
+        .page-date { font-size: .78rem; color: var(--muted); letter-spacing: .5px; }
+
+        /* TABLE CARD */
+        .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; animation: fadeUp .5s ease both; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .table-card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+        .card-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--cream); }
+        .order-count-badge { font-size: .7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold1); background: rgba(201,169,110,.1); border: 1px solid rgba(201,169,110,.2); padding: .3rem .75rem; border-radius: 20px; }
+
+        /* TABLE */
+        .tbl-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+        thead tr { background: var(--surface2); border-bottom: 1px solid var(--border2); }
+        thead th { padding: .9rem 1rem; text-align: left; font-size: .65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--dim); font-weight: 600; white-space: nowrap; }
+        tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+        tbody tr:hover { background: var(--surface2); }
+        tbody td { padding: .85rem 1rem; color: var(--cream); font-size: .82rem; vertical-align: middle; }
+        .td-id { font-family: monospace; color: var(--muted); font-size: .78rem; }
+        .td-name { font-weight: 500; }
+        .td-amount { font-weight: 600; color: var(--gold1); }
+        .td-date { color: var(--muted); font-size: .78rem; white-space: nowrap; }
+
+        /* STATUS BADGES */
+        .badge { display: inline-flex; align-items: center; gap: .3rem; padding: .25rem .65rem; border-radius: 20px; font-size: .68rem; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 3px; }
+        .badge-confirmed { background: rgba(76,175,125,.15); color: #4caf7d; border: 1px solid rgba(76,175,125,.25); }
+        .badge-delivered { background: rgba(76,175,125,.15); color: #4caf7d; border: 1px solid rgba(76,175,125,.25); }
+        .badge-canceled { background: rgba(224,95,95,.15); color: #e05f5f; border: 1px solid rgba(224,95,95,.25); }
+        .badge-shipped { background: rgba(99,153,199,.15); color: #6399c7; border: 1px solid rgba(99,153,199,.25); }
+        .badge-pending { background: rgba(201,169,110,.15); color: var(--gold1); border: 1px solid rgba(201,169,110,.25); }
+
+        /* ACTION BUTTON */
+        .action-btn { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--border2); background: transparent; color: var(--muted); text-decoration: none; transition: color .2s, border-color .2s, background .2s; font-size: .9rem; }
+        .action-btn:hover { color: var(--gold1); border-color: var(--gold1); background: rgba(201,169,110,.08); }
+
+        /* PAYMENT PILL */
+        .pay-pill { display: inline-block; font-size: .7rem; padding: .2rem .55rem; border-radius: 5px; background: var(--surface2); border: 1px solid var(--border2); color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+
+        /* EMPTY STATE */
+        .empty-state { padding: 4rem 2rem; text-align: center; }
+        .empty-state i { font-size: 2.5rem; color: var(--dim); display: block; margin-bottom: 1rem; }
+        .empty-state p { color: var(--muted); font-size: .9rem; }
+
+        /* PAGINATION */
+        .pagination-wrap { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; align-items: center; gap: .4rem; flex-wrap: wrap; }
+        .pg-btn { padding: .35rem .75rem; border-radius: 6px; border: 1px solid var(--border2); background: transparent; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: .78rem; cursor: pointer; text-decoration: none; transition: all .2s; display: inline-block; }
+        .pg-btn:hover { border-color: var(--gold1); color: var(--gold1); }
+        .pg-btn.active { background: linear-gradient(135deg, var(--gold1), var(--gold2)); border-color: transparent; color: #0f0f0f; font-weight: 700; }
+        .pg-btn.disabled { opacity: .35; pointer-events: none; }
+
+        @media (max-width: 768px) {
+            .hamburger { display: block; }
+            .sidebar { position: fixed; top: 0; left: 0; bottom: 0; z-index: 95; transform: translateX(-100%); padding-top: 4.5rem; }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .main { padding: 1.25rem 1rem; }
         }
+        @media (max-width: 500px) { .navbar-badge { display: none; } }
     </style>
 </head>
-<body class="page-body">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg nav-bar-custom">
-        <div class="container-fluid">
-            <h3 class="text-white cinzel-decorative mt-2">Fashion Feet</h3>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <!-- <li class="nav-item">
-                        <a class=" nav-link" href="#"><i class="bi bi-person-circle"></i>Account</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-gear-fill"></i>Settings</a>
-                    </li> -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/logout"><i class="bi bi-box-arrow-right"></i>Logout</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<body>
 
-    <!-- Main content -->
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-2 sidebar p-3">
-                <nav class="nav flex-column">
-                    <a class=" btn btn-primary nav-link" href="/admin/dashboard">Dashboard</a>
-                    <a class="btn btn-primary nav-link" href="/admin/customer">Customers</a>
-                    <a class="btn btn-primary nav-link" href="/admin/product">Products</a>
-                    <a class="btn btn-primary nav-link" href="/admin/orderManagement">Orders</a>
-                    <a class="btn btn-primary nav-link" href="/admin/couponManagement">Coupon Management</a>
-                    <a class="btn btn-primary nav-link" href="/admin/salesReport">Sales Report</a>
-                    <a class="btn btn-primary nav-link" href="/admin/category">Category</a>
-                </nav>
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div style="display:flex;align-items:center;gap:.85rem;">
+            <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="bi bi-list"></i></button>
+            <a class="navbar-brand" href="#">Fashion Feet</a>
+        </div>
+        <div class="navbar-right">
+            <span class="navbar-badge">Admin Portal</span>
+            <a href="/admin/logout" class="logout-btn"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        </div>
+    </header>
+
+    <!-- LAYOUT -->
+    <div class="layout">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <span class="sidebar-label">Main</span>
+            <a class="nav-link" href="/admin/dashboard"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+            <a class="nav-link" href="/admin/customer"><i class="bi bi-people"></i> Customers</a>
+            <a class="nav-link" href="/admin/product"><i class="bi bi-box-seam"></i> Products</a>
+            <a class="nav-link active" href="/admin/orderManagement"><i class="bi bi-basket3"></i> Orders</a>
+            <span class="sidebar-label">Management</span>
+            <a class="nav-link" href="/admin/couponManagement"><i class="bi bi-ticket-perforated"></i> Coupons</a>
+            <a class="nav-link" href="/admin/salesReport"><i class="bi bi-bar-chart-line"></i> Sales Report</a>
+            <a class="nav-link" href="/admin/category"><i class="bi bi-tag"></i> Categories</a>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main">
+            <div class="page-header">
+                <h1 class="page-title">Orders</h1>
+                <!-- <span class="page-date" id="todayDate"></span> -->
             </div>
-        
-            <div class="col-md-10 content p-4">
-                <!-- Orders Table Header -->
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="mb-0 border-bottom border-dark border-2">Orders</h4>
-                    <!-- <div class="d-flex align-items-center">
-                        <label for="sort" class="me-2">Sort:</label>
-                        <select class="form-select form-select-sm me-2" id="sort">
-                            <option value="name">Name</option>
-                            <option value="amount">Amount</option>
-                            <option value="date">Date</option>
-                        </select>
-                        <select class="form-select form-select-sm me-2">
-                            <option value="ascending">Ascending</option>
-                            <option value="descending">Descending</option>
-                        </select>
-                        <input type="text" class="form-control form-control-sm" placeholder="Filter">
-                    </div> -->
+
+            <div class="table-card">
+                <div class="table-card-header">
+                    <h2 class="card-title">All Orders</h2>
+                    <span class="order-count-badge">
+                        <i class="bi bi-basket3"></i> <%= orders.length %> orders
+                    </span>
                 </div>
-            
-                <% if(orders.length > 0) { %>
-                    <!-- Orders Table -->
-                    <table class="table table-hover table-bordered text-center " style="font-size: 14px;">
-                        <thead class="table-dark">
+
+                <% if (orders.length > 0) { %>
+                <div class="tbl-wrap">
+                    <table>
+                        <thead>
                             <tr>
-                                <th scope="col">S.No</th>
-                                <th scope="col">Order ID</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Total Amount</th>
-                                <th scope="col">Payment</th>
-                                <th scope="col">Date</th>
-                                <th scope="col">Item's Status</th>
-                                <th scope="col">Actions</th>
+                                <th>#</th>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Payment</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
-                        <% orders.forEach((order,index)=>{ %>
-                            <tbody  style="font-family:'Times New Roman', Times, serif;text-transform: uppercase;">
-                                <tr>
-                                    <td style="width: 10px;" class="text-center"><%=index+1%></td>
-                                    <td style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;"><%=order._id.toString().slice(-6) %></td>
-                                    <td><%=order.user.firstName+' '+order.user.lastName%></td>
-                                    <td>₹<%=(order.actualSalePrice - (order.coupon.discount ? order.coupon.discount : 0)).toLocaleString()%></td>
-                                    <td><%=order.paymentMethod%></td>
-                                    <td style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;"><%=new Date(order.orderDate).toLocaleString()%></td>
-                                    <td>
-                                    <% order.items.forEach((item, index) => { %>
-                                        <div class="d-flex align-items-center mb-1">
-                                            <% if (item.OrderStatus === "Confirmed") { %>
-                                                <span class="badge bg-success me-2">  <%= item.OrderStatus %></span>
-                                            <% } else if (item.OrderStatus === "Delivered") { %>
-                                                <span class="badge bg-success me-2"> <%= item.OrderStatus %></span>
-                                                <i class="bi bi-check2-circle text-success fs-5"></i>
-                                            <% } else if (item.OrderStatus === "Canceled") { %>
-                                                <span class="badge bg-danger me-2"> <%= item.OrderStatus %></span>
-                                            <% } else if (item.OrderStatus === "Shipped") { %>
-                                                <span class="badge bg-primary me-2"> <%= item.OrderStatus %></span>
-                                            <% } else { %>
-                                                <span class="badge bg-warning me-2"> <%= item.OrderStatus %></span>
-                                            <% } %>
-                                        </div>
+                        <tbody>
+                            <% orders.forEach((order, index) => { %>
+                            <tr>
+                                <td class="td-id"><%= index + 1 %></td>
+                                <td class="td-id">#<%= order._id.toString().slice(-6).toUpperCase() %></td>
+                                <td class="td-name"><%= order.user.firstName + ' ' + order.user.lastName %></td>
+                                <td class="td-amount">₹<%= (order.actualSalePrice - (order.coupon.discount ? order.coupon.discount : 0)).toLocaleString() %></td>
+                                <td><span class="pay-pill"><%= order.paymentMethod %></span></td>
+                                <td class="td-date"><%= new Date(order.orderDate).toLocaleString('en-IN') %></td>
+                                <td>
+                                    <% order.items.forEach(item => { %>
+                                        <% if (item.OrderStatus === 'Confirmed') { %>
+                                            <span class="badge badge-confirmed"><%= item.OrderStatus %></span>
+                                        <% } else if (item.OrderStatus === 'Delivered') { %>
+                                            <span class="badge badge-delivered"><i class="bi bi-check2-circle"></i> <%= item.OrderStatus %></span>
+                                        <% } else if (item.OrderStatus === 'Canceled') { %>
+                                            <span class="badge badge-canceled"><%= item.OrderStatus %></span>
+                                        <% } else if (item.OrderStatus === 'Shipped') { %>
+                                            <span class="badge badge-shipped"><%= item.OrderStatus %></span>
+                                        <% } else { %>
+                                            <span class="badge badge-pending"><%= item.OrderStatus %></span>
+                                        <% } %>
                                     <% }) %>
-                                    </td>
-                                    <td>
-                                        <a href="/admin/orderDetails/<%=order._id%>" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
-                                    </td>
-                                </tr>
-                                <!-- Add more rows as needed -->
-                            </tbody>
-                        <% }) %>
+                                </td>
+                                <td>
+                                    <a href="/admin/orderDetails/<%= order._id %>" class="action-btn" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
                     </table>
-                
-                    <!-- Pagination -->
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-end">
-                            <% if(currentPage > 1){ %>
-                            <li class="page-item " >
-                                <a class="page-link" href="?page=<%= currentPage - 1 %>" tabindex="-1" >Previous</a>
-                            </li> 
-                            <% } %>                          
-                            <% for(let i = 1 ; i <=  totalPages ; i++){ %>
-                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                    <a class="page-link" href='?page=<%=i%>'><%= i %></a>
-                                </li>
-                            <% } %> 
-                            <% if (currentPage < totalPages) { %>
-                            <li class="page-item"></li>
-                                <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
-                            </li>
-                            <% } %>
-                        </ul>
-                    </nav>
-                <% } else { %>
-                     <div class="d-flex justify-content-center align-items-center" style="height: 300px">
-                        <h5 class="fw-bold text-Dark">No orders found. It looks like NO One ordered anything yet!</h5>
-                    </div>
-                <%}%>
-            </div>            
-        </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+                </div>
 
+                <!-- PAGINATION -->
+                <div class="pagination-wrap">
+                    <% if (currentPage > 1) { %>
+                        <a class="pg-btn" href="?page=<%= currentPage - 1 %>">Previous</a>
+                    <% } else { %>
+                        <span class="pg-btn disabled">Previous</span>
+                    <% } %>
+
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <a class="pg-btn <%= currentPage === i ? 'active' : '' %>" href="?page=<%= i %>"><%= i %></a>
+                    <% } %>
+
+                    <% if (currentPage < totalPages) { %>
+                        <a class="pg-btn" href="?page=<%= currentPage + 1 %>">Next</a>
+                    <% } else { %>
+                        <span class="pg-btn disabled">Next</span>
+                    <% } %>
+                </div>
+
+                <% } else { %>
+                <div class="empty-state">
+                    <i class="bi bi-basket3"></i>
+                    <p>No orders found. It looks like no one has ordered anything yet!</p>
+                </div>
+                <% } %>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('todayDate').textContent =
+            new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        hamburger.addEventListener('click', () => { sidebar.classList.toggle('open'); overlay.classList.toggle('open'); });
+        overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('open'); });
+    </script>
+</body>
 </html>

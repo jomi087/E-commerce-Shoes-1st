@@ -4,333 +4,818 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fashion Feet</title>
-    <!-- font -->
+    <title>Fashion Feet — Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Moul&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;700&display=swap"
         rel="stylesheet">
-
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <!-- my-css -->
-    <link rel="stylesheet" href="styleadmin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .graph-card {
-
-            border-radius: 10px;
-            padding: 20px;
-            width: 100%;
-            max-width: auto;
-            height: auto;
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        #myChart {
-            width: 100%;
+        :root {
+            --bg: #0f0f0f;
+            --surface: #1a1a1a;
+            --surface2: #222222;
+            --border: #2a2a2a;
+            --border2: #333;
+            --cream: #f0e6d3;
+            --muted: #999;
+            --dim: #555;
+            --gold1: #c9a96e;
+            --gold2: #a8813d;
+            --error: #e05f5f;
+            --success: #4caf7d;
+            --sidebar-w: 220px;
+        }
+
+        html,
+        body {
             height: 100%;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--cream);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ══════════════════════════════
+           NAVBAR
+        ══════════════════════════════ */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .85rem 1.5rem;
+            gap: 1rem;
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.45rem;
+            color: var(--cream);
+            letter-spacing: 1px;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .navbar-badge {
+            font-size: .65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            border: 1px solid var(--border2);
+            padding: .25rem .65rem;
+            border-radius: 20px;
+        }
+
+        .logout-btn {
+            font-size: .75rem;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            text-decoration: none;
+            padding: .4rem .9rem;
+            border: 1px solid var(--border2);
+            border-radius: 6px;
+            transition: color .2s, border-color .2s;
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+        }
+
+        .logout-btn:hover {
+            color: var(--gold1);
+            border-color: var(--gold1);
+        }
+
+        /* hamburger */
+        .hamburger {
+            display: none;
+            background: none;
+            border: 1px solid var(--border2);
+            border-radius: 6px;
+            color: var(--muted);
+            font-size: 1.2rem;
+            padding: .3rem .55rem;
+            cursor: pointer;
+        }
+
+        /* ══════════════════════════════
+           LAYOUT
+        ══════════════════════════════ */
+        .layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ══════════════════════════════
+           SIDEBAR
+        ══════════════════════════════ */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 1rem;
+            gap: .35rem;
+            flex-shrink: 0;
+            transition: transform .3s ease;
+        }
+
+        .sidebar-label {
+            font-size: .6rem;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--dim);
+            padding: .5rem .65rem .2rem;
+            margin-top: .5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+            padding: .65rem .85rem;
+            border-radius: 8px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: .86rem;
+            font-weight: 500;
+            transition: background .2s, color .2s;
+        }
+
+        .nav-link i {
+            font-size: 1rem;
+            width: 1.1rem;
+            text-align: center;
+        }
+
+        .nav-link:hover {
+            background: var(--surface2);
+            color: var(--cream);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, rgba(201, 169, 110, .18), rgba(168, 129, 61, .1));
+            color: var(--gold1);
+            border: 1px solid rgba(201, 169, 110, .2);
+        }
+
+        /* overlay for mobile sidebar */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .6);
+            z-index: 90;
+        }
+
+        /* ══════════════════════════════
+           MAIN CONTENT
+        ══════════════════════════════ */
+        .main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.75rem;
+        }
+
+        /* page title */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: .75rem;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--cream);
+        }
+
+        .page-date {
+            font-size: .78rem;
+            color: var(--muted);
+            letter-spacing: .5px;
+        }
+
+        /* ══════════════════════════════
+           STAT CARDS
+        ══════════════════════════════ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: fadeUp .5s ease both;
+            transition: border-color .2s, transform .2s;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(201, 169, 110, .3);
+            transform: translateY(-2px);
+        }
+
+        .stat-card:nth-child(1) {
+            animation-delay: .05s;
+        }
+
+        .stat-card:nth-child(2) {
+            animation-delay: .1s;
+        }
+
+        .stat-card:nth-child(3) {
+            animation-delay: .15s;
+        }
+
+        .stat-card:nth-child(4) {
+            animation-delay: .2s;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(201, 169, 110, .2), rgba(168, 129, 61, .1));
+            border: 1px solid rgba(201, 169, 110, .2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: var(--gold1);
+            flex-shrink: 0;
+        }
+
+        .stat-info {
+            min-width: 0;
+        }
+
+        .stat-label {
+            font-size: .7rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: .2rem;
+        }
+
+        .stat-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--cream);
+            line-height: 1.1;
+        }
+
+        .stat-sub {
+            font-size: .72rem;
+            color: var(--dim);
+            margin-top: .2rem;
+        }
+
+        .stat-sub .highlight {
+            color: var(--error);
+            font-weight: 600;
+        }
+
+        /* ══════════════════════════════
+           BOTTOM ROW
+        ══════════════════════════════ */
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 1.25rem;
+        }
+
+        /* ── Chart card ── */
+        .chart-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            animation: fadeUp .5s .25s ease both;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.05rem;
+            color: var(--cream);
+        }
+
+        .timeframe-btns {
+            display: flex;
+            gap: .5rem;
+            flex-wrap: wrap;
+        }
+
+        .tf-btn {
+            padding: .35rem .85rem;
+            border-radius: 6px;
+            border: 1px solid var(--border2);
+            background: transparent;
+            color: var(--muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: .75rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .tf-btn:hover {
+            border-color: var(--gold1);
+            color: var(--gold1);
+        }
+
+        .tf-btn.active {
+            background: linear-gradient(135deg, var(--gold1), var(--gold2));
+            border-color: transparent;
+            color: #0f0f0f;
+            font-weight: 700;
+        }
+
+        .chart-wrap {
+            position: relative;
+            flex: 1;
+            min-height: 240px;
+        }
+
+        .revenue-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            background: rgba(201, 169, 110, .1);
+            border: 1px solid rgba(201, 169, 110, .2);
+            border-radius: 20px;
+            padding: .3rem .85rem;
+            font-size: .78rem;
+            color: var(--gold1);
+            font-weight: 600;
+        }
+
+        /* ── Info card ── */
+        .info-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            animation: fadeUp .5s .3s ease both;
+        }
+
+        .section-label {
+            font-size: .65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--dim);
+            margin-bottom: .75rem;
+            padding-bottom: .5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* best product */
+        .best-product {
+            display: flex;
+            align-items: center;
+            gap: .9rem;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: .85rem;
+        }
+
+        .best-product img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border2);
+        }
+
+        .best-product-name {
+            font-weight: 600;
+            font-size: .88rem;
+            color: var(--cream);
+            margin-bottom: .2rem;
+        }
+
+        .best-product-tag {
+            font-size: .68rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--gold1);
+        }
+
+        /* category pill */
+        .cat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: .4rem .9rem;
+            font-size: .8rem;
+            color: var(--cream);
+        }
+
+        .cat-pill i {
+            color: var(--gold1);
+            font-size: .75rem;
+        }
+
+        .empty-msg {
+            font-size: .8rem;
+            color: var(--dim);
+            font-style: italic;
+        }
+
+        /* ══════════════════════════════
+           RESPONSIVE
+        ══════════════════════════════ */
+        @media (max-width: 1100px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .bottom-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --sidebar-w: 240px;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                z-index: 95;
+                transform: translateX(-100%);
+                padding-top: 4.5rem;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
+            .main {
+                padding: 1.25rem 1rem;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar-badge {
+                display: none;
+            }
         }
     </style>
 </head>
 
-<body class="page-body">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg nav-bar-custom">
-        <div class="container-fluid">
-            <h3 class="text-white cinzel-decorative mt-2">Fashion Feet</h3>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+<body>
+
+    <!-- ── NAVBAR ── -->
+    <header class="navbar">
+        <div style="display:flex;align-items:center;gap:.85rem;">
+            <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+                <i class="bi bi-list"></i>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="#">Account</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Settings</a>
-                    </li> -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/logout">Logout</a>
-                    </li>
-                </ul>
-            </div>
+            <a class="navbar-brand" href="#">Fashion Feet</a>
         </div>
-    </nav>
+        <div class="navbar-right">
+            <span class="navbar-badge">Admin Portal</span>
+            <a href="/admin/logout" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </div>
+    </header>
+    <!-- converted the above code in to resuble so that rest of the page can use it  -->
+    <!-- <%- include('../Z_Common_Code/admin/header.ejs') %> -->
 
-    <!-- Main content -->
-    <div class="container-fluid">
-        <div class="row ">
-            <!-- Sidebar -->
-            <div class="col-md-2 sidebar p-3">
-                <nav class="nav flex-column">
-                    <a class="btn btn-primary nav-link" href="/admin/dashboard">Dashboard</a>
-                    <a class="btn btn-primary nav-link" href="/admin/customer">Customers</a>
-                    <a class="btn btn-primary nav-link" href="/admin/product">Products</a>
-                    <a class="btn btn-primary nav-link" href="/admin/orderManagement">Orders</a>
-                    <a class="btn btn-primary nav-link" href="/admin/couponManagement">Coupon Management</a>
-                    <a class="btn btn-primary nav-link" href="/admin/salesReport">Sales Report</a>
-                    <a class="btn btn-primary nav-link" href="/admin/category">Category</a>
-                </nav>
+
+    <!-- ── LAYOUT ── -->
+    <div class="layout">
+
+        <!-- Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- ── SIDEBAR ── -->
+        <aside class="sidebar" id="sidebar">
+            <span class="sidebar-label">Main</span>
+            <a class="nav-link active" href="/admin/dashboard"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+            <a class="nav-link" href="/admin/customer"><i class="bi bi-people"></i> Customers</a>
+            <a class="nav-link" href="/admin/product"><i class="bi bi-box-seam"></i> Products</a>
+            <a class="nav-link" href="/admin/orderManagement"><i class="bi bi-basket3"></i> Orders</a>
+
+            <span class="sidebar-label">Management</span>
+            <a class="nav-link" href="/admin/couponManagement"><i class="bi bi-ticket-perforated"></i> Coupons</a>
+            <a class="nav-link" href="/admin/salesReport"><i class="bi bi-bar-chart-line"></i> Sales Report</a>
+            <a class="nav-link" href="/admin/category"><i class="bi bi-tag"></i> Categories</a>
+        </aside>
+        <!-- converted the above code in to resuble so that rest of the page can use it  -->
+        <!-- <%- include('../Z_Common_Code/admin/sidebar.ejs', { active: 'dashboard' }) %> -->
+
+        <!-- ── MAIN ── -->
+        <main class="main">
+
+            <!-- Page header -->
+            <div class="page-header">
+                <h1 class="page-title">Dashboard</h1>
+                <span class="page-date" id="todayDate"></span>
             </div>
 
-            <!-- Content area -->
-            <div class="col-md-10 content">
-                <!-- Summary Cards Row -->
-                <div class="row">
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <div class="mt-3 stats-card d-flex align-items-center p-2">
-                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white"
-                                style="width: 55px; height: 50px;">
-                                <i class="bi bi-currency-rupee fs-2"></i>
-                            </div>
-                            <div class="ms-2">
-                                <h5><strong>Total Revenue</strong></h5>
-                                <p class="pt-2 mb-0 fs-1 text-success"
-                                    style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif">₹<%=
-                                        summary.totalSales %>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <div class="mt-3 stats-card d-flex align-items-center p-2">
-                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white"
-                                style="width: 55px; height: 50px;">
-                                <i class="bi bi-basket3 fs-2"></i>
-                            </div>
-                            <div class="ms-2">
-                                <h4><strong>Total Orders</strong></h4>
-                                <p class="pt-2 mb-0 fs-1 text-success"
-                                    style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif">
-                                    <%= summary.ordersCount %>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <div class="stats-card d-flex align-items-center p-2">
-                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white"
-                                style="width: 55px; height: 50px;">
-                                <i class="bi bi-box-seam fs-2"></i>
-                            </div>
-                            <div class="ms-2">
-                                <h4><strong>Total Products</strong></h4>
-                                <p class="fs-1 text-success mb-0"
-                                    style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif">
-                                    <%= summary.productCount %>
-                                </p>
-                                <p style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-                                    <strong>In <span class="text-danger fs-5">
-                                            <%= summary.categoryCount %>
-                                        </span> Categories</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <div class="stats-card d-flex align-items-center p-2">
-                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white"
-                                style="width: 55px; height: 50px;">
-                                <i class="bi bi-people fs-2"></i>
-                            </div>
-                            <div class="ms-2">
-                                <h4><strong>Total Users</strong></h4>
-                                <p class="fs-1 text-success mb-0"
-                                    style="font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif">
-                                    <%= summary.userCount + summary.userBlockCount %>
-                                </p>
-                                <p style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-                                    <strong><span class="text-danger fs-5">
-                                            <%= summary.userBlockCount %>
-                                        </span> user's is Blocked</strong>
-                                </p>
-                            </div>
+            <!-- Stat cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="bi bi-currency-rupee"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-label">Total Revenue</div>
+                        <div class="stat-value">₹<%= summary.totalSales %>
                         </div>
                     </div>
                 </div>
-
-                <!-- Graph and Recent Sales Row -->
-                <div class="row mt-4">
-                    <div class="col-12 col-md-8 mb-4">
-                        <div class="graph-card bg-light">
-                            <div class="btn-group mb-3" role="group" aria-label="Timeframe selection">
-                                <button type="button" class="btn btn-secondary"
-                                    onclick="changeTimeframe('day')">Daily</button>
-                                <button type="button" class="btn btn-secondary"
-                                    onclick="changeTimeframe('week')">Weekly</button>
-                                <button type="button" class="btn btn-secondary"
-                                    onclick="changeTimeframe('month')">Monthly</button>
-                                <button type="button" class="btn btn-secondary"
-                                    onclick="changeTimeframe('year')">Yearly</button>
-
-                            </div>
-                            <div>
-                                <canvas id="myChart"></canvas>
-                            </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="bi bi-basket3"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-label">Total Orders</div>
+                        <div class="stat-value">
+                            <%= summary.ordersCount %>
                         </div>
                     </div>
-                    <div class="col-12 col-md-4">
-                        <div class="recent-sales bg-light p-4  rounded shadow-sm">
-                            <!-- Sales Summary Section -->
-                            <div class="mb-5">
-                                <h5 class="text-secondary border-bottom pb-2 fw-bold"
-                                    style="text-underline-offset: 5px;">
-                                    Sales Summary
-                                </h5>
-                                <ul class="list-unstyled mt-3">
-                                    <li class="mt-3 font-lg text-dark" id="timeFrameBaseRevenue"
-                                        style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">
-                                        L-o-d-i-n-g..</li>
-                                </ul>
-                            </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="bi bi-box-seam"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-label">Total Products</div>
+                        <div class="stat-value">
+                            <%= summary.productCount %>
+                        </div>
+                        <div class="stat-sub">In <span class="highlight" style="color:var(--gold1)">
+                                <%= summary.categoryCount %>
+                            </span> categories</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="bi bi-people"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-label">Total Users</div>
+                        <div class="stat-value">
+                            <%= summary.userCount + summary.userBlockCount %>
+                        </div>
+                        <div class="stat-sub"><span class="highlight">
+                                <%= summary.userBlockCount %>
+                            </span> blocked</div>
+                    </div>
+                </div>
+            </div>
 
-                            <!-- Best Selling Product Section -->
-                            <div class="mb-5">
-                                <h5 class="text-secondary border-bottom pb-2 fw-bold"
-                                    style="text-underline-offset: 5px;">
-                                    Best Selling Product
-                                </h5>
+            <!-- Chart + Info -->
+            <div class="bottom-grid">
 
-                                <% if (productDetails && productDetails.images && productDetails.images.length> 0) { %>
+                <!-- Chart -->
+                <div class="chart-card">
+                    <div
+                        style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;">
+                        <h2 class="card-title">Sales Overview</h2>
+                        <span class="revenue-badge" id="revenueBadge"><i class="bi bi-graph-up"></i>
+                            Loading…</span>
+                    </div>
+                    <div class="timeframe-btns">
+                        <button class="tf-btn active" onclick="changeTimeframe('day', this)">Daily</button>
+                        <button class="tf-btn" onclick="changeTimeframe('week', this)">Weekly</button>
+                        <button class="tf-btn" onclick="changeTimeframe('month', this)">Monthly</button>
+                        <button class="tf-btn" onclick="changeTimeframe('year', this)">Yearly</button>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
 
-                                    <div
-                                        class="d-flex align-items-center justify-content-between bg-white rounded shadow p-3">
-                                        <div class="d-flex align-items-center">
-                                            <img src="/imgs/product/<%= productDetails.images[0] %>" alt="Product Image"
-                                                class="img-thumbnail me-3 border-0"
-                                                style="width: 80px; height: 80px; border-radius: 10px;">
-                                            <div>
-                                                <h6 class="text-primary mb-1">
-                                                    <%= productDetails.productName %>
-                                                </h6>
-                                                <small class="text-muted">Best Seller</small>
-                                            </div>
-                                        </div>
+                <!-- Info panel -->
+                <div class="info-card">
+
+                    <!-- Best product -->
+                    <div>
+                        <div class="section-label">Best Selling Product</div>
+                        <% if (productDetails && productDetails.images && productDetails.images.length> 0) { %>
+                            <div class="best-product">
+                                <img src="/imgs/product/<%= productDetails.images[0] %>"
+                                    alt="<%= productDetails.productName %>">
+                                <div>
+                                    <div class="best-product-name">
+                                        <%= productDetails.productName %>
                                     </div>
-
-                                    <% } else { %>
-
-                                        <div class="bg-white rounded shadow p-3 text-center text-muted">
-                                            <small>No best selling product yet</small>
-                                        </div>
-
-                                        <% } %>
+                                    <div class="best-product-tag"><i class="bi bi-trophy-fill"></i> Top Seller
+                                    </div>
+                                </div>
                             </div>
+                            <% } else { %>
+                                <p class="empty-msg">No best selling product yet.</p>
+                                <% } %>
+                    </div>
 
-                            <!-- Best Selling Categories Section -->
-                            <div>
-                                <h5 class="text-secondary border-bottom pb-2 fw-bold"
-                                    style="text-underline-offset: 5px;">
-                                    Best Selling Categories
-                                </h5>
-
-                                <% if (productDetails && productDetails.category && productDetails.category.name) { %>
-
-                                    <!-- Categories List -->
-                                    <ul class="list-unstyled mt-3 ps-2">
-                                        <li class="mb-2">
-                                            <i class="bi bi-star-fill text-warning"></i>
-                                            <%= productDetails.category.name %>
-                                        </li>
-                                    </ul>
-
-                                    <% } else { %>
-
-                                        <div class="mt-3 ps-2 text-muted">
-                                            <small>No best selling category yet</small>
-                                        </div>
-
-                                    <% } %>
-                            </div>
-                        </div>
+                    <!-- Best category -->
+                    <div>
+                        <div class="section-label">Best Selling Category</div>
+                        <% if (productDetails && productDetails.category && productDetails.category.name) { %>
+                            <span class="cat-pill">
+                                <i class="bi bi-star-fill"></i>
+                                <%= productDetails.category.name %>
+                            </span>
+                            <% } else { %>
+                                <p class="empty-msg">No best selling category yet.</p>
+                                <% } %>
                     </div>
 
                 </div>
             </div>
-        </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootst 6rap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        </main>
+    </div><!-- /layout -->
 
     <script>
+        // ── Date ──
+        document.getElementById('todayDate').textContent =
+            new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-        const ctx = document.getElementById("myChart").getContext("2d");
+        // ── Sidebar toggle ──
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+
+        hamburger.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        });
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        });
+
+        // ── Chart ──
+        const ctx = document.getElementById('myChart').getContext('2d');
         let myChart;
 
-        // Function to update the chart data
         const updateChartData = async (timeframe) => {
             try {
-                const response = await fetch(`/admin/dashboard/fetchReport?timeframe=${timeframe}`);
+                const res = await fetch(`/admin/dashboard/fetchReport?timeframe=${timeframe}`);
+                if (!res.ok) throw new Error('Network error');
+                const { xValues, yValues, totalRevenue } = await res.json();
 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+                document.getElementById('revenueBadge').innerHTML =
+                    `<i class="bi bi-graph-up"></i> ₹${Number(totalRevenue).toLocaleString('en-IN')}`;
 
-                const data = await response.json();
-                const { xValues, yValues, totalRevenue } = data;
-
-
-                document.getElementById('timeFrameBaseRevenue').innerText = `${timeframe.toUpperCase()}-BASED-REVENUE : ₹${totalRevenue.toLocaleString()}`
-
-                if (myChart) {
-                    myChart.destroy();  // Destroy the previous chart instance
-                }
+                if (myChart) myChart.destroy();
 
                 myChart = new Chart(ctx, {
-                    type: "line",
+                    type: 'line',
                     data: {
                         labels: xValues,
                         datasets: [{
-                            label: 'Sales',
-                            fill: false,
-                            lineTension: 0.1,
-                            backgroundColor: "rgba(0,0,255,1.0)",
-                            borderColor: "rgba(0,0,255,0.5)",
-                            data: yValues
+                            label: 'Revenue (₹)',
+                            data: yValues,
+                            fill: true,
+                            tension: 0.4,
+                            borderColor: '#c9a96e',
+                            backgroundColor: (context) => {
+                                const chart = context.chart;
+                                const { ctx: c, chartArea } = chart;
+                                if (!chartArea) return 'transparent';
+                                const gradient = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                                gradient.addColorStop(0, 'rgba(201,169,110,0.25)');
+                                gradient.addColorStop(1, 'rgba(201,169,110,0.01)');
+                                return gradient;
+                            },
+                            pointBackgroundColor: '#c9a96e',
+                            pointBorderColor: '#0f0f0f',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
                         }]
                     },
                     options: {
                         responsive: true,
+                        maintainAspectRatio: true,
                         plugins: {
-                            title: {
-                                display: true,
-                                text: "Sales Data"
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: '#1a1a1a',
+                                borderColor: '#2a2a2a',
+                                borderWidth: 1,
+                                titleColor: '#f0e6d3',
+                                bodyColor: '#c9a96e',
+                                padding: 10,
+                                callbacks: {
+                                    label: ctx => ` ₹${Number(ctx.raw).toLocaleString('en-IN')}`
+                                }
                             }
                         },
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: "Sales (units)"
-                                }
+                                grid: { color: 'rgba(255,255,255,0.04)' },
+                                ticks: {
+                                    color: '#666', font: { family: 'DM Sans', size: 11 },
+                                    callback: v => '₹' + Number(v).toLocaleString('en-IN')
+                                },
+                                border: { color: 'transparent' }
                             },
                             x: {
-                                title: {
-                                    display: true,
-                                    text: timeframe.charAt(0).toUpperCase() + timeframe.slice(1)
-                                }
+                                grid: { display: false },
+                                ticks: { color: '#666', font: { family: 'DM Sans', size: 11 } },
+                                border: { color: '#2a2a2a' }
                             }
                         }
                     }
                 });
-            } catch (error) {
-                console.error("Error fetching data:", error);
+            } catch (err) {
+                console.error('Chart error:', err);
             }
         };
 
-        // Function called by each button's onclick
-        const changeTimeframe = (timeframe) => {
+        const changeTimeframe = (timeframe, btn) => {
+            document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
             updateChartData(timeframe);
         };
 
-        // Initial load with 'daily' data
         updateChartData('day');
-
     </script>
-
 </body>
 
 </html>

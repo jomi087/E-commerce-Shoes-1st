@@ -88,9 +88,16 @@
 
 <body>
     <div class="container my-4">
-        <h3 class="mb-3"><i class="bi bi-receipt-cutoff"></i> Order Detail</h3>
-        <p class="text-muted">Details for Order ID: <strong>#<%=order._id.toString().slice(-6) %></strong></p>
-
+        <!-- With this -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h3 class="mb-0"><i class="bi bi-receipt-cutoff"></i> Order Detail</h3>
+                <p class="text-muted mb-0 mt-1">Details for Order ID: <strong>#<%=order._id.toString().slice(-6) %></strong></p>
+            </div>
+            <a href="/admin/orderManagement" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
         <!-- Order Header -->
         <div class="order-header">
             <i class="bi bi-calendar-check-fill section-icon"></i>

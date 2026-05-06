@@ -1,170 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fashion Feet</title>
-    <!-- font -->
+    <title>Fashion Feet — Coupon Management</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Moul&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #2a2a2a;
+            --border: #2a2a2a; --border2: #3a3a3a;
+            --cream: #f0e6d3; --muted: #999; --dim: #666;
+            --gold1: #c9a96e; --gold2: #a8813d;
+            --error: #e05f5f; --success: #4caf7d;
+            --sidebar-w: 220px;
+        }
+        html { height: 100%; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--cream);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        /* NAVBAR */
+        .navbar {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--surface); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: .85rem 1.5rem; gap: 1rem; flex-shrink: 0;
+        }
+        .navbar-brand { font-family: 'Playfair Display', serif; font-size: 1.45rem; color: var(--cream); letter-spacing: 1px; white-space: nowrap; text-decoration: none; }
+        .navbar-right { display: flex; align-items: center; gap: 1rem; }
+        .navbar-badge { font-size: .65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border2); padding: .25rem .65rem; border-radius: 20px; }
+        .logout-btn { font-size: .75rem; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); text-decoration: none; padding: .4rem .9rem; border: 1px solid var(--border2); border-radius: 6px; transition: color .2s, border-color .2s; display: flex; align-items: center; gap: .4rem; }
+        .logout-btn:hover { color: var(--gold1); border-color: var(--gold1); }
+        .hamburger { display: none; background: none; border: 1px solid var(--border2); border-radius: 6px; color: var(--muted); font-size: 1.2rem; padding: .3rem .55rem; cursor: pointer; }
 
-    <!-- my-css -->
-    <link rel="stylesheet" href="styleadmin.css">
+        /* LAYOUT */
+        .layout { display: flex; flex: 1; }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            padding: 1.5rem 1rem; gap: .35rem;
+            flex-shrink: 0;
+            position: sticky;
+            top: 57px;
+            height: calc(100vh - 57px);
+            overflow-y: auto;
+            transition: transform .3s ease;
+        }
+        .sidebar-label { font-size: .6rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--dim); padding: .5rem .65rem .2rem; margin-top: .5rem; }
+        .nav-link { display: flex; align-items: center; gap: .65rem; padding: .65rem .85rem; border-radius: 8px; color: var(--muted); text-decoration: none; font-size: .86rem; font-weight: 500; transition: background .2s, color .2s; }
+        .nav-link i { font-size: 1rem; width: 1.1rem; text-align: center; }
+        .nav-link:hover { background: var(--surface2); color: var(--cream); }
+        .nav-link.active { background: linear-gradient(135deg, rgba(201,169,110,.18), rgba(168,129,61,.1)); color: var(--gold1); border: 1px solid rgba(201,169,110,.2); }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 90; }
+
+        /* MAIN */
+        .main {
+            flex: 1;
+            padding: 2rem 1.75rem;
+            display: flex; flex-direction: column; gap: 1.75rem;
+            min-width: 0;
+        }
+        .page-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: var(--cream); }
+
+        /* CARDS */
+        .table-card, .form-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            animation: fadeUp .5s ease both;
+        }
+        .form-card { animation-delay: .1s; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .table-card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 1rem; flex-wrap: wrap;
+        }
+        .card-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--cream); }
+        .count-badge { font-size: .7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold1); background: rgba(201,169,110,.1); border: 1px solid rgba(201,169,110,.2); padding: .3rem .75rem; border-radius: 20px; }
+
+        /* TABLE */
+        .tbl-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+        thead tr { background: var(--surface2); border-bottom: 1px solid var(--border2); }
+        thead th { padding: .9rem 1rem; text-align: left; font-size: .65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--dim); font-weight: 600; white-space: nowrap; }
+        tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--surface2); }
+        tbody td { padding: .85rem 1rem; color: var(--cream); font-size: .82rem; vertical-align: middle; }
+        .td-id { color: var(--muted); font-size: .78rem; }
+        .td-code { font-family: monospace; font-weight: 600; color: var(--gold1); letter-spacing: 1px; font-size: .85rem; }
+        .td-muted { color: var(--muted); }
+
+        /* ACTION BUTTONS */
+        .action-btn {
+            display: inline-flex; align-items: center; gap: .35rem;
+            padding: .28rem .7rem; border-radius: 7px;
+            border: 1px solid var(--border2); background: transparent;
+            color: var(--muted); text-decoration: none;
+            font-size: .75rem; font-weight: 500; cursor: pointer;
+            transition: color .2s, border-color .2s, background .2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .action-btn-edit:hover { color: var(--gold1); border-color: var(--gold1); background: rgba(201,169,110,.08); }
+        .action-btn-del:hover { color: var(--error); border-color: var(--error); background: rgba(224,95,95,.08); }
+        .action-btns { display: flex; gap: .5rem; }
+
+        /* EMPTY STATE */
+        .empty-state { padding: 3.5rem 2rem; text-align: center; }
+        .empty-state i { font-size: 2.5rem; color: var(--dim); display: block; margin-bottom: 1rem; }
+        .empty-state p { color: var(--muted); font-size: .9rem; }
+
+        /* FORM */
+        .form-body { padding: 1.5rem; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem 1.5rem; }
+        .form-group { display: flex; flex-direction: column; gap: .45rem; }
+        .form-label { font-size: .72rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+        .form-input {
+            background: #111;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: .65rem .9rem;
+            color: var(--cream);
+            font-family: 'DM Sans', sans-serif;
+            font-size: .85rem;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+            width: 100%;
+        }
+        .form-input::placeholder { color: var(--dim); }
+        .form-input:focus { border-color: var(--gold1); box-shadow: 0 0 0 3px rgba(201,169,110,.12); }
+        .field-error { font-size: .72rem; color: var(--error); min-height: 1.1em; }
+        .form-footer {
+            display: flex; justify-content: flex-end;
+            margin-top: 1.5rem; padding-top: 1.25rem;
+            border-top: 1px solid var(--border);
+        }
+        .submit-btn {
+            display: inline-flex; align-items: center; gap: .5rem;
+            padding: .65rem 1.5rem;
+            background: linear-gradient(135deg, var(--gold1), var(--gold2));
+            border: none; border-radius: 8px;
+            color: #0f0f0f; font-family: 'DM Sans', sans-serif;
+            font-size: .82rem; font-weight: 700; letter-spacing: 1px;
+            text-transform: uppercase; cursor: pointer;
+            transition: opacity .2s, transform .15s;
+        }
+        .submit-btn:hover { opacity: .88; transform: translateY(-1px); }
+        .submit-btn:active { transform: translateY(0); }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hamburger { display: block; }
+            .sidebar {
+                position: fixed; top: 0; left: 0; bottom: 0;
+                z-index: 95; height: 100vh;
+                transform: translateX(-100%);
+                padding-top: 4.5rem;
+            }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .main { padding: 1.25rem 1rem; }
+            .form-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 500px) { .navbar-badge { display: none; } }
+    </style>
 </head>
+<body>
 
-<body class="page-body">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg nav-bar-custom">
-        <div class="container-fluid">
-            <h3 class="text-white cinzel-decorative mt-2">Fashion Feet</h3>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="#">Account</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Settings</a>
-                    </li> -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/logout">Logout</a>
-                    </li>
-                </ul>
-            </div>
+    <header class="navbar">
+        <div style="display:flex;align-items:center;gap:.85rem;">
+            <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="bi bi-list"></i></button>
+            <a class="navbar-brand" href="#">Fashion Feet</a>
         </div>
-    </nav>
+        <div class="navbar-right">
+            <span class="navbar-badge">Admin Portal</span>
+            <a href="/admin/logout" class="logout-btn"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        </div>
+    </header>
 
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-2 sidebar p-3">
-                <nav class="nav flex-column">
-                    <a class="btn btn-primary nav-link" href="/admin/dashboard">Dashboard</a>
-                    <a class="btn btn-primary nav-link" href="/admin/customer">Customers</a>
-                    <a class="btn btn-primary nav-link" href="/admin/product">Products</a>
-                    <a class="btn btn-primary nav-link" href="/admin/orderManagement">Orders</a>
-                    <a class="btn btn-primary nav-link" href="/admin/couponManagement">Coupon Management</a>
-                    <a class="btn btn-primary nav-link" href="/admin/salesReport">Sales Report</a>
-                    <a class="btn btn-primary nav-link" href="/admin/category">Category</a>
-                </nav>
+    <div class="layout">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <span class="sidebar-label">Main</span>
+            <a class="nav-link" href="/admin/dashboard"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+            <a class="nav-link" href="/admin/customer"><i class="bi bi-people"></i> Customers</a>
+            <a class="nav-link" href="/admin/product"><i class="bi bi-box-seam"></i> Products</a>
+            <a class="nav-link" href="/admin/orderManagement"><i class="bi bi-basket3"></i> Orders</a>
+            <span class="sidebar-label">Management</span>
+            <a class="nav-link active" href="/admin/couponManagement"><i class="bi bi-ticket-perforated"></i> Coupons</a>
+            <a class="nav-link" href="/admin/salesReport"><i class="bi bi-bar-chart-line"></i> Sales Report</a>
+            <a class="nav-link" href="/admin/category"><i class="bi bi-tag"></i> Categories</a>
+        </aside>
+
+        <main class="main">
+            <h1 class="page-title">Coupon Management</h1>
+
+            <div class="table-card">
+                <div class="table-card-header">
+                    <h2 class="card-title">Existing Coupons</h2>
+                    <% if (coupons.length > 0) { %>
+                        <span class="count-badge"><i class="bi bi-ticket-perforated"></i> <%= coupons.length %> coupons</span>
+                    <% } %>
+                </div>
+
+                <% if (coupons.length > 0) { %>
+                <div class="tbl-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Coupon Code</th>
+                                <th>Discount (%)</th>
+                                <th>Usage Limit</th>
+                                <th>Min Purchase</th>
+                                <th>Max Cap</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="couponList">
+                            <% coupons.forEach((coupon, index) => { %>
+                            <tr>
+                                <td class="td-id"><%= index + 1 %></td>
+                                <td class="td-code"><%= coupon.code %></td>
+                                <td><%= coupon.discountPercentage %>%</td>
+                                <td class="td-muted"><%= coupon.usageLimit %></td>
+                                <td class="td-muted">₹<%= coupon.minPurchaseAmount.toLocaleString() %></td>
+                                <td class="td-muted">₹<%= coupon.maxCapAmount.toLocaleString() %></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <a href="/admin/editCoupon/<%= coupon._id %>" class="action-btn action-btn-edit">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
+                                        <button class="action-btn action-btn-del" onclick="deleteCoupon('<%= coupon._id %>')">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+                <% } else { %>
+                <div class="empty-state">
+                    <i class="bi bi-ticket-perforated"></i>
+                    <p>No coupons added yet. Create your first coupon below.</p>
+                </div>
+                <% } %>
             </div>
 
-            <!-- Main Content Area -->
-            <div class="col-md-10 content">
-                <!-- Coupon Management Section -->
-                <div class="container">
-                    <% if (coupons.length > 0) { %>
-                        <!-- Coupon List Table -->
-                        <div class="card mb-5">
-                            <div class="card-header">
-                                Existing Coupons
+            <div class="form-card">
+                <div class="table-card-header">
+                    <h2 class="card-title">Add New Coupon</h2>
+                </div>
+                <div class="form-body">
+                    <form id="couponForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="couponCode">Coupon Code</label>
+                                <input class="form-input" type="text" id="couponCode" placeholder="e.g. SAVE20">
+                                <span class="field-error" id="couponCodeError"></span>
                             </div>
-                            <div class="card-body">
-                                <div class="table-responsive"> <!-- Add responsive class here -->
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Sr.no</th>
-                                                <th scope="col">Coupon Code</th>
-                                                <th scope="col">Discount (%)</th>
-                                                <th scope="col">Usage Limit</th>
-                                                <th scope="col">Min Purchase Amount</th>
-                                                <th scope="col">Max Cap Amount</th>
-                                                <th scope="col">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="couponList">
-                                            <% coupons.forEach((coupon,index) => { %>
-                                                <tr class="text-center">
-                                                    <td><%=index + 1 %>)</td>
-                                                    <td><%= coupon.code %></td>
-                                                    <td><%= coupon.discountPercentage %>%</td>
-                                                    <td><%= coupon.usageLimit %></td>
-                                                    <td><%= coupon.minPurchaseAmount %></td>
-                                                    <td><%= coupon.maxCapAmount %></td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-between"> 
-                                                            <a href="/admin/editCoupon/<%= coupon._id %>" class="btn btn-sm btn-warning">Edit</a>
-                                                            <button class="btn btn-sm btn-danger" onclick="deleteCoupon('<%= coupon._id %>')">Delete</button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            <% }) %>
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <div class="form-group">
+                                <label class="form-label" for="discountAmount">Discount (%)</label>
+                                <input class="form-input" type="number" id="discountAmount" placeholder="e.g. 15">
+                                <span class="field-error" id="discountError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="minPurchaseAmount">Minimum Purchase Amount</label>
+                                <input class="form-input" type="number" id="minPurchaseAmount" placeholder="e.g. 500">
+                                <span class="field-error" id="minPurchaseAmountError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="maxCapAmount">Maximum Cap Amount</label>
+                                <input class="form-input" type="number" id="maxCapAmount" placeholder="e.g. 200">
+                                <span class="field-error" id="maxCapAmountError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="usageLimit">Usage Limit</label>
+                                <input class="form-input" type="number" id="usageLimit" placeholder="e.g. 100">
+                                <span class="field-error" id="usageLimitError"></span>
                             </div>
                         </div>
-                    <% } else { %>
-                        <div class="mb-5">
-                            <h4 class="text-center fs-4 mt-5">No Coupons added</h4>
+                        <div class="form-footer">
+                            <button type="submit" class="submit-btn">
+                                <i class="bi bi-plus-circle"></i> Add Coupon
+                            </button>
                         </div>
-                    <% } %>
-                    
-                    <!-- Add Coupon Form -->
-                    <div class="card fw-semibold ">
-                        <div class="card-header">
-                            Add New Coupon
-                        </div>
-                        <div class="card-body">
-                            <form id="couponForm">
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="couponCode" class="form-label">Coupon Code</label>
-                                        <input type="text" class="form-control" id="couponCode" placeholder="Enter coupon code" >
-                                        <span class="text-danger" id="couponCodeError"></span>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="discountAmount" class="form-label">Discount (%)</label>
-                                        <input type="number" class="form-control" id="discountAmount" placeholder="Enter discount percentage" >
-                                        <span class="text-danger" id="discountError"></span>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="minPurchaseAmount" class="form-label">Minimum Purchase Amount</label>
-                                        <input type="number" class="form-control" id="minPurchaseAmount" placeholder="Minimum purchase amount">
-                                        <span class="text-danger" id="minPurchaseAmountError"></span>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="maxCapAmount" class="form-label">Maximum Cap Amount</label>
-                                        <input type="number" class="form-control" id="maxCapAmount" placeholder="Max Cap amount">
-                                        <span class="text-danger" id="maxCapAmountError"></span>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="usageLimit" class="form-label">Usage Limit</label>
-                                        <input type="number" class="form-control" id="usageLimit" placeholder="Max usage limit">
-                                        <span class="text-danger" id="usageLimitError"></span>
-                                    </div>
-                                </div>
-                                <div class="d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-primary">Add Coupon</button>
-                                </div>
-
-                            </form>                            
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-
     <script>
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        hamburger.addEventListener('click', () => { sidebar.classList.toggle('open'); overlay.classList.toggle('open'); });
+        overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('open'); });
+
         document.getElementById('couponForm').addEventListener('submit', async function(event) {
-            event.preventDefault();  // Prevent form submission
+            event.preventDefault();
 
             const couponCode = document.getElementById('couponCode').value.trim();
             const discountAmount = document.getElementById('discountAmount').value.trim();
@@ -174,7 +329,6 @@
 
             let isValid = true;
 
-            // Clear previous error messages
             document.getElementById('couponCodeError').textContent = '';
             document.getElementById('discountError').textContent = '';
             document.getElementById('minPurchaseAmountError').textContent = '';
@@ -184,122 +338,80 @@
             if (!couponCode) {
                 document.getElementById('couponCodeError').textContent = 'Coupon code is required';
                 isValid = false;
-            }else if (!/^[A-Z][A-Z0-9]*$/.test(couponCode)) {
-                document.getElementById('couponCodeError').textContent = 'code must start with a letter & it should Only contain uppercase letters and numbers.';
+            } else if (!/^[A-Z][A-Z0-9]*$/.test(couponCode)) {
+                document.getElementById('couponCodeError').textContent = 'Code must start with a letter & contain only uppercase letters and numbers.';
                 isValid = false;
             }
 
-            if (discountAmount === '' || parseInt(discountAmount) < 0 || parseInt(discountAmount) > 90 ) {
-                document.getElementById('discountError').textContent = 'Please enter a valid discount percentage (0-100)';
+            if (discountAmount === '' || parseInt(discountAmount) < 0 || parseInt(discountAmount) > 90) {
+                document.getElementById('discountError').textContent = 'Please enter a valid discount percentage (0–90)';
                 isValid = false;
             }
 
             if (!minPurchaseAmount) {
                 document.getElementById('minPurchaseAmountError').textContent = 'Minimum purchase amount is required';
                 isValid = false;
-            } else if (parseInt(minPurchaseAmount) <= 0) { 
+            } else if (parseInt(minPurchaseAmount) <= 0) {
                 document.getElementById('minPurchaseAmountError').textContent = 'Minimum purchase amount must be greater than 0';
                 isValid = false;
             }
 
             if (!maxCapAmount) {
-                document.getElementById('maxCapAmountError').textContent = 'Max Cap amount is required';
+                document.getElementById('maxCapAmountError').textContent = 'Max cap amount is required';
                 isValid = false;
-            } else if (parseInt(maxCapAmount) <= 0) { 
-                document.getElementById('maxCapAmountError').textContent = 'Max Cap amount must be greater than 0';
+            } else if (parseInt(maxCapAmount) <= 0) {
+                document.getElementById('maxCapAmountError').textContent = 'Max cap amount must be greater than 0';
                 isValid = false;
             }
-
 
             if (!usageLimit) {
                 document.getElementById('usageLimitError').textContent = 'Usage limit is required';
                 isValid = false;
-            } else if(parseInt(usageLimit) <= 0){
-                document.getElementById('usageLimitError').textContent = 'Usage limit is must be gretor than zero';
+            } else if (parseInt(usageLimit) <= 0) {
+                document.getElementById('usageLimitError').textContent = 'Usage limit must be greater than 0';
                 isValid = false;
             }
 
             if (isValid) {
                 try {
-                    const response = await fetch('/admin/addCoupon',{
-                        method : 'POST',
-                        headers : {
-                            'Content-type' : 'application/json'
-                        },
-                        body: JSON.stringify({
-
-                            couponCode,
-                            discountAmount,
-                            minPurchaseAmount,
-                            maxCapAmount,
-                            usageLimit,
-                        })
-                    })
-
-                    const result  = await response.json()
-
-                    if(result.success){
-                        window.location.reload()
-                    }
-
+                    const response = await fetch('/admin/addCoupon', {
+                        method: 'POST',
+                        headers: { 'Content-type': 'application/json' },
+                        body: JSON.stringify({ couponCode, discountAmount, minPurchaseAmount, maxCapAmount, usageLimit })
+                    });
+                    const result = await response.json();
+                    if (result.success) { window.location.reload(); }
                 } catch (error) {
                     console.log(error);
                     Swal.fire({
-                        icon: 'error',
-                        toast: true,
-                        position: 'top-end',
-                        background: '#f8d7da',
-                        customClass: {
-                            popup: 'swal2-custom-font', 
-                        },
-                        width: '280px', 
+                        icon: 'error', toast: true, position: 'top-end',
+                        background: '#f8d7da', width: '280px',
                         text: 'Something went wrong. Please try again later.',
-                        showConfirmButton: false,
-                        timerProgressBar: true,
-                        timer: 1500,
-                    })
+                        showConfirmButton: false, timerProgressBar: true, timer: 1500,
+                    });
                 }
             }
         });
 
-
-        async function deleteCoupon(couponId){
+        async function deleteCoupon(couponId) {
             try {
-                const response = await fetch('/admin/deleteCoupon',{
-                    method : 'delete',
-                    headers : {
-                        'Content-type' : 'application/json'
-                    },
-                    body : JSON.stringify({
-                        couponId
-                    })
-                })
-                const result  = await response.json()
-
-                if(result.success){
-                    window.location.reload()
-                }
-
+                const response = await fetch('/admin/deleteCoupon', {
+                    method: 'delete',
+                    headers: { 'Content-type': 'application/json' },
+                    body: JSON.stringify({ couponId })
+                });
+                const result = await response.json();
+                if (result.success) { window.location.reload(); }
             } catch (error) {
                 console.log(error);
                 Swal.fire({
-                    icon: 'error',
-                    toast: true,
-                    position: 'top-end',
-                    background: '#f8d7da',
-                    customClass: {
-                        popup: 'swal2-custom-font', 
-                    },
-                    width: '280px', 
+                    icon: 'error', toast: true, position: 'top-end',
+                    background: '#f8d7da', width: '280px',
                     text: 'Something went wrong. Please try again later.',
-                    showConfirmButton: false,
-                    timerProgressBar: true,
-                    timer: 1500,
-                })
+                    showConfirmButton: false, timerProgressBar: true, timer: 1500,
+                });
             }
         }
-
-     </script>
+    </script>
 </body>
-
 </html>

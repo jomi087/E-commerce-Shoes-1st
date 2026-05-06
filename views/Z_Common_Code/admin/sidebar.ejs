@@ -1,0 +1,35 @@
+<aside class="sidebar" id="sidebar">
+
+    <span class="sidebar-label">Main</span>
+
+    <a class="nav-link <%= active === 'dashboard' ? 'active' : '' %>" href="/admin/dashboard">
+        <i class="bi bi-grid-1x2"></i> Dashboard
+    </a>
+
+    <a class="nav-link <%= active === 'customers' ? 'active' : '' %>" href="/admin/customer">
+        <i class="bi bi-people"></i> Customers
+    </a>
+
+    <a class="nav-link <%= active === 'products' ? 'active' : '' %>" href="/admin/product">
+        <i class="bi bi-box-seam"></i> Products
+    </a>
+
+    <a class="nav-link <%= active === 'orders' ? 'active' : '' %>" href="/admin/orderManagement">
+        <i class="bi bi-basket3"></i> Orders
+    </a>
+
+    <span class="sidebar-label">Management</span>
+
+    <a class="nav-link <%= active === 'coupons' ? 'active' : '' %>" href="/admin/couponManagement">
+        <i class="bi bi-ticket-perforated"></i> Coupons
+    </a>
+
+    <a class="nav-link <%= active === 'sales' ? 'active' : '' %>" href="/admin/salesReport">
+        <i class="bi bi-bar-chart-line"></i> Sales Report
+    </a>
+
+    <a class="nav-link <%= active === 'category' ? 'active' : '' %>" href="/admin/category">
+        <i class="bi bi-tag"></i> Categories
+    </a>
+
+</aside>

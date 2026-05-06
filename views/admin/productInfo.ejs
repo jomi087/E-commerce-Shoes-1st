@@ -1,270 +1,525 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fashion Feet</title>
-    <!-- font -->
+    <title>Fashion Feet — Products</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Moul&display=swap" rel="stylesheet">
-
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <!-- my-css -->
-    <link rel="stylesheet" href="styleadmin.css">
     <style>
-    .product-images-row {
-    display: flex;
-    justify-content: center; /* Center the images horizontally */
-    align-items: center; /* Center the images vertically */
-    flex-wrap: nowrap; /* Ensure images do not wrap to the next line */
-}
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.product-images-row img {
-    max-width: 100px; 
-    margin-right: 5px; 
-}
+        :root {
+            --bg:       #0f0f0f;
+            --surface:  #1a1a1a;
+            --surface2: #222222;
+            --border:   #2a2a2a;
+            --border2:  #333;
+            --cream:    #f0e6d3;
+            --muted:    #999;
+            --dim:      #555;
+            --gold1:    #c9a96e;
+            --gold2:    #a8813d;
+            --error:    #e05f5f;
+            --success:  #4caf7d;
+            --sidebar-w: 220px;
+        }
 
-       
+        html, body { height: 100%; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--cream);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ── Navbar ── */
+        .navbar {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: .85rem 1.5rem; gap: 1rem;
+        }
+
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.45rem; color: var(--cream);
+            letter-spacing: 1px; white-space: nowrap; text-decoration: none;
+        }
+
+        .navbar-right { display: flex; align-items: center; gap: 1rem; }
+
+        .navbar-badge {
+            font-size: .65rem; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--muted); border: 1px solid var(--border2);
+            padding: .25rem .65rem; border-radius: 20px;
+        }
+
+        .logout-btn {
+            font-size: .75rem; font-weight: 500; letter-spacing: 1.5px;
+            text-transform: uppercase; color: var(--muted); text-decoration: none;
+            padding: .4rem .9rem; border: 1px solid var(--border2); border-radius: 6px;
+            transition: color .2s, border-color .2s;
+            display: flex; align-items: center; gap: .4rem;
+        }
+        .logout-btn:hover { color: var(--gold1); border-color: var(--gold1); }
+
+        .hamburger {
+            display: none; background: none; border: 1px solid var(--border2);
+            border-radius: 6px; color: var(--muted); font-size: 1.2rem;
+            padding: .3rem .55rem; cursor: pointer;
+        }
+
+        /* ── Layout ── */
+        .layout { display: flex; flex: 1; overflow: hidden; }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: var(--sidebar-w); background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            padding: 1.5rem 1rem; gap: .35rem;
+            flex-shrink: 0; transition: transform .3s ease;
+        }
+
+        .sidebar-label {
+            font-size: .6rem; letter-spacing: 2.5px; text-transform: uppercase;
+            color: var(--dim); padding: .5rem .65rem .2rem; margin-top: .5rem;
+        }
+
+        .nav-link {
+            display: flex; align-items: center; gap: .65rem;
+            padding: .65rem .85rem; border-radius: 8px;
+            color: var(--muted); text-decoration: none;
+            font-size: .86rem; font-weight: 500;
+            transition: background .2s, color .2s;
+        }
+        .nav-link i { font-size: 1rem; width: 1.1rem; text-align: center; }
+        .nav-link:hover { background: var(--surface2); color: var(--cream); }
+        .nav-link.active {
+            background: linear-gradient(135deg, rgba(201,169,110,.18), rgba(168,129,61,.1));
+            color: var(--gold1); border: 1px solid rgba(201,169,110,.2);
+        }
+
+        .sidebar-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,.6); z-index: 90;
+        }
+
+        /* ── Main ── */
+        .main {
+            flex: 1; overflow-y: auto;
+            padding: 2rem 1.75rem;
+            display: flex; flex-direction: column; gap: 1.5rem;
+        }
+
+        /* ── Page header ── */
+        .page-header {
+            display: flex; align-items: center;
+            justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem; font-weight: 700; color: var(--cream);
+        }
+
+        .header-actions { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
+
+        /* ── Search ── */
+        .search-form { display: flex; gap: 0; }
+
+        .search-input {
+            background: var(--surface2); border: 1px solid var(--border2);
+            border-right: none; border-radius: 8px 0 0 8px;
+            color: var(--cream); font-family: 'DM Sans', sans-serif;
+            font-size: .85rem; padding: .5rem 1rem; outline: none;
+            width: 220px; transition: border-color .2s;
+        }
+        .search-input::placeholder { color: #444; }
+        .search-input:focus { border-color: var(--gold1); }
+
+        .search-btn {
+            background: linear-gradient(135deg, var(--gold1), var(--gold2));
+            border: none; border-radius: 0 8px 8px 0;
+            color: #0f0f0f; padding: .5rem .9rem;
+            font-size: .9rem; cursor: pointer;
+            transition: opacity .2s;
+        }
+        .search-btn:hover { opacity: .85; }
+
+        /* ── Add button ── */
+        .btn-add {
+            display: inline-flex; align-items: center; gap: .4rem;
+            background: linear-gradient(135deg, var(--gold1), var(--gold2));
+            border: none; border-radius: 8px;
+            color: #0f0f0f; font-family: 'DM Sans', sans-serif;
+            font-weight: 700; font-size: .8rem; letter-spacing: 1px;
+            text-transform: uppercase; text-decoration: none;
+            padding: .55rem 1.1rem; cursor: pointer;
+            transition: opacity .2s, transform .15s;
+        }
+        .btn-add:hover { opacity: .87; transform: translateY(-1px); color: #0f0f0f; }
+
+        /* ── Table card ── */
+        .table-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px; overflow: hidden;
+            animation: fadeUp .4s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            width: 100%; border-collapse: collapse;
+            font-size: .83rem; white-space: nowrap;
+        }
+
+        thead tr {
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            padding: .85rem 1rem; text-align: left;
+            font-size: .65rem; font-weight: 600;
+            letter-spacing: 1.8px; text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background .15s;
+        }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--surface2); }
+
+        td {
+            padding: .85rem 1rem; color: var(--cream);
+            vertical-align: middle;
+        }
+
+        /* status dot */
+        .status-dot {
+            display: inline-block; width: 8px; height: 8px;
+            border-radius: 50%; margin-right: .4rem; flex-shrink: 0;
+        }
+        .dot-green { background: var(--success); box-shadow: 0 0 6px rgba(76,175,125,.5); }
+        .dot-red   { background: var(--error);   box-shadow: 0 0 6px rgba(224,95,95,.4); }
+
+        /* stock badge */
+        .badge-out {
+            font-size: .68rem; font-weight: 600; letter-spacing: .5px;
+            color: var(--error); background: rgba(224,95,95,.1);
+            border: 1px solid rgba(224,95,95,.25);
+            padding: .18rem .55rem; border-radius: 20px;
+        }
+
+        /* discount badge */
+        .badge-discount {
+            font-size: .72rem; color: var(--gold1);
+            background: rgba(201,169,110,.1);
+            border: 1px solid rgba(201,169,110,.2);
+            padding: .18rem .5rem; border-radius: 20px;
+        }
+
+        /* toggle */
+        .toggle-btn {
+            background: none; border: none; cursor: pointer;
+            font-size: 1.55rem; line-height: 1; padding: 0;
+            transition: opacity .2s;
+        }
+        .toggle-btn:hover { opacity: .75; }
+        .toggle-on  { color: var(--success); }
+        .toggle-off { color: var(--dim); }
+
+        /* edit btn */
+        .btn-edit {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; border-radius: 7px;
+            border: 1px solid var(--border2); color: var(--muted);
+            background: transparent; text-decoration: none;
+            transition: color .2s, border-color .2s;
+        }
+        .btn-edit:hover { color: var(--gold1); border-color: var(--gold1); }
+
+        /* category chip */
+        .chip {
+            display: inline-block; background: var(--surface2);
+            border: 1px solid var(--border2); border-radius: 20px;
+            padding: .15rem .6rem; font-size: .72rem; color: var(--muted);
+        }
+
+        /* no products row */
+        .empty-row td {
+            padding: 3rem; text-align: center;
+            color: var(--dim); font-style: italic; font-size: .9rem;
+        }
+
+        /* ── Pagination ── */
+        .pagination-wrap {
+            display: flex; justify-content: flex-end;
+            padding: 1rem 1.25rem; border-top: 1px solid var(--border);
+            gap: .35rem; flex-wrap: wrap;
+        }
+
+        .page-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 32px; height: 32px; border-radius: 6px;
+            border: 1px solid var(--border2); background: transparent;
+            color: var(--muted); font-family: 'DM Sans', sans-serif;
+            font-size: .8rem; text-decoration: none; cursor: pointer;
+            transition: all .2s;
+        }
+        .page-btn:hover { border-color: var(--gold1); color: var(--gold1); }
+        .page-btn.active {
+            background: linear-gradient(135deg, var(--gold1), var(--gold2));
+            border-color: transparent; color: #0f0f0f; font-weight: 700;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            :root { --sidebar-w: 240px; }
+            .hamburger { display: block; }
+            .sidebar {
+                position: fixed; top: 0; left: 0; bottom: 0;
+                z-index: 95; transform: translateX(-100%);
+                padding-top: 4.5rem;
+            }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.open { display: block; }
+            .main { padding: 1.25rem 1rem; }
+            .search-input { width: 150px; }
+            .navbar-badge { display: none; }
+        }
+
+        @media (max-width: 480px) {
+            .header-actions { width: 100%; }
+            .btn-add { width: 100%; justify-content: center; }
+            .search-form { width: 100%; }
+            .search-input { flex: 1; width: auto; }
+        }
     </style>
 </head>
-<body class="page-body">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg nav-bar-custom">
-        <div class="container-fluid">
-            <h3 class="text-white cinzel-decorative mt-2">Fashion Feet</h3>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+<body>
+
+    <!-- ── NAVBAR ── -->
+    <header class="navbar">
+        <div style="display:flex;align-items:center;gap:.85rem;">
+            <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+                <i class="bi bi-list"></i>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <!-- <li class="nav-item">
-                        <a class=" nav-link" href="#">Account</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Settings</a>
-                    </li> -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/logout">Logout</a>
-                    </li>
-                </ul>
-            </div>
+            <a class="navbar-brand" href="#">Fashion Feet</a>
         </div>
-    </nav>
+        <div class="navbar-right">
+            <span class="navbar-badge">Admin Portal</span>
+            <a href="/admin/logout" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </div>
+    </header>
 
-    <!-- Main content -->
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-2 sidebar p-3">
-                <nav class="nav flex-column">
-                    <a class=" btn btn-primary nav-link" href="/admin/dashboard">Dashboard</a>
-                    <a class="btn btn-primary nav-link" href="/admin/customer">Customers</a>
-                    <a class="btn btn-primary nav-link" href="/admin/product">Products</a>
-                    <a class="btn btn-primary nav-link" href="/admin/orderManagement">Orders</a>
-                    <a class="btn btn-primary nav-link" href="/admin/couponManagement">Coupon Management</a>
-                    <a class="btn btn-primary nav-link" href="/admin/salesReport">Sales Report</a>
-                    <a class="btn btn-primary nav-link" href="/admin/category">Category</a>
-                </nav>
-            </div>
-        <!-- Content area -->
-        <div class="col-md-10 content">
-    <!-- Top Bar -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="/admin/addProduct" class="btn btn-success">+ Add Product</a>
-        <div>
-            <form action="/admin/product" method="get">
-                <div class="input-group">
-                    <input type="search" class="form-control" placeholder="Search..." name="search" value="<%=searchTerm%>" >
+    <div class="layout">
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- ── SIDEBAR ── -->
+        <aside class="sidebar" id="sidebar">
+            <span class="sidebar-label">Main</span>
+            <a class="nav-link" href="/admin/dashboard"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+            <a class="nav-link" href="/admin/customer"><i class="bi bi-people"></i> Customers</a>
+            <a class="nav-link active" href="/admin/product"><i class="bi bi-box-seam"></i> Products</a>
+            <a class="nav-link" href="/admin/orderManagement"><i class="bi bi-basket3"></i> Orders</a>
+            <span class="sidebar-label">Management</span>
+            <a class="nav-link" href="/admin/couponManagement"><i class="bi bi-ticket-perforated"></i> Coupons</a>
+            <a class="nav-link" href="/admin/salesReport"><i class="bi bi-bar-chart-line"></i> Sales Report</a>
+            <a class="nav-link" href="/admin/category"><i class="bi bi-tag"></i> Categories</a>
+        </aside>
+
+        <!-- ── MAIN ── -->
+        <main class="main">
+
+            <div class="page-header">
+                <h1 class="page-title">Products</h1>
+                <div class="header-actions">
+                    <form class="search-form" action="/admin/product" method="get">
+                        <input class="search-input" type="search" name="search"
+                               placeholder="Search products…" value="<%=searchTerm%>">
+                        <button class="search-btn" type="submit"><i class="bi bi-search"></i></button>
+                    </form>
+                    <a href="/admin/addProduct" class="btn-add">
+                        <i class="bi bi-plus-lg"></i> Add Product
+                    </a>
                 </div>
-            </form>
-           
-        </div>
-    </div>
+            </div>
 
-    <!-- Product Table -->
-    <div class="table-responsive">
-        <table class="table table-hover table-striped table-bordered align-middle text-center" style="font-size: 12px;">
-            <thead class="table-dark">
-                <tr>
-                    <th>Sr.No</th>
-                    <th>Product Name</th>
-                    <th>Category</th>
-                    <th>Qty</th>
-                    <th>Regular Price</th>
-                    <th>Discount</th>
-                    <th>Sale Price</th>
-                    <th>Size</th>
-                    <th>Color</th>
-                    <!-- <th>Image</th> -->
-                    <th>Status</th>
-                    <th>Update</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if (product.length > 0 ) { %>
-                    <% product.forEach((product, index) => { %>
-                        <tr>
-                            <td>
-                                <%= index + 1 %>
-                                <% if (product.forSale === true) { %>
-                                    <span class="bg-success rounded-circle d-inline-block ms-2" style="width: 10px; height: 10px;"></span>
-                                <% } else { %>
-                                    <span class="bg-danger rounded-circle d-inline-block ms-2" style="width: 10px; height: 10px;"></span>
-                                <% } %>
-                            </td>
-                            <td ><%= product.productName %></td>
-                            <td><%= product.category.name %></td>
-                            <td>
-                                <% if (product.unitsInStock === 0) { %>
-                                    <span class="text-danger">Out Of Stock</span>
-                                <% } else { %>
-                                    <%= product.unitsInStock %>
-                                <% } %>
-                            </td>
-                            <td>₹<%= product.regularPrice %></td>
-                            <td><%= product.discount %>%</td>
-                            <td>₹<%= product.salePrice %></td>
-                            <td><%= product.sizesAvailable %></td>
-                            <td><%= product.primaryColor %></td>
-<!--                             
-                            <td>
-                                <div class="product-images-row">
-                                    <% for (let i = 0; i < product.images.length; i++) { %>
-                                        <img src="/imgs/product/<%= product.images[i] %>" alt="Product Image" class="img-thumbnail ">
-                                    <% } %>
-                                </div>
-                            </td> -->
-                            <td>
-                                <% if (product.forSale === true) { %>
-                                    <button onclick="productStatus('<%= product._id %>')" class="btn fs-3  mx-1 border-0"><i class="bi bi-toggle-on"></i></button>
-                                <% }else { %>
-                                    <button onclick="productStatus('<%= product._id %>')" class="btn fs-3  mx-1 border-0" ><i class="bi bi-toggle-off"></i></button>
-                                <% } %>
-                            </td>
-                            <td>
-                               <div class="d-flex"> 
-                                    <a href="/admin/editProduct?id=<%= product._id %>" class="btn btn-sm btn-outline-secondary mx-1"><i class="bi bi-pencil"></i></a>
-                                    <!-- <button onclick="deleteProduct('<percentage= product._id %>')" class="btn btn-sm btn-outline-secondary mx-1"><i class="bi bi-trash"></i></button> -->
-                                </div>
-                            </td>
-                        </tr>
-                    <% }) %>
+            <div class="table-card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Stock</th>
+                                <th>Regular Price</th>
+                                <th>Discount</th>
+                                <th>Sale Price</th>
+                                <th>Sizes</th>
+                                <th>Color</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (product.length > 0) { %>
+                                <% product.forEach((product, index) => { %>
+                                <tr>
+                                    <td style="color:var(--muted);">
+                                        <span class="status-dot <%= product.forSale ? 'dot-green' : 'dot-red' %>"></span>
+                                        <%= index + 1 %>
+                                    </td>
+                                    <td style="font-weight:600; max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                        <%= product.productName %>
+                                    </td>
+                                    <td><span class="chip"><%= product.category.name %></span></td>
+                                    <td>
+                                        <% if (product.unitsInStock === 0) { %>
+                                            <span class="badge-out">Out of Stock</span>
+                                        <% } else { %>
+                                            <%= product.unitsInStock %>
+                                        <% } %>
+                                    </td>
+                                    <td style="color:var(--muted); text-decoration:line-through;">
+                                        ₹<%= product.regularPrice %>
+                                    </td>
+                                    <td><span class="badge-discount"><%= product.discount %>% off</span></td>
+                                    <td style="font-weight:600; color:var(--gold1);">₹<%= product.salePrice %></td>
+                                    <td style="color:var(--muted);"><%= product.sizesAvailable %></td>
+                                    <td style="color:var(--muted);"><%= product.primaryColor %></td>
+                                    <td>
+                                        <% if (product.forSale === true) { %>
+                                            <button onclick="productStatus('<%= product._id %>')"
+                                                class="toggle-btn toggle-on" title="Active — click to disable">
+                                                <i class="bi bi-toggle-on"></i>
+                                            </button>
+                                        <% } else { %>
+                                            <button onclick="productStatus('<%= product._id %>')"
+                                                class="toggle-btn toggle-off" title="Inactive — click to enable">
+                                                <i class="bi bi-toggle-off"></i>
+                                            </button>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/editProduct?id=<%= product._id %>" class="btn-edit" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr class="empty-row">
+                                    <td colspan="11">No products found.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <div class="pagination-container d-flex justify-content-end ">
-                        <ul class="pagination">
-                         
-                          <% for (let i = 1; i <= totalPages; i++) { %>
-                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                              <a class="page-link" href="?page=<%= i %>&search=<%= searchTerm %>"><%= i %></a>
-                            </li>
-                          <% } %>
-                         
-                        </ul>
-                    </div>
-                      
-                <% } else { %>
-                    <tr>
-                        <td colspan="12" class="text-center">NO Product Added</td>
-                    </tr>
+                <!-- Pagination -->
+                <% if (totalPages > 1) { %>
+                <div class="pagination-wrap">
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <a class="page-btn <%= currentPage === i ? 'active' : '' %>"
+                           href="?page=<%= i %>&search=<%= searchTerm %>"><%= i %></a>
+                    <% } %>
+                </div>
                 <% } %>
-            </tbody>
-        </table>
-    </div>
-</div>
+            </div>
 
-        
-       
+        </main>
     </div>
-</div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script>
+        // Sidebar toggle
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        document.getElementById('hamburgerBtn').addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        });
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        });
+
         async function deleteProduct(productId) {
-            const confirmResult = await Swal.fire({
-                title: 'Are you sure ?',
-                text : 'You Can Not Recover It Back',
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: 'You cannot recover this product.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',                    cancelButtonColor: '#3085d6',
-                confirmButtonText: 'yes',
-                cancelButtonText: 'No'
+                confirmButtonColor: '#e05f5f',
+                cancelButtonColor: '#333',
+                confirmButtonText: 'Delete',
+                cancelButtonText: 'Cancel',
+                background: '#1a1a1a',
+                color: '#f0e6d3'
             });
-
-            if (confirmResult.isConfirmed) {
+            if (result.isConfirmed) {
                 try {
-                    const response = await fetch('/admin/deleteProduct', {
+                    const res = await fetch('/admin/deleteProduct', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
+                        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                         body: JSON.stringify({ id: productId })
                     });
-                    if (response.ok) {
-                        window.location.href = '/admin/product'; // Redirect on success
-                    //  why written both side cz of Fallbacks: Having redirection on both the client and server sides can act as a safety net. For instance, if the client-side JavaScript fails or is disabled, the server-side redirection still ensures the user is navigated to the correct page.
-                    } else {
-                        alert('Failed to delete product');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Error occurred while deleting product');
+                    if (res.ok) window.location.href = '/admin/product';
+                    else Swal.fire({ title: 'Error', text: 'Failed to delete product.', icon: 'error', background: '#1a1a1a', color: '#f0e6d3' });
+                } catch (e) {
+                    Swal.fire({ title: 'Error', text: 'Something went wrong.', icon: 'error', background: '#1a1a1a', color: '#f0e6d3' });
                 }
             }
         }
 
         async function productStatus(productId) {
-            try {
-                const confirmResult = await Swal.fire({
-                title: 'Are you sure?',
+            const result = await Swal.fire({
+                title: 'Change product status?',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'yes',
-                cancelButtonText: 'No'
-                });
-
-                if(confirmResult.isConfirmed){
-                    const response = await fetch('/admin/productStatus', {
+                confirmButtonColor: '#c9a96e',
+                cancelButtonColor: '#333',
+                confirmButtonText: 'Yes, change it',
+                cancelButtonText: 'Cancel',
+                background: '#1a1a1a',
+                color: '#f0e6d3'
+            });
+            if (result.isConfirmed) {
+                try {
+                    const res = await fetch('/admin/productStatus', {
                         method: 'PATCH',
-                        headers: {
-                            'Content-Type':'application/json',
-                        },
-                        body: JSON.stringify({
-                            productId 
-                        })
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ productId })
                     });
-
-                    const result = await response.json()
-
-                    if (response.ok) {
-                        window.location.reload();
-                    } else {
-                        Swal.fire(
-                        'Alert!',
-                        result.message || 'Error in Status updation',
-                        'error'
-                        )
-                    }
+                    const data = await res.json();
+                    if (res.ok) window.location.reload();
+                    else Swal.fire({ title: 'Error', text: data.message || 'Status update failed.', icon: 'error', background: '#1a1a1a', color: '#f0e6d3' });
+                } catch (e) {
+                    Swal.fire({ title: 'Error', text: 'Something went wrong.', icon: 'error', background: '#1a1a1a', color: '#f0e6d3' });
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                Swal.fire(
-                    'Error!',
-                    'An error occurred while Changing the status.',
-                    'error'
-                );
             }
         }
     </script>
-    
 </body>
-
 </html>
