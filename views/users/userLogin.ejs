@@ -223,6 +223,11 @@
             margin-bottom: 1rem;
         }
 
+        .autoFill {
+            font-size: 0.8rem;
+            color: #c9a96e;
+        }
+
         /* FORGOT */
         .forgot-link {
             font-size: 0.8rem;
@@ -393,8 +398,17 @@
                     <span id="password-error" class="field-err"></span>
                 </div>
 
-                <div class="text-end mb-3">
-                    <a href="/forgetPassword" class="forgot-link">Forgot password?</a>
+                <div class="mb-3 d-flex justify-content-between align-items-center">
+
+                    <label class="d-flex align-items-center gap-2">
+                        <input type="checkbox" id="autofill" name="fill">
+                        <span class="autoFill">Auto-fill</span>
+                    </label>
+
+                    <a href="/forgetPassword" class="forgot-link">
+                        Forgot password?
+                    </a>
+
                 </div>
 
                 <button type="submit" class="btn-submit">Sign In</button>
@@ -417,6 +431,8 @@
                 Continue with Google
             </a>
 
+
+
             <hr class="card-divider">
             <p class="bottom-text">Don't have an account? <a href="/signup">Create one</a></p>
 
@@ -425,11 +441,25 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        let emailInput = document.getElementById('email')
+        let passwordInput = document.getElementById('password')
+
+        document.getElementById("autofill").addEventListener('change', function () {
+            if (this.checked) {
+                emailInput.value = "dummyone@gmail.com";
+                passwordInput.value = "1111111111"
+            } else {
+                emailInput.value = "";
+                passwordInput.value = "";
+            }
+
+        })
+
         function validateForm() {
             let isValid = true;
 
-            let email = document.getElementById('email').value.trim();
-            let password = document.getElementById('password').value.trim();
+            let email = emailInput.value.trim();
+            let password = passwordInput.value.trim();
             let emailError = document.getElementById('email-error');
             let passwordError = document.getElementById('password-error');
 
